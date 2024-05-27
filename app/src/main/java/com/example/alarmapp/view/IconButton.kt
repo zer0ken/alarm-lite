@@ -14,26 +14,23 @@ import androidx.compose.ui.unit.dp
  * @param painter 내부에 삽입될 아이콘
  * @param checked 초기 버튼 상태
  * @param onCheckedChange 버튼 상태가 변경될 때 호출되는 콜백 함수
- * @param modifier 버튼의 모양과 크기 조정
  * @author 이현령
  */
 @Composable
 fun IconToggleButton_(
     painter: Painter,
     checked: Boolean = false,
-    onCheckedChange: (Boolean) -> Unit = {},
-    buttonModifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier
+    onCheckedChange: (Boolean) -> Unit = {}
 ) {
     IconToggleButton(
         checked = checked,
         onCheckedChange = onCheckedChange,
-        modifier = buttonModifier.size(20.dp)
+        modifier = Modifier.size(20.dp)
     ) {
         Icon(
             painter = painter,
             contentDescription = "",
-            modifier = iconModifier.size(10.dp)
+            modifier = Modifier.size(10.dp)
         )
     }
 }
