@@ -4,6 +4,7 @@ package com.example.alarmapp.alarmdata
 // 최종 "확인" 버튼 등의 행동은 이 클래스를 통해 사용
 // ex1. 알람 추가 버튼(+) 클릭 후 모든 설정을 마치고 확인 버튼을 누를 시 -> AlarmManager.addAlarm(a) (a는 alarm)
 // ex2. 화면에 표시되는 첫 번째 알람 삭제 시 -> AlarmManager.removeAlarm(0)
+// ex3. 알람 그룹 "학교" 삭제 시 -> AlarmManager.removeGroup("학교")
 
 // 알람의 경우 List의 index를 통해 접근
 // 그룹의 경우 getGroup(name)을 통해 객체에 접근
@@ -62,8 +63,17 @@ object AlarmManager {
     }
 
     // "알람 그룹 삭제" 화면에서 최종적으로 "확인(삭제)" 버튼 클릭 시 호출
-    fun removeGroup(name: String) {
+    // 삭제한 AlarmGroup 객체 반환, 해당 그룹 이름이 없으면 null 반환
+    // 소속된 알람들이 있다면 모두 무소속으로 전환
+    fun removeGroup(name: String) :AlarmGroup? {
+        // 기존 알람들의 소속 그룹을 모두 무소속으로 전환
+        alarmList.forEach { item ->
+            if (item.groupName == name)
+                item.groupName = ""
+        }
+        // Set과 Map에서 삭제
         alarmGroupSet.remove(getGroup(name))
         alarmGroupMap.remove(name)
+        return getGroup(name)
     }
 }
