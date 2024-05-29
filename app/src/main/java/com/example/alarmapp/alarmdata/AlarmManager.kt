@@ -74,6 +74,7 @@ object AlarmManager {
     // 소속된 알람들이 있다면 모두 무소속으로 전환
     fun removeGroup(name: String): AlarmGroup? {
         // 기존 알람들의 소속 그룹을 모두 무소속으로 전환
+        val removedGroup = getGroup(name)
         alarmList.forEach { item ->
             if (item.groupName == name)
                 item.groupName = ""
@@ -81,6 +82,6 @@ object AlarmManager {
         // Set과 Map에서 삭제
         alarmGroupSet.remove(getGroup(name))
         alarmGroupMap.remove(name)
-        return getGroup(name)
+        return removedGroup
     }
 }
