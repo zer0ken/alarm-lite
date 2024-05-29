@@ -10,11 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.alarmapp.alarmdata.Alarm
-import com.example.alarmapp.alarmdata.AlarmGroup
 import com.example.alarmapp.ui.theme.AlarmAppTheme
-import com.example.alarmapp.view.alarm.AlarmListView
-import java.util.LinkedList
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

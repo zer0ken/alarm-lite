@@ -37,12 +37,14 @@ import com.example.alarmapp.view.IconToggleButton_
 /**
  * LazyColumn 내에서 알람 그룹과 그에 속한 알람을 표시하는 LazyListScope 함수입니다.
  *
+ * @param alarms 표시하고자 하는 알람이 담긴 List
  * @param alarmGroup 표시하고자 하는 알람 그룹의 정보
  * @param alarmViewModel AlarmViewModel의 인스턴스
  * @author 이현령
  */
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.groupedAlarmItems(
+    alarms: List<Alarm>,
     alarmGroup: AlarmGroup,
     alarmViewModel: AlarmViewModel
 ) {
@@ -53,9 +55,9 @@ fun LazyListScope.groupedAlarmItems(
         alarmViewModel = alarmViewModel
     )
     if (alarmGroupState.isFolded) {
-        foldedAlarmGroupItems(alarmGroup.groupAlarmList, alarmViewModel)
+        foldedAlarmGroupItems(alarms, alarmViewModel)
     } else {
-        expandedAlarmGroupItems(alarmGroup.groupAlarmList, alarmViewModel)
+        expandedAlarmGroupItems(alarms, alarmViewModel)
     }
     stickyHeader {}
 }

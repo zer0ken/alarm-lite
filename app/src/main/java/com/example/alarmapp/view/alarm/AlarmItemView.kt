@@ -1,6 +1,5 @@
 package com.example.alarmapp.view.alarm
 
-import android.util.Log
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
