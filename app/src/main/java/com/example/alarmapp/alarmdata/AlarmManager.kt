@@ -6,12 +6,19 @@ package com.example.alarmapp.alarmdata
 // ex2. 화면에 표시되는 첫 번째 알람 삭제 시 -> AlarmManager.removeAlarm(0)
 // ex3. 알람 그룹 "학교" 삭제 시 -> AlarmManager.removeGroup("학교")
 
-// 알람의 경우 List의 index를 통해 접근
+// 알람의 경우 List의 index를 통해 객체에 접근
 // 그룹의 경우 getGroup(name)을 통해 객체에 접근
 object AlarmManager {
     val alarmList = mutableListOf<Alarm>()          // 메인 화면에 표시되는 알람 List(이 순서가 "메인" 화면에 반영됨)
-    val alarmGroupSet = mutableSetOf<AlarmGroup>()  // 생성된 모든 그룹을 담는 Set(이 순서가 "드롭다운 리스트"에 반영됨, 그룹 이름이 같으면 동등한 그룹)
-    val alarmGroupMap = mutableMapOf<String,AlarmGroup>()   // 그룹 이름을 key, AlarmGroup을 value로 갖는 Map
+    val alarmGroupSet =
+        mutableSetOf<AlarmGroup>()  // 생성된 모든 그룹을 담는 Set(이 순서가 "드롭다운 리스트"에 반영됨, 그룹 이름이 같으면 동등한 그룹)
+    val alarmGroupMap =
+        mutableMapOf<String, AlarmGroup>()   // 그룹 이름을 key, AlarmGroup을 value로 갖는 Map
+
+    // alarmList의 index를 통해 "Alarm" 객체를 반환
+    fun getAlarm(index: Int): Alarm {
+        return alarmList[index]
+    }
 
     // "알람 추가" 화면에서 최종적으로 "확인" 버튼 클릭 시 호출
     fun addAlarm(alarm: Alarm) {
@@ -65,7 +72,7 @@ object AlarmManager {
     // "알람 그룹 삭제" 화면에서 최종적으로 "확인(삭제)" 버튼 클릭 시 호출
     // 삭제한 AlarmGroup 객체 반환, 해당 그룹 이름이 없으면 null 반환
     // 소속된 알람들이 있다면 모두 무소속으로 전환
-    fun removeGroup(name: String) :AlarmGroup? {
+    fun removeGroup(name: String): AlarmGroup? {
         // 기존 알람들의 소속 그룹을 모두 무소속으로 전환
         alarmList.forEach { item ->
             if (item.groupName == name)

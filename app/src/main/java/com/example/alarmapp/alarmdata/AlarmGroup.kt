@@ -4,7 +4,7 @@ import com.example.alarmapp.alarmdata.AlarmManager.alarmList
 
 // 알람 그룹은 자신이 포함하고 있는 Alarm 객체를 알 수 없음
 data class AlarmGroup (
-    var groupName: String = "",     // 그룹 이름(그룹을 구분하는 key값, 같은 그룹 이름이 존재할 수 없음)
+    var groupName: String = "",     // 그룹 이름(그룹을 구분하는 식별자, 같은 그룹 이름이 존재할 수 없음)
     // var groupAlarmList: MutableList<Alarm> = mutableListOf(),   // 그룹에 속한 Alarm 객체들 (db 데이터 중복 -> 보류)
 ){
     // 그룹 이름이 같으면 같은 객체로 취급
