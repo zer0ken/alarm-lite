@@ -1,10 +1,12 @@
 package com.example.alarmapp.alarmdata
 
-// 전반적인 알람의 관리를 담당하는 클래스(추가, 삭제, 편집 시 데이터의 무결성을 보장해야 함)
-// 최종 "확인" 버튼 등의 행동은 이 클래스를 통해 사용
-// ex1. 알람 추가 버튼(+) 클릭 후 모든 설정을 마치고 확인 버튼을 누를 시 -> AlarmManager.addAlarm(a) (a는 alarm)
-// ex2. 화면에 표시되는 첫 번째 알람 삭제 시 -> AlarmManager.removeAlarm(0)
-// ex3. 알람 그룹 "학교" 삭제 시 -> AlarmManager.removeGroup("학교")
+/*
+전반적인 알람의 관리를 담당하는 클래스(추가, 삭제, 편집 시 데이터의 무결성을 보장해야 함)
+최종 "확인" 버튼 등의 행동은 이 클래스를 통해 사용
+ex1. 알람 추가 버튼(+) 클릭 후 모든 설정을 마치고 확인 버튼을 누를 시 -> AlarmManager.addAlarm(a) (a는 alarm)
+ex2. 화면에 표시되는 첫 번째 알람 삭제 시 -> AlarmManager.removeAlarm(0)
+ex3. 알람 그룹 "학교" 삭제 시 -> AlarmManager.removeGroup("학교")
+*/
 
 // 알람의 경우 List의 index를 통해 객체에 접근
 // 그룹의 경우 getGroup(name)을 통해 객체에 접근
@@ -21,7 +23,12 @@ object AlarmManager {
     }
 
     // "알람 추가" 화면에서 최종적으로 "확인" 버튼 클릭 시 호출
+    // 만약 추가하고자하는 "Alarm" 객체가 가진 그룹 이름이 alarmGroupSet에 존재하지 않는 경우, 해당 그룹 이름으로 새로운 그룹을 생성함
     fun addAlarm(alarm: Alarm) {
+        val insertedAlarmGroup: AlarmGroup? = getGroup(alarm.groupName)
+        if (insertedAlarmGroup == null) {
+            addGroup(AlarmGroup(alarm.groupName))
+        }
         alarmList.add(alarm)
     }
 
@@ -74,6 +81,7 @@ object AlarmManager {
     // 소속된 알람들이 있다면 모두 무소속으로 전환
     fun removeGroup(name: String): AlarmGroup? {
         // 기존 알람들의 소속 그룹을 모두 무소속으로 전환
+        val removedGroup = getGroup(name)
         alarmList.forEach { item ->
             if (item.groupName == name)
                 item.groupName = ""
@@ -81,6 +89,22 @@ object AlarmManager {
         // Set과 Map에서 삭제
         alarmGroupSet.remove(getGroup(name))
         alarmGroupMap.remove(name)
-        return getGroup(name)
+        return removedGroup
+    }
+
+    // 이 그룹에 소속된 알람을 전부 켬
+    fun turnOnAll(alarmGroup: AlarmGroup) {
+        alarmList.forEach { item ->
+            if (item.groupName == alarmGroup.groupName)
+                item.isOn = true
+        }
+    }
+
+    // 이 그룹에 소속된 알람을 전부 끔
+    fun turnOffAll(alarmGroup: AlarmGroup) {
+        alarmList.forEach { item ->
+            if (item.groupName == alarmGroup.groupName)
+                item.isOn = false
+        }
     }
 }

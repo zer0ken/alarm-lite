@@ -27,19 +27,21 @@ data class AlarmGroup (
         groupName = name
     }
 
-    // 이 그룹에 소속된 알람을 전부 켬
-    fun turnOnAll() {
-        alarmList.forEach { item ->
-            if (item.groupName == this.groupName)
-                item.isOn = true
-        }
-    }
+    // 아래 기능은 AlarmManager에 할당함
 
-    // 이 그룹에 소속된 알람을 전부 끔
-    fun turnOffAll() {
-        alarmList.forEach { item ->
-            if (item.groupName == this.groupName)
-                item.isOn = false
-        }
-    }
+//    // 이 그룹에 소속된 알람을 전부 켬
+//    fun turnOnAll() {
+//        alarmList.forEach { item ->
+//            if (item.groupName == this.groupName)
+//                item.isOn = true
+//        }
+//    }
+//
+//    // 이 그룹에 소속된 알람을 전부 끔
+//    fun turnOffAll() {
+//        alarmList.forEach { item ->
+//            if (item.groupName == this.groupName)
+//                item.isOn = false
+//        }
+//    }
 }
