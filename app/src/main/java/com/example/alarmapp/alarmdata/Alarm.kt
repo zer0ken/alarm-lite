@@ -1,10 +1,12 @@
 package com.example.alarmapp.alarmdata
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
+
 data class Alarm (
     var content: String = "",       // 알람 설명(기본값: "")
     var hour: Int,                  // 시각(00 ~ 23)
     var minute: Int,                // 분(00 ~ 59)
-    var repeatDays: BooleanArray = BooleanArray(7), // 0: 월요일, 1: 화요일, ..., 6: 일요일(해당 요일에 반복함)
+    var repeatDays: SnapshotStateList<Boolean>, // 0: 월요일, 1: 화요일, ..., 6: 일요일(해당 요일에 반복함)
     var weekTerm: Int = 1,          // n주마다 반복(기본값: 1(주마다 반복))
     var groupName: String = "",     // 속한 그룹의 이름(빈 문자열의 경우 소속된 그룹 없음, 기본값: "")
     var updatedTime: Long,          // 알람이 생성/수정된 시스템 시간을 저장(사용하지 않는 알람 자동 삭제 시 사용)
