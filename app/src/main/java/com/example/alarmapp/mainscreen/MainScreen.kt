@@ -10,9 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.model.AlarmViewModel
 
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navController: NavController, alarmManager: AlarmManager, alarmViewModel: AlarmViewModel) {
     //알람 뷰모델이 필요함 뷰모델 리스트 받아와야댐
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -22,5 +24,6 @@ fun MainScreen(navController: NavController) {
             .padding(horizontal = 24.dp)
     ) {
         ToolBar(navController)
+        MainAlarmList(alarmManager, alarmViewModel)
     }
 }

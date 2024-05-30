@@ -11,6 +11,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.alarmapp.Routes
 import com.example.alarmapp.addalarm.AddUnitAlarm
+import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.model.AlarmViewModel
 import com.example.alarmapp.settingscreen.SettingScreen
 
 @Composable
@@ -26,13 +28,14 @@ val LocalNavGraphViewModelStoreOwner = staticCompositionLocalOf<ViewModelStoreOw
 @Composable
 fun MainNaviGraph(navController: NavHostController) {
     val navStoreOwner = rememberViewModelStoreOwner()
-
+    val alarmManager = AlarmManager
+    val alarmViewModel = AlarmViewModel()
     CompositionLocalProvider (
         LocalNavGraphViewModelStoreOwner provides navStoreOwner
     ) {
         NavHost(navController = navController, startDestination = Routes.MainScreen.route){
             composable(Routes.MainScreen.route) {
-                MainScreen(navController)
+                MainScreen(navController , alarmManager, alarmViewModel)
             }
 
             composable(Routes.Setting.route){
@@ -40,7 +43,7 @@ fun MainNaviGraph(navController: NavHostController) {
             }
 
             composable(Routes.AddUnitAlarm.route){
-                AddUnitAlarm()
+                AddUnitAlarm(navController, alarmManager, alarmViewModel)
             }
             
             // 추가적인 화면 등등
