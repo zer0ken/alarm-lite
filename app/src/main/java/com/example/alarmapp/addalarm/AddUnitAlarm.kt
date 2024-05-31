@@ -34,8 +34,8 @@ import com.example.alarmapp.view.IconToggleButton_
 
 @Composable
 fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarmViewModel: AlarmViewModel) {
-    var alarmName = remember { mutableStateOf("") }
-    var repeatDays = remember { mutableStateListOf(false, false, false, false, false, false, false) }
+    val alarmName = remember { mutableStateOf("") }
+    val repeatDays = remember { mutableStateListOf(false, false, false, false, false, false, false) }
     alarmManager.addGroup(AlarmGroup("abc"))
     alarmManager.addGroup(AlarmGroup("def"))
     alarmManager.addGroup(AlarmGroup("ghj"))
@@ -116,7 +116,7 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
 
 @Preview
 @Composable
-fun Prev() {
+fun PrevAddUnitAlarm() {
     val navController = rememberNavController()
     val alarmManager = AlarmManager
     val alarmViewModel = AlarmViewModel()

@@ -1,30 +1,59 @@
 package com.example.alarmapp.addalarm
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import com.example.alarmapp.R
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmName(alarmName: MutableState<String> ) {
-    TextField(
-        value = alarmName.value,
-        onValueChange = {alarmName.value = it},
-        placeholder = { Text(text = stringResource(id = R.string.alarm_name), color = Color.Gray)},
-        colors = TextFieldDefaults.textFieldColors( containerColor = Color.White ),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        //visualTransformation = , // 시발 어떻게 입력란 앞당기죠? 너무 불편한데
-        modifier = Modifier
-            .fillMaxWidth()
-    )
+    var isFocused by remember { mutableStateOf(false) }
+    val focusRequester = remember{FocusRequester()}
+
+    Box {
+        BasicTextField(
+            value = alarmName.value,
+            onValueChange = { alarmName.value = it },
+            textStyle = TextStyle(color = Color.Black, fontSize = 20.sp),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    isFocused = focusState.isFocused
+                }
+                .focusRequester(focusRequester)
+        )
+
+        if (!isFocused) {
+            Text(
+                text = "알람 이름",
+                color = Color.Gray,
+            )
+        }
+    }
+    HorizontalDivider(color = Color.Black)
+}
+
+@Preview
+@Composable
+fun PrevAlarmName() {
+    val alarmName = remember { mutableStateOf("") }
+    AlarmName(alarmName)
 }
