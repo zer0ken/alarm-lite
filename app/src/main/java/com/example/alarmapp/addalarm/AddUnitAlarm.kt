@@ -29,6 +29,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
+import com.example.alarmapp.addalarm.alarmgroupselect.AlarmGroupSelect
+import com.example.alarmapp.addalarm.alarmname.AlarmName
+import com.example.alarmapp.addalarm.alarmrepeat.AlarmRepeat
+import com.example.alarmapp.addalarm.bookmark.Bookmark
+import com.example.alarmapp.addalarm.repeatweek.RepeatWeek
+import com.example.alarmapp.addalarm.timepicker.TimePicker
 import com.example.alarmapp.alarmdata.AlarmManager
 import com.example.alarmapp.model.AlarmViewModel
 

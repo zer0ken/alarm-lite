@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm
+package com.example.alarmapp.addalarm.repeatweek
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable

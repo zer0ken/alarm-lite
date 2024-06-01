@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm
+package com.example.alarmapp.addalarm.repeatweek
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -8,6 +8,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.example.alarmapp.addalarm.repeatweek.RepeatDay
 
 @Composable
 fun RepeatWeek(repeatDays: SnapshotStateList<Boolean>) {

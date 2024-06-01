@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm
+package com.example.alarmapp.addalarm.timepicker
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm
+package com.example.alarmapp.addalarm.alarmname
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
