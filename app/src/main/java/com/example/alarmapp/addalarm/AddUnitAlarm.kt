@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.alarmapp.R
-import com.example.alarmapp.Routes
 import com.example.alarmapp.addalarm.alarmgroupselect.AlarmGroupSelect
 import com.example.alarmapp.addalarm.alarmname.AlarmName
 import com.example.alarmapp.addalarm.alarmrepeat.AlarmRepeat
 import com.example.alarmapp.addalarm.bookmark.Bookmark
+import com.example.alarmapp.addalarm.cancelsave.CancelSave
 import com.example.alarmapp.addalarm.repeatweek.RepeatWeek
 import com.example.alarmapp.addalarm.timepicker.TimePicker
 import com.example.alarmapp.alarmdata.AlarmManager
@@ -102,37 +101,12 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
                         .scale(0.6f)
                 )
             }
+
             AlarmRepeat(isOn, navController)
             Spacer(modifier = Modifier.height(verticalSpace))
         }
-
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            TextButton(
-                onClick = { navController.navigate(Routes.MainScreen.route) },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.cancel),
-                    color = Color.Black
-                )
-            }
-            TextButton(
-                onClick = {
-                /* 위의 갖가지 정보들 추가하여 알람하나 생성*/
-                }
-            ) {
-                Text(
-                    text = stringResource(id = R.string.save),
-                    color = Color.Black
-
-                )
-            }
-        }
+        Spacer(modifier = Modifier.weight(1f))
+        CancelSave(navController)
     }
 }
 

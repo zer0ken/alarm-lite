@@ -42,7 +42,7 @@ fun TimePicker(selectedHour: MutableState<Int> , selectedMinute: MutableState<In
     }
 
     LaunchedEffect(hourListState){
-        snapshotFlow { hourListState.firstVisibleItemIndex + (hourListState.firstVisibleItemScrollOffset)/60 +1} // 다시...
+        snapshotFlow { hourListState.firstVisibleItemIndex + (hourListState.firstVisibleItemScrollOffset)/80 +1} // 다시...
             .distinctUntilChanged()
             .filter { it in 0 until 24* 4 }
             .collect{index ->
@@ -51,7 +51,7 @@ fun TimePicker(selectedHour: MutableState<Int> , selectedMinute: MutableState<In
     }
 
     LaunchedEffect(minuteListState){
-        snapshotFlow { minuteListState.firstVisibleItemIndex + (minuteListState.firstVisibleItemScrollOffset)/60 +1} // 다시...
+        snapshotFlow { minuteListState.firstVisibleItemIndex + (minuteListState.firstVisibleItemScrollOffset)/80 +1} // 다시...
             .distinctUntilChanged()
             .filter { it in 0 until 60* 4 }
             .collect{index ->
@@ -63,20 +63,20 @@ fun TimePicker(selectedHour: MutableState<Int> , selectedMinute: MutableState<In
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .height(228.dp)
+            .height(288.dp)
             .padding(24.dp)
     ) {
         LazyColumn(
             state = hourListState,
             modifier = Modifier
-                .size(width = 60.dp, height = 180.dp)
+                .size(width = 60.dp, height = 240.dp)
         ) {
             items(24*4) { index ->
                 val hour = index % 24
                 val isCenter = hour == selectedHour.value
                 Box(
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(80.dp)
                         .clickable {
                             selectedHour.value = hour
                             coroutineScope.launch {
@@ -100,13 +100,13 @@ fun TimePicker(selectedHour: MutableState<Int> , selectedMinute: MutableState<In
         LazyColumn(
             state = minuteListState,
             modifier = Modifier
-                .size(width = 60.dp, height = 180.dp)
+                .size(width = 60.dp, height = 240.dp)
         ) {
             items(60*4) { index ->
                 val minute = index % 60
                 Box(
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(80.dp)
                         .clickable {
                             selectedMinute.value = minute
                             coroutineScope.launch {
