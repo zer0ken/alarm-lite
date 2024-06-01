@@ -19,5 +19,9 @@ fun MainAlarmList(alarmManager: AlarmManager, alarmViewModel: AlarmViewModel) {
     AlarmItemView(alarm = alarmManager.getAlarm(0), alarmViewModel = alarmViewModel, modifier = Modifier)
     AlarmItemView(alarm = alarmManager.getAlarm(1), alarmViewModel = alarmViewModel, modifier = Modifier)
     AlarmItemView(alarm = alarmManager.getAlarm(2), alarmViewModel = alarmViewModel, modifier = Modifier)
+
+    //    alarmManager.addGroup(AlarmGroup("abc"))
+//    alarmManager.addGroup(AlarmGroup("def"))
+//    alarmManager.addGroup(AlarmGroup("ghj"))
 }
 

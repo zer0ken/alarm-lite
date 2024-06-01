@@ -10,4 +10,9 @@
     <string name="add_group">그룹 추가</string>
     <string name="ring_again">다시 울림</string>
     <string name="bookmark">즐겨찾기</string>
+    <string name="using">사용 중</string>
+    <string name="backward">뒤로가기</string>
+    <string name="gap">간격</string>
+    <string name="repeat">반복</string>
+    <string name="not_using">사용 안 함</string>
 </resources>

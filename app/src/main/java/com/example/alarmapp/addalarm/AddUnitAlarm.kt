@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,18 +20,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.alarmapp.R
-import com.example.alarmapp.alarmdata.AlarmGroup
+import com.example.alarmapp.Routes
 import com.example.alarmapp.alarmdata.AlarmManager
 import com.example.alarmapp.model.AlarmViewModel
-import com.example.alarmapp.view.IconToggleButton_
 
 @Composable
 fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarmViewModel: AlarmViewModel) {
@@ -39,10 +39,8 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
     val selectedMinute = remember{ mutableStateOf(0)}
     var repeatDays = remember { mutableStateListOf(false, false, false, false, false, false, false) }
     var bookmark = remember { mutableStateOf(false)}
+    val isOn = remember { mutableStateOf(true)}
 
-    alarmManager.addGroup(AlarmGroup("abc"))
-    alarmManager.addGroup(AlarmGroup("def"))
-    alarmManager.addGroup(AlarmGroup("ghj"))
     val verticalSpace = 16.dp
 
     Column (
@@ -67,14 +65,21 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
             Bookmark(bookmark)
             Spacer(modifier = Modifier.height(verticalSpace))
 
-
             //알림음
             Row (
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+
             ) {
                 Text(text =  stringResource(id = R.string.alarm_sound))
+                Switch(
+                    checked = isOn.value,
+                    onCheckedChange = {isOn.value = !isOn.value},
+                    modifier = Modifier
+                        .scale(0.6f)
+                )
             }
 
             //진동
@@ -84,23 +89,15 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text =  stringResource(id = R.string.vibration))
-                IconToggleButton_(
-                    painter = painterResource(id = R.drawable.baseline_unfold_less_24),
-                    checked = true,
-                    onCheckedChange = { },
-                    contentDescription = "알람 추가 진동 on/off"
+                Switch(
+                    checked = isOn.value,
+                    onCheckedChange = {isOn.value = !isOn.value},
+                    modifier = Modifier
+                        .scale(0.6f)
                 )
             }
-
-            //다시 울림
-            Row (
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text =  stringResource(id = R.string.ring_again))
-                //몇회 다시 울릴 건지
-            }
+            AlarmRepeat(isOn, navController)
+            Spacer(modifier = Modifier.height(verticalSpace))
         }
 
         Row (
@@ -109,7 +106,7 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
             modifier = Modifier.fillMaxWidth()
         ) {
             TextButton(
-                onClick = { /*TODO*/ },
+                onClick = { navController.navigate(Routes.MainScreen.route) },
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
             ) {
@@ -118,7 +115,11 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
                     color = Color.Black
                 )
             }
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(
+                onClick = {
+                /* 위의 갖가지 정보들 추가하여 알람하나 생성*/
+                }
+            ) {
                 Text(
                     text = stringResource(id = R.string.save),
                     color = Color.Black

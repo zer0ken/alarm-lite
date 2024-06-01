@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.alarmapp.Routes
 import com.example.alarmapp.addalarm.AddUnitAlarm
+import com.example.alarmapp.addalarm.alarmrepeat.SetAlarmRepeat
 import com.example.alarmapp.alarmdata.AlarmManager
 import com.example.alarmapp.model.AlarmViewModel
 import com.example.alarmapp.settingscreen.SettingScreen
@@ -44,6 +45,10 @@ fun MainNaviGraph(navController: NavHostController) {
 
             composable(Routes.AddUnitAlarm.route){
                 AddUnitAlarm(navController, alarmManager, alarmViewModel)
+            }
+
+            composable(Routes.SetAlarmRepeat.route) {
+                SetAlarmRepeat(navController, alarmManager)
             }
             
             // 추가적인 화면 등등

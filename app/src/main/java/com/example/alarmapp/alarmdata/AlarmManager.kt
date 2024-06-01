@@ -15,6 +15,10 @@ object AlarmManager {
     val alarmGroupMap =
         mutableMapOf<String, AlarmGroup>()   // 그룹 이름을 key, AlarmGroup을 value로 갖는 Map
 
+    var repeatGap: Int =5 // 임시 뷰모델 합치면 버릴 것
+    var repeatTime: Int = 3 // 임시 뷰모델 합치면 버릴 것
+    var isOn: Boolean = true
+
     // alarmList의 index를 통해 "Alarm" 객체를 반환
     fun getAlarm(index: Int): Alarm {
         return alarmList[index]
