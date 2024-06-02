@@ -15,4 +15,6 @@
     <string name="gap">간격</string>
     <string name="repeat">반복</string>
     <string name="not_using">사용 안 함</string>
+    <string name="select_alarm_sound">알람음 선택</string>
+    <string name="nothing_selected">선택 안함</string>
 </resources>

@@ -17,7 +17,7 @@ import com.example.alarmapp.R
 import com.example.alarmapp.Routes
 
 @Composable
-fun AlarmRepeat(isOn: MutableState<Boolean>,navController:NavController) {
+fun AlarmRepeat(repeatIsOn: MutableState<Boolean>,navController:NavController) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -29,8 +29,8 @@ fun AlarmRepeat(isOn: MutableState<Boolean>,navController:NavController) {
     ) {
         Text(text =  stringResource(id = R.string.ring_again))
         Switch(
-            checked = isOn.value,
-            onCheckedChange = {isOn.value = !isOn.value},
+            checked = repeatIsOn.value,
+            onCheckedChange = {repeatIsOn.value = !repeatIsOn.value},
             modifier = Modifier
                 .scale(0.6f)
         )
