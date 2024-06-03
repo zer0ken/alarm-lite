@@ -12,8 +12,8 @@ ex3. 알람 그룹 "학교" 삭제 시 -> AlarmManager.removeGroup("학교")
 // 그룹의 경우 getGroup(name)을 통해 객체에 접근
 object AlarmManager {
     val alarmList = mutableListOf<Alarm>()          // 메인 화면에 표시되는 알람 List(이 순서가 "메인" 화면에 반영됨)
-    val alarmGroupSet =
-        mutableSetOf<AlarmGroup>()  // 생성된 모든 그룹을 담는 Set(이 순서가 "드롭다운 리스트"에 반영됨, 그룹 이름이 같으면 동등한 그룹)
+//    val alarmGroupSet =
+//        mutableSetOf<AlarmGroup>()  // 생성된 모든 그룹을 담는 Set(이 순서가 "드롭다운 리스트"에 반영됨, 그룹 이름이 같으면 동등한 그룹)
     val alarmGroupMap =
         mutableMapOf<String, AlarmGroup>()   // 그룹 이름을 key, AlarmGroup을 value로 갖는 Map
 
@@ -67,7 +67,7 @@ object AlarmManager {
 
     // "알람 그룹 추가" 화면에서 최종적으로 "확인(그룹 추가)" 버튼 클릭 시 호출(그룹 이름이 같으면 Set에 추가, Map의 경우 value가 대체됨)
     fun addGroup(alarmGroup: AlarmGroup) {
-        alarmGroupSet.add(alarmGroup)
+//        alarmGroupSet.add(alarmGroup)
         alarmGroupMap[alarmGroup.groupName] = alarmGroup
     }
 
@@ -86,8 +86,8 @@ object AlarmManager {
             if (item.groupName == name)
                 item.groupName = ""
         }
-        // Set과 Map에서 삭제
-        alarmGroupSet.remove(getGroup(name))
+        // Map에서 삭제
+//        alarmGroupSet.remove(getGroup(name))
         alarmGroupMap.remove(name)
         return removedGroup
     }
@@ -106,5 +106,15 @@ object AlarmManager {
             if (item.groupName == alarmGroup.groupName)
                 item.isOn = false
         }
+    }
+
+    // alarmList를 절대적인 시간 기준으로 정렬
+    fun sortAbsolute() {
+        alarmList.sortWith(AlarmComparator.absolute)
+    }
+
+    // alarmList를 상대적인 시간 기준으로 정렬 (켜져있는 것을 우선으로)
+    fun sortRelative() {
+        alarmList.sortWith(AlarmComparator.relative)
     }
 }
