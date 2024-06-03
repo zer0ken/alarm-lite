@@ -2,7 +2,7 @@ package com.example.alarmapp.alarmdata
 
 /*
 전반적인 알람의 관리를 담당하는 클래스(추가, 삭제, 편집 시 데이터의 무결성을 보장해야 함)
-※ alarmList와 alarmGroup에 직접 추가 및 삭제를 진행하지 말 것 (이 클래스에 정의된 함수를 사용해야 함, 알람 편집 시에는 getAlarm()을 통해 얻은 객체에서 값을 조정
+※ alarmList와 alarmGroup에 직접 추가 및 삭제를 진행하지 말 것 (이 클래스에 정의된 함수를 사용해야 함, 알람 또는 그룹 편집 시에는 getAlarm(), getGroup()을 통해 얻은 객체에서 값을 조정)
 ex1. 알람 추가 버튼(+) 클릭 후 모든 설정을 마치고 확인 버튼을 누를 시 -> AlarmManager.addAlarm(a) (a는 alarm)
 ex2. 화면에 표시되는 첫 번째 알람 삭제 시 -> AlarmManager.removeAlarm(0)
 ex3. 알람 그룹 "학교" 삭제 시 -> AlarmManager.removeGroup("학교")
@@ -78,11 +78,6 @@ object AlarmManager {
     // "알람 그룹 추가" 화면에서 최종적으로 "확인(그룹 추가)" 버튼 클릭 시 호출(그룹 이름이 같으면 Set에 추가, Map의 경우 value가 대체됨)
     fun addGroup(alarmGroup: AlarmGroup) {
         alarmGroupMap[alarmGroup.groupName] = alarmGroup
-    }
-
-    // "알람 그룹 편집" 화면에서 최종적으로 "확인(그룹 이름 변경)" 버튼 클릭 시 호출(현재 알람 그룹 편집의 경우 알람 그룹 이름을 변경하는 기능뿐임)
-    fun editGroup(alarmGroup: AlarmGroup, name: String) {
-        alarmGroup.changeGroupName(name.trim())
     }
 
     // "알람 그룹 삭제" 화면에서 최종적으로 "확인(삭제)" 버튼 클릭 시 호출
