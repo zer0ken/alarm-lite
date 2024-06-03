@@ -2,6 +2,7 @@ package com.example.alarmapp.addalarm.alarmrepeat
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Switch
@@ -11,7 +12,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
@@ -27,7 +30,14 @@ fun AlarmRepeat(repeatIsOn: MutableState<Boolean>,navController:NavController) {
                 navController.navigate(Routes.SetAlarmRepeat.route)
             }
     ) {
-        Text(text =  stringResource(id = R.string.ring_again))
+        Column {
+            Text(text = stringResource(id = R.string.ring_again))
+            Text(
+                text = "추후에 뷰모델과 연결",
+                color = Color(0xFF734D4D),
+                fontSize = 12.sp
+            )
+        }
         Switch(
             checked = repeatIsOn.value,
             onCheckedChange = {repeatIsOn.value = !repeatIsOn.value},

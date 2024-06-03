@@ -27,12 +27,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.alarmapp.R
 import com.example.alarmapp.addalarm.alarmgroupselect.AlarmGroupSelect
 import com.example.alarmapp.addalarm.alarmname.AlarmName
 import com.example.alarmapp.addalarm.alarmrepeat.AlarmRepeat
+import com.example.alarmapp.addalarm.alarmsound.AlarmSound
 import com.example.alarmapp.addalarm.bookmark.Bookmark
 import com.example.alarmapp.addalarm.cancelsave.CancelSave
 import com.example.alarmapp.addalarm.repeatweek.RepeatWeek
@@ -70,7 +72,7 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
             RepeatWeek(repeatDays = repeatDays)
             Spacer(modifier = Modifier.height(verticalSpace))
             AlarmName(alarmName = alarmName)
-            Spacer(modifier = Modifier.height(verticalSpace))
+            Spacer(modifier = Modifier.height(12.dp))
             AlarmGroupSelect(alarmManager = AlarmManager)
             Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
             Bookmark(bookmark)
@@ -84,7 +86,15 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text =  stringResource(id = R.string.vibration))
+                Column {
+                    Text(text = stringResource(id = R.string.vibration))
+                    Text(
+                        text = "일단 내비둬",
+                        color = Color(0xFF734D4D),
+                        fontSize = 12.sp
+                    )
+                }
+
                 Switch(
                     checked = ringtoneIsOn.value,
                     onCheckedChange = {ringtoneIsOn.value = !ringtoneIsOn.value},

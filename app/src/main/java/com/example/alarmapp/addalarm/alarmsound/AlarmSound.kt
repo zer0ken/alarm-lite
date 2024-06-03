@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm
+package com.example.alarmapp.addalarm.alarmsound
 
 import android.app.Activity
 import android.content.Context
@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import com.example.alarmapp.R
 
 @Composable
@@ -62,7 +63,8 @@ fun AlarmSound(ringtoneIsOn: MutableState<Boolean>, context: Context, selectedSo
             Text(text =  stringResource(id = R.string.alarm_sound))
             Text(
                 text = selectedRingtone.value,
-                color = Color(0xFF734D4D)
+                color = Color(0xFF734D4D),
+                fontSize = 12.sp
             )
         }
         
