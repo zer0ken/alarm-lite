@@ -5,5 +5,5 @@ sealed class Routes (val route: String) {
     object Setting: Routes("Setting")
     object AddUnitAlarm: Routes("AddUnitAlarm")
     object SetAlarmRepeat: Routes("SetAlarmRepeat")
-
+    object MakeGroupAlarm: Routes("MakeGroupAlarm")
 }
