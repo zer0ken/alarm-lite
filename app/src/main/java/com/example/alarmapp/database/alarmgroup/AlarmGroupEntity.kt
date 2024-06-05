@@ -1,4 +1,4 @@
-package com.example.alarmapp.database
+package com.example.alarmapp.database.alarmgroup
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

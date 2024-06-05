@@ -1,8 +1,9 @@
-package com.example.alarmapp.database
+package com.example.alarmapp.database.alarm
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.example.alarmapp.database.alarmgroup.AlarmGroupEntity
 
 @Entity(
     tableName = "alarm", foreignKeys = [ForeignKey(
