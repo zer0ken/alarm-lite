@@ -15,7 +15,8 @@ import com.example.alarmapp.database.alarmgroup.AlarmGroupEntity
     )]
 )
 data class AlarmEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int,
     val groupName: String?, // 그룹 이름
     val content: String,    // 알람 설명
     val hour: Int,          // 울리는 시간 0..23
