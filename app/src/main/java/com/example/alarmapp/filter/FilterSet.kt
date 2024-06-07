@@ -1,12 +1,13 @@
 package com.example.alarmapp.filter
 
+import com.example.alarmapp.alarmdata.AlarmGroup
 import java.time.DayOfWeek
 import java.time.MonthDay
 
 data class FilterSet(
     val title: String,
-    val repeatFilter: List<RepeatFilter>? = null,
-    val groupFilter: List<GroupFilter>? = null
+    val repeatFilter: RepeatFilter? = null,
+    val groupFilter: GroupFilter? = null
 )
 
 data class RepeatFilter(
@@ -18,9 +19,4 @@ data class RepeatFilter(
 data class GroupFilter(
     val none: Boolean = false,
     val group: List<AlarmGroup>? = null
-)
-
-// 임의로 만든 알람 그룹 data class
-data class AlarmGroup(
-    val name: String
 )
