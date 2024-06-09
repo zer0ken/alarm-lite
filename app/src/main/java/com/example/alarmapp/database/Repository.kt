@@ -18,7 +18,6 @@ class Repository(private val db: AlarmDatabase) {
         }
 
     fun getAlarmGroups(): Flow<List<AlarmGroup>> = alarmGroupDao.getAll()
-        .map { alarmGroups -> alarmGroups.map { alarmGroup -> fromAlarmGroupEntity(alarmGroup) } }
         .map { alarmGroups ->
             alarmGroups.map { alarmGroup -> fromAlarmGroupEntity(alarmGroup) }
         }
@@ -72,9 +71,14 @@ class Repository(private val db: AlarmDatabase) {
         TODO()
     }
 
-    private fun fromAlarmGroupEntity(alarmGroupEntity: AlarmGroupEntity): AlarmGroup {
-        TODO()
-    }
+    private fun fromAlarmGroupEntity(value: AlarmGroupEntity) = AlarmGroup(
+        value.name
+    )
+
+    private fun toAlarmGroupEntity(value: AlarmGroup) = AlarmGroupEntity(
+        value.groupName
+    )
+
     private fun fromFilterEntity(value: FilterEntity) = FilterSet(
         value.name,
         value.repeatFilter,
