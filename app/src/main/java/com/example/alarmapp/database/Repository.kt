@@ -4,6 +4,8 @@ import com.example.alarmapp.alarmdata.Alarm
 import com.example.alarmapp.alarmdata.AlarmGroup
 import com.example.alarmapp.database.alarm.AlarmEntity
 import com.example.alarmapp.database.alarmgroup.AlarmGroupEntity
+import com.example.alarmapp.database.filter.FilterEntity
+import com.example.alarmapp.filter.FilterSet
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -67,7 +69,7 @@ class Repository(private val db: AlarmDatabase) {
         TODO()
     }
 
-    private fun toAlarmEntity(alarm: Alarm): AlarmEntity {
+    private fun toAlarmEntity(value: Alarm): AlarmEntity {
         TODO()
     }
 
