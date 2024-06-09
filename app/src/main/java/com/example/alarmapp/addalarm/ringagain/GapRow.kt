@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm.alarmrepeat
+package com.example.alarmapp.addalarm.ringagain
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,12 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun RepeatRow(
+fun GapRow(
     colIndex : Int,
     time: Int,
-    repeatCheckList : SnapshotStateList<Boolean>
+    gapCheckList :SnapshotStateList<Boolean>,
+    alarmViewModel: AlarmViewModel
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -32,20 +34,22 @@ fun RepeatRow(
         Column () {
             Row (verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
-                    checked = repeatCheckList[colIndex],
+                    checked = gapCheckList[colIndex],
                     onCheckedChange = {
-                        for ( i in 0 until repeatCheckList.size){
-                            repeatCheckList[i] = (i == colIndex)
+                        for ( i in 0 until gapCheckList.size){
+                            gapCheckList[i] = (i == colIndex)
                         }
+                        alarmViewModel.setRepeatGap(time)
                     }
                 )
                 when(time){
-                    3 -> Text(text = "3회")
-                    5 -> Text(text = "5회")
-                    100000 -> Text(text = "계속 반복")
+                    5 -> Text(text = "5분")
+                    10 -> Text(text = "10분")
+                    15 -> Text(text = "15분")
+                    30 -> Text(text = "30분")
                 }
             }
-            if(time !=100000)
+            if(time !=30)
                 HorizontalDivider(modifier = Modifier.padding(start = 48.dp,end = 12.dp), color= Color.LightGray)
         }
     }

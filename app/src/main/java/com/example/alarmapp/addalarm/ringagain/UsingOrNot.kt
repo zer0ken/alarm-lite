@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm.alarmrepeat
+package com.example.alarmapp.addalarm.ringagain
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,10 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.alarmapp.R
-import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun UsingOrNot(alarmManager:AlarmManager) {
+fun UsingOrNot(alarmViewModel: AlarmViewModel) {
     val isOn = remember { mutableStateOf(true)}
     val usingOrNot = if (isOn.value) stringResource(id = R.string.using) else stringResource(id = R.string.not_using)
     val backgroundColor = if (isOn.value) Color.LightGray else Color.White
@@ -45,4 +45,5 @@ fun UsingOrNot(alarmManager:AlarmManager) {
                 .scale(0.6f)
         )
     }
+    alarmViewModel.setRingAgain(isOn.value)
 }

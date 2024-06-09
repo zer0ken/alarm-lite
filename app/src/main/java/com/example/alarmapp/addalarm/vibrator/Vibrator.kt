@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -19,9 +18,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.example.alarmapp.R
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun Vibrator(context:Context, vibrationIsOn: MutableState<Boolean>) {
+fun Vibrator(context:Context, alarmViewModel: AlarmViewModel) {
+    val vibrationIsOn = remember { mutableStateOf(true)}
     val showVibrationDialog = remember{ mutableStateOf(false) }
     val selectedVibrationPattern = remember{ mutableStateOf("무음") }
     Row (
@@ -56,4 +57,6 @@ fun Vibrator(context:Context, vibrationIsOn: MutableState<Boolean>) {
             }
         )
     }
+    alarmViewModel.setVibrate(vibrationIsOn.value)
+    alarmViewModel.setSelectedVibrationPattern(selectedVibrationPattern.value)
 }

@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm.alarmrepeat
+package com.example.alarmapp.addalarm.ringagain
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,11 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.alarmapp.R
-import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun Repeat(repeatCheckList : SnapshotStateList<Boolean>, alarmManager: AlarmManager) {
+fun Repeat(repeatCheckList : SnapshotStateList<Boolean>, alarmViewModel : AlarmViewModel) {
     val isOn = remember { mutableStateOf(true) } // 확인용이고 뷰모델 합쳐지면 상단의 사용 중 버튼 과 연결
+    isOn.value = alarmViewModel.getRingAgain()
     val alpha = if (isOn.value) 1f else 0.5f
     Text(
         text = stringResource(id = R.string.repeat),
@@ -36,9 +37,9 @@ fun Repeat(repeatCheckList : SnapshotStateList<Boolean>, alarmManager: AlarmMana
             .alpha(alpha)
     ) {
         Column () {
-            RepeatRow(colIndex = 0, time = 3, repeatCheckList = repeatCheckList)
-            RepeatRow(colIndex = 1, time = 5, repeatCheckList = repeatCheckList)
-            RepeatRow(colIndex = 2, time = 100000, repeatCheckList = repeatCheckList)
+            RepeatRow(colIndex = 0, number = 3, repeatCheckList = repeatCheckList, alarmViewModel)
+            RepeatRow(colIndex = 1, number = 5, repeatCheckList = repeatCheckList, alarmViewModel)
+            RepeatRow(colIndex = 2, number = 100000, repeatCheckList = repeatCheckList, alarmViewModel)
         }
     }
 }

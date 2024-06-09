@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.example.alarmapp.R
 import com.example.alarmapp.alarmdata.Alarm
 import com.example.alarmapp.alarmdata.AlarmGroup
-import com.example.alarmapp.model.AlarmViewModel
+import com.example.alarmapp.alarmdata.AlarmViewModel
 import com.example.alarmapp.ui.theme.background
 import com.example.alarmapp.view.IconToggleButton_
 

@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,12 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.alarmapp.alarmdata.Alarm
-import com.example.alarmapp.model.AlarmViewModel
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 /**
  * 리스트 내에서 알람 하나를 표시하는 컴포저블 함수입니다.
@@ -138,8 +136,8 @@ fun AlarmItemView(
             Column(
                 verticalArrangement = Arrangement.Center
             ) {
-                if (alarm.content != "") {
-                    Text(text = alarm.content, fontSize = contentFontSize)
+                if (alarm.name != "") {
+                    Text(text = alarm.name, fontSize = contentFontSize)
                 }
                 Text(
                     text = "${alarm.hour} : ${alarm.minute}",
@@ -159,12 +157,4 @@ fun AlarmItemView(
             .width(14.dp)
             .height(14.dp)
     )
-}
-
-@Preview (showBackground = true)
-@Composable
-fun PrevAlarmItemView() {
-    val alarm =Alarm("Morning Alarm", 7, 30, remember { mutableStateListOf(false, false, false, false, false, false, false) }, updatedTime = System.currentTimeMillis())
-    val alarmViewModel = AlarmViewModel()
-    AlarmItemView(alarm, alarmViewModel, Modifier)
 }

@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm.alarmrepeat
+package com.example.alarmapp.addalarm.ringagain
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,11 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.alarmapp.R
-import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun Gap(gapCheckList : SnapshotStateList<Boolean>, alarmManager: AlarmManager) {
-    val isOn = remember { mutableStateOf(true) } // 확인용이고 뷰모델 합쳐지면 상단의 사용 중 버튼 과 연결
+fun Gap(gapCheckList : SnapshotStateList<Boolean>, alarmViewModel: AlarmViewModel) {
+    val isOn = remember { mutableStateOf(true) }
+    isOn.value = alarmViewModel.getRingAgain()
     val alpha = if (isOn.value) 1f else 0.5f
 
     Text(
@@ -36,9 +37,9 @@ fun Gap(gapCheckList : SnapshotStateList<Boolean>, alarmManager: AlarmManager) {
             .clickable { isOn.value = !isOn.value } // 추후 변경
             .alpha(alpha)
     ) {
-        GapRow(colIndex = 0, time = 5, gapCheckList = gapCheckList)
-        GapRow(colIndex = 1, time = 10, gapCheckList = gapCheckList)
-        GapRow(colIndex = 2, time = 15, gapCheckList = gapCheckList)
-        GapRow(colIndex = 3, time = 30, gapCheckList = gapCheckList)
+        GapRow(colIndex = 0, time = 5, gapCheckList = gapCheckList,alarmViewModel)
+        GapRow(colIndex = 1, time = 10, gapCheckList = gapCheckList,alarmViewModel)
+        GapRow(colIndex = 2, time = 15, gapCheckList = gapCheckList,alarmViewModel)
+        GapRow(colIndex = 3, time = 30, gapCheckList = gapCheckList, alarmViewModel)
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.alarmapp.addalarm.cancelsave.CancelSave
+import com.example.alarmapp.alarmdata.AlarmViewModel
 import com.example.alarmapp.makegroupalarm.groupalarmname.GroupAlarmName
 import com.example.alarmapp.makegroupalarm.groupalarmrepeat.GroupAlarmRepeat
 import com.example.alarmapp.makegroupalarm.groupalarmsound.GroupAlarmSound
@@ -31,7 +32,7 @@ import com.example.alarmapp.makegroupalarm.groupvibrator.GroupVibrator
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MakeGroupAlarm(navController: NavController) {
+fun MakeGroupAlarm(navController: NavController, alarmViewModel: AlarmViewModel) {
     val alarmName = remember { mutableStateOf("") }
     val repeatDays = remember { mutableStateListOf(false, false, false, false, false, false, false) }
     val ringtoneIsOn = remember { mutableStateOf(true) }
@@ -42,7 +43,7 @@ fun MakeGroupAlarm(navController: NavController) {
 
     val verticalSpace = 24.dp
     Scaffold(
-        bottomBar = {CancelSave(navController)}
+        bottomBar = {CancelSave(navController, alarmViewModel)}
     ) {
         Column (
         verticalArrangement = Arrangement.Center,

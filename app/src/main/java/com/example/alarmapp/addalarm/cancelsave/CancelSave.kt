@@ -13,9 +13,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun CancelSave(navController: NavController) { //알람 정보 받아랑 알람 뷰모델 받아와서 알람 뷰모델에 기입 ㄱㄱ
+fun CancelSave(navController: NavController, alarmViewModel: AlarmViewModel) { //알람 정보 받아랑 알람 뷰모델 받아와서 알람 뷰모델에 기입 ㄱㄱ
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -34,7 +35,8 @@ fun CancelSave(navController: NavController) { //알람 정보 받아랑 알람 
         }
         TextButton(
             onClick = {
-                /* 위의 갖가지 정보들 추가하여 알람하나 생성*/
+                alarmViewModel.makeAlarm()
+                navController.navigate(Routes.MainScreen.route)
             },
             modifier = Modifier
                 .weight(1f)

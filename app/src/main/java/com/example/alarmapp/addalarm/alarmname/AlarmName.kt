@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,14 +18,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun AlarmName(alarmName: MutableState<String> ) {
+fun AlarmName(alarmViewModel: AlarmViewModel ) {
+    val alarmName = remember { mutableStateOf("") }
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = remember{FocusRequester()}
-
     Box {
         BasicTextField(
             value = alarmName.value,
@@ -49,11 +48,5 @@ fun AlarmName(alarmName: MutableState<String> ) {
         }
     }
     HorizontalDivider(color = Color.Black)
-}
-
-@Preview
-@Composable
-fun PrevAlarmName() {
-    val alarmName = remember { mutableStateOf("") }
-    AlarmName(alarmName)
+    alarmViewModel.setAlarmName(alarmName.value)
 }

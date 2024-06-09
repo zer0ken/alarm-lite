@@ -15,7 +15,8 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -23,12 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.alarmapp.alarmdata.AlarmViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 @Composable
-fun TimePicker(selectedHour: MutableState<Int> , selectedMinute: MutableState<Int> ) {
+fun TimePicker(alarmViewModel: AlarmViewModel) {
+    val selectedHour = remember { mutableStateOf(0) }
+    val selectedMinute = remember{ mutableStateOf(0) }
+
     val hourListState = rememberLazyListState()
     val minuteListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
@@ -125,4 +130,6 @@ fun TimePicker(selectedHour: MutableState<Int> , selectedMinute: MutableState<In
             }
         }
     }
+    alarmViewModel.setHour(selectedHour.value)
+    alarmViewModel.setMinute(selectedMinute.value)
 }

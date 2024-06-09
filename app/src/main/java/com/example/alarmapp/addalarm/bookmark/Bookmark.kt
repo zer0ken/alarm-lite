@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,9 +16,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.example.alarmapp.R
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun Bookmark(bookmark : MutableState<Boolean>) {
+fun Bookmark(alarmViewModel: AlarmViewModel) {
+    val bookmark = remember { mutableStateOf(false) }
     val star = if(bookmark.value) ImageVector.vectorResource(id = R.drawable.baseline_star_rate_24)
                 else ImageVector.vectorResource(id = R.drawable.baseline_star_outline_24)
     val starColor = if(bookmark.value) Color(0xFFF5EE31)  else Color.Gray
@@ -35,4 +38,5 @@ fun Bookmark(bookmark : MutableState<Boolean>) {
                 .clickable { bookmark.value = !bookmark.value }
         )
     }
+    alarmViewModel.setBookmark(bookmark.value)
 }

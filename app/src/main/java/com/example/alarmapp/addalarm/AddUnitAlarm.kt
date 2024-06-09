@@ -1,6 +1,5 @@
 package com.example.alarmapp.addalarm
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,9 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -23,36 +19,25 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.alarmapp.addalarm.alarmgroupselect.AlarmGroupSelect
 import com.example.alarmapp.addalarm.alarmname.AlarmName
-import com.example.alarmapp.addalarm.alarmrepeat.AlarmRepeat
 import com.example.alarmapp.addalarm.alarmsound.AlarmSound
 import com.example.alarmapp.addalarm.bookmark.Bookmark
 import com.example.alarmapp.addalarm.cancelsave.CancelSave
 import com.example.alarmapp.addalarm.repeatweek.RepeatWeek
+import com.example.alarmapp.addalarm.ringagain.RingAgain
 import com.example.alarmapp.addalarm.timepicker.TimePicker
 import com.example.alarmapp.addalarm.vibrator.Vibrator
-import com.example.alarmapp.alarmdata.AlarmManager
-import com.example.alarmapp.model.AlarmViewModel
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarmViewModel: AlarmViewModel) {
-    val alarmName = remember { mutableStateOf("") }
-    val selectedHour = remember { mutableStateOf(0) }
-    val selectedMinute = remember{ mutableStateOf(0)}
-    val repeatDays = remember { mutableStateListOf(false, false, false, false, false, false, false) }
-    val bookmark = remember { mutableStateOf(false)}
-    val ringtoneIsOn = remember { mutableStateOf(true)}
-    val vibrationIsOn = remember { mutableStateOf(true)}
-    val repeatIsOn = remember { mutableStateOf(true)}
-    val selectedSoundUri = remember{ mutableStateOf<Uri?>(null)}
+fun AddUnitAlarm(navController: NavController, alarmViewModel: AlarmViewModel) {
     val context = LocalContext.current
-
     val verticalSpace = 24.dp
     Column (
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFE9E9E9))
     ) {
-        TimePicker(selectedHour = selectedHour, selectedMinute = selectedMinute)
+        TimePicker(alarmViewModel)
         Column(
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(24.dp))
@@ -60,23 +45,23 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
                 .padding(horizontal = 24.dp)
         ) {
             Spacer(modifier = Modifier.height(verticalSpace))
-            RepeatWeek(repeatDays = repeatDays)
+            RepeatWeek(alarmViewModel)
             Spacer(modifier = Modifier.height(verticalSpace))
-            AlarmName(alarmName = alarmName)
+            AlarmName(alarmViewModel)
             Spacer(modifier = Modifier.height(12.dp))
-            AlarmGroupSelect(alarmManager = AlarmManager)
+            AlarmGroupSelect(alarmViewModel)
             Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
-            Bookmark(bookmark)
+            Bookmark(alarmViewModel)
             Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
-            AlarmSound(ringtoneIsOn, context ,selectedSoundUri)
+            AlarmSound(context, alarmViewModel)
             Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
-            Vibrator(context, vibrationIsOn)
+            Vibrator(context, alarmViewModel)
             Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
-            AlarmRepeat(repeatIsOn, navController)
+            RingAgain(navController, alarmViewModel)
             Spacer(modifier = Modifier.height(verticalSpace))
         }
         Spacer(modifier = Modifier.weight(1f))
-        CancelSave(navController)
+        CancelSave(navController,alarmViewModel)
     }
 }
 
@@ -84,7 +69,6 @@ fun AddUnitAlarm(navController: NavController, alarmManager: AlarmManager, alarm
 @Composable
 fun PrevAddUnitAlarm() {
     val navController = rememberNavController()
-    val alarmManager = AlarmManager
     val alarmViewModel = AlarmViewModel()
-    AddUnitAlarm(navController, alarmManager, alarmViewModel)
+    AddUnitAlarm(navController, alarmViewModel)
 }

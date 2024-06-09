@@ -11,10 +11,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.alarmapp.Routes
 import com.example.alarmapp.addalarm.AddUnitAlarm
-import com.example.alarmapp.addalarm.alarmrepeat.SetAlarmRepeat
+import com.example.alarmapp.addalarm.ringagain.SetAlarmRepeat
 import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.alarmdata.AlarmViewModel
 import com.example.alarmapp.makegroupalarm.MakeGroupAlarm
-import com.example.alarmapp.model.AlarmViewModel
 import com.example.alarmapp.settingscreen.SettingScreen
 
 @Composable
@@ -37,7 +37,7 @@ fun MainNaviGraph(navController: NavHostController) {
     ) {
         NavHost(navController = navController, startDestination = Routes.MainScreen.route){
             composable(Routes.MainScreen.route) {
-                MainScreen(navController , alarmManager, alarmViewModel)
+                MainScreen(navController, alarmViewModel)
             }
 
             composable(Routes.Setting.route){
@@ -45,15 +45,15 @@ fun MainNaviGraph(navController: NavHostController) {
             }
 
             composable(Routes.AddUnitAlarm.route){
-                AddUnitAlarm(navController, alarmManager, alarmViewModel)
+                AddUnitAlarm(navController, alarmViewModel)
             }
 
             composable(Routes.SetAlarmRepeat.route) {
-                SetAlarmRepeat(navController, alarmManager)
+                SetAlarmRepeat(navController, alarmViewModel)
             }
 
             composable(Routes.MakeGroupAlarm.route){
-                MakeGroupAlarm(navController)
+                MakeGroupAlarm(navController, alarmViewModel)
             }
             // 추가적인 화면 등등
         }

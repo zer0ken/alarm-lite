@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm.alarmrepeat
+package com.example.alarmapp.addalarm.ringagain
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row

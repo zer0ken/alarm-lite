@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,9 +24,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import com.example.alarmapp.R
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun AlarmSound(ringtoneIsOn: MutableState<Boolean>, context: Context, selectedSoundUri: MutableState<Uri?>) {
+fun AlarmSound(context: Context, alarmViewModel: AlarmViewModel) {
+    val selectedSoundUri = remember{ mutableStateOf<Uri?>(null)}
+    val ringtoneIsOn = remember { mutableStateOf(true)}
     val selectedRingtone = remember{ mutableStateOf("")}
     selectedRingtone.value = if (selectedSoundUri.value != null){
         RingtoneManager.getRingtone(context, selectedSoundUri.value).getTitle(context)
@@ -75,4 +77,6 @@ fun AlarmSound(ringtoneIsOn: MutableState<Boolean>, context: Context, selectedSo
                 .scale(0.6f)
         )
     }
+    alarmViewModel.setAlarmSound(ringtoneIsOn.value)
+    alarmViewModel.setSelectedRingtone(selectedRingtone.value)
 }

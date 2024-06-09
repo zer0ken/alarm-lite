@@ -1,8 +1,6 @@
 package com.example.alarmapp.alarmdata
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import java.util.*
-import kotlin.Comparator
+import java.util.Calendar
 
 object AlarmComparator {
 
@@ -51,22 +49,22 @@ object AlarmComparator {
 }
 
 // 사용 예시
-fun main() {
-    val alarms = mutableListOf(
-        Alarm(content = "Morning Alarm", hour = 7, minute = 30, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis()),
-        Alarm(content = "Evening Alarm", hour = 18, minute = 0, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis(), isOn = true),
-        Alarm(content = "Night Alarm", hour = 22, minute = 45, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis())
-    )
-
-    // 절대 시간 기준
-    // 1. 알람의 켜짐/꺼짐은 고려하지 않음
-    // 2. 00시 00분이 가장 위, 23시 59분이 가장 아래
-    alarms.sortWith(AlarmComparator.absolute)
-    println("Sorted by hour and minute: $alarms")
-
-    // 상대 시간 기준
-    // 1. 켜진 알람을 우선으로 함
-    // 2. 현재 시간으로부터 (미래로) 가장 가까운 시간
-    alarms.sortWith(AlarmComparator.relative)
-    println("Sorted by next alarm time: $alarms")
-}
+//fun main() {
+//    val alarms = mutableListOf(
+//        Alarm(content = "Morning Alarm", hour = 7, minute = 30, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis()),
+//        Alarm(content = "Evening Alarm", hour = 18, minute = 0, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis(), isOn = true),
+//        Alarm(content = "Night Alarm", hour = 22, minute = 45, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis())
+//    )
+//
+//    // 절대 시간 기준
+//    // 1. 알람의 켜짐/꺼짐은 고려하지 않음
+//    // 2. 00시 00분이 가장 위, 23시 59분이 가장 아래
+//    alarms.sortWith(AlarmComparator.absolute)
+//    println("Sorted by hour and minute: $alarms")
+//
+//    // 상대 시간 기준
+//    // 1. 켜진 알람을 우선으로 함
+//    // 2. 현재 시간으로부터 (미래로) 가장 가까운 시간
+//    alarms.sortWith(AlarmComparator.relative)
+//    println("Sorted by next alarm time: $alarms")
+//}

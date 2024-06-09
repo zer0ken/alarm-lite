@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm.alarmrepeat
+package com.example.alarmapp.addalarm.ringagain
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -18,9 +19,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun AlarmRepeat(repeatIsOn: MutableState<Boolean>,navController:NavController) {
+fun RingAgain(navController:NavController , alarmViewModel: AlarmViewModel) {
+    val ringAgainIsOn = remember { mutableStateOf(true) }
+    val selectedRingAgain = remember { mutableStateOf("") }
+    val gap = when(alarmViewModel.getRepeatGap()){
+        5 -> "5분"
+        10-> "10분"
+        15-> "15분"
+        else -> "30분"
+    }
+    val repeat = when(alarmViewModel.getRepeatNumber()){
+        3 -> "3회"
+        5-> "5회"
+        else -> "계속 반복"
+    }
+    selectedRingAgain.value = "$gap, $repeat"
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -33,16 +49,18 @@ fun AlarmRepeat(repeatIsOn: MutableState<Boolean>,navController:NavController) {
         Column {
             Text(text = stringResource(id = R.string.ring_again))
             Text(
-                text = "추후에 뷰모델과 연결",
+                text = selectedRingAgain.value,
                 color = Color(0xFF734D4D),
                 fontSize = 12.sp
             )
         }
         Switch(
-            checked = repeatIsOn.value,
-            onCheckedChange = {repeatIsOn.value = !repeatIsOn.value},
+            checked = ringAgainIsOn.value,
+            onCheckedChange = {ringAgainIsOn.value = !ringAgainIsOn.value},
             modifier = Modifier
                 .scale(0.6f)
         )
     }
+    alarmViewModel.setRingAgain(ringAgainIsOn.value)
+    alarmViewModel.setSelectedRingtone(selectedRingAgain.value)
 }

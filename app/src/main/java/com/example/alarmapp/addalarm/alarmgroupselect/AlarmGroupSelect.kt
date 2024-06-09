@@ -25,13 +25,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.alarmapp.R
-import com.example.alarmapp.alarmdata.AlarmGroup
-import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun AlarmGroupSelect(alarmManager:AlarmManager) {
+fun AlarmGroupSelect(alarmViewModel: AlarmViewModel) {
     var groupSelectMenuExpanded by remember { mutableStateOf(false) }
-    var selectedGroup by remember { mutableStateOf(AlarmGroup("")) }
+    var selectedGroupName = remember { mutableStateOf("") }
+    val alarmList = alarmViewModel.alarms.value ?: emptyList()
+    val alarmGroupSet = alarmList.map { it.groupName}.toSet()
+
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -57,7 +59,7 @@ fun AlarmGroupSelect(alarmManager:AlarmManager) {
                 modifier = Modifier
                     .width(128.dp)
             ) {
-                alarmManager.alarmGroupSet.forEach { alarmGroup ->
+                alarmGroupSet.forEach { groupName ->
                     DropdownMenuItem(
                         text = {
                             Row (
@@ -66,10 +68,10 @@ fun AlarmGroupSelect(alarmManager:AlarmManager) {
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(
-                                    text = alarmGroup.groupName,
-                                    color = if(alarmGroup == selectedGroup) Color(0xFF734D4D) else Color.Black
+                                    text = groupName,
+                                    color = if(groupName == selectedGroupName.value) Color(0xFF734D4D) else Color.Black
                                 )
-                                if (alarmGroup == selectedGroup){
+                                if (groupName == selectedGroupName.value){
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected group",
@@ -81,7 +83,7 @@ fun AlarmGroupSelect(alarmManager:AlarmManager) {
                             }
                         },
                         onClick = {
-                            selectedGroup = alarmGroup
+                            selectedGroupName.value = groupName
                             groupSelectMenuExpanded = false
                         }
                     )
@@ -107,4 +109,5 @@ fun AlarmGroupSelect(alarmManager:AlarmManager) {
             }
         }
     }
+    alarmViewModel.setGroupName(selectedGroupName.value)
 }

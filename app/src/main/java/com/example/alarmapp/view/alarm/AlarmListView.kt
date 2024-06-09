@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.alarmapp.alarmdata.Alarm
 import com.example.alarmapp.alarmdata.AlarmGroup
-import com.example.alarmapp.model.AlarmViewModel
+import com.example.alarmapp.alarmdata.AlarmViewModel
 import com.example.alarmapp.ui.theme.background
 
 /**

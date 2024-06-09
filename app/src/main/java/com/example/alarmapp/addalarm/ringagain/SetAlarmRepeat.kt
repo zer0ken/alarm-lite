@@ -1,4 +1,4 @@
-package com.example.alarmapp.addalarm.alarmrepeat
+package com.example.alarmapp.addalarm.ringagain
 
 
 import androidx.compose.foundation.background
@@ -9,13 +9,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.alarmapp.alarmdata.AlarmManager
+import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun SetAlarmRepeat(navController: NavController, alarmManager: AlarmManager) {
+fun SetAlarmRepeat(navController: NavController, alarmViewModel: AlarmViewModel) {
     val gapCheckList = remember { mutableStateListOf(true,false,false,false)}
     val repeatCheckList = remember { mutableStateListOf(true,false,false)}
 
@@ -24,12 +22,12 @@ fun SetAlarmRepeat(navController: NavController, alarmManager: AlarmManager) {
 
     for (i in 0 until gapCheckList.size){ // 이 부분은 뷰모델이 하나로 합쳐지면 뷰모델에 박으면 됨
         if (gapCheckList[i])
-            alarmManager.repeatGap = gapList[i]
+            alarmViewModel.setRepeatGap(gapList[i])
     }
 
     for (i in 0 until repeatCheckList.size){ // 이 부분은 뷰모델이 하나로 합쳐지면 뷰모델에 박으면 됨
         if (repeatCheckList[i])
-            alarmManager.repeatGap = repeatList[i]
+            alarmViewModel.setRepeatNumber(repeatList[i])
     }
 
     Column (
@@ -38,16 +36,8 @@ fun SetAlarmRepeat(navController: NavController, alarmManager: AlarmManager) {
             .background(Color(0xFFE9E9E9))
     ) {
         BackwardAndTitle(navController)
-        UsingOrNot(alarmManager)
-        Gap(gapCheckList, alarmManager)
-        Repeat(repeatCheckList, alarmManager)
+        UsingOrNot(alarmViewModel)
+        Gap(gapCheckList, alarmViewModel)
+        Repeat(repeatCheckList, alarmViewModel)
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PrevAlarmRepeat() {
-    val navController = rememberNavController()
-    val alarmManager = AlarmManager
-    SetAlarmRepeat(navController, alarmManager)
 }

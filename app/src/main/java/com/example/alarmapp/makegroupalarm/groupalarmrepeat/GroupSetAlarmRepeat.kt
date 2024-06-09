@@ -9,10 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import com.example.alarmapp.addalarm.alarmrepeat.BackwardAndTitle
-import com.example.alarmapp.addalarm.alarmrepeat.Gap
-import com.example.alarmapp.addalarm.alarmrepeat.Repeat
-import com.example.alarmapp.addalarm.alarmrepeat.UsingOrNot
 import com.example.alarmapp.alarmdata.AlarmManager
 
 @Composable
