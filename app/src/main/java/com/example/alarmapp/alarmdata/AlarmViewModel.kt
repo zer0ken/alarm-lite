@@ -1,5 +1,9 @@
 package com.example.alarmapp.alarmdata
 
+import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -8,9 +12,11 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.alarmapp.addalarm.alarmsound.AlarmReceiver
 import com.example.alarmapp.model.AlarmGroupState
 import com.example.alarmapp.model.AlarmState
-
+import java.util.Calendar
+import android.app.AlarmManager as AM
 
 
 class AlarmViewModel : ViewModel() {
@@ -167,7 +173,7 @@ class AlarmViewModel : ViewModel() {
     }
 
     // 새로운 알람을 생성하고 추가
-    fun makeAlarm() {
+    fun makeAlarm(context: Context) {
         val alarm = Alarm(
             hour = hour.value ?: 0,
             minute = minute.value ?: 0,
@@ -188,7 +194,31 @@ class AlarmViewModel : ViewModel() {
         makeAlarmDefault()
         AlarmManager.addAlarm(alarm)
         _alarms.value = AlarmManager.alarmList
+
+        setAlarmRing(context,alarm.hour, alarm.minute)
     }
+
+    @SuppressLint("ScheduleExactAlarm")
+    fun setAlarmRing(context: Context, hour:Int, minute: Int){
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AM
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE,minute)
+            set(Calendar.SECOND,0)
+        }
+
+        if (calendar.timeInMillis < System.currentTimeMillis()){
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+        }
+
+        alarmManager.setExact(AM.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+    }
+
 
     // 기존의 알람 객체를 생성했다면, 이를 추가
     fun addAlarm(alarm: Alarm) {

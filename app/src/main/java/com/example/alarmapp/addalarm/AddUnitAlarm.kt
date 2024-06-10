@@ -61,7 +61,7 @@ fun AddUnitAlarm(navController: NavController, alarmViewModel: AlarmViewModel) {
             Spacer(modifier = Modifier.height(verticalSpace))
         }
         Spacer(modifier = Modifier.weight(1f))
-        CancelSave(navController,alarmViewModel)
+        CancelSave(context,navController,alarmViewModel)
     }
 }
 

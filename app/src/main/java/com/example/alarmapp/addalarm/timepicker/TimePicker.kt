@@ -83,7 +83,7 @@ fun TimePicker(alarmViewModel: AlarmViewModel) {
                     modifier = Modifier
                         .size(80.dp)
                         .clickable {
-                            selectedHour.value = hour
+                            selectedHour.value = hour % 24
                             coroutineScope.launch {
                                 hourListState.animateScrollToItem(hour - 1)
                             }
@@ -113,7 +113,7 @@ fun TimePicker(alarmViewModel: AlarmViewModel) {
                     modifier = Modifier
                         .size(80.dp)
                         .clickable {
-                            selectedMinute.value = minute
+                            selectedMinute.value = minute % 60
                             coroutineScope.launch {
                                 minuteListState.scrollToItem(minute - 1)
                             }

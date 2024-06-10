@@ -1,5 +1,6 @@
 package com.example.alarmapp.addalarm.cancelsave
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +17,7 @@ import com.example.alarmapp.Routes
 import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun CancelSave(navController: NavController, alarmViewModel: AlarmViewModel) { //알람 정보 받아랑 알람 뷰모델 받아와서 알람 뷰모델에 기입 ㄱㄱ
+fun CancelSave(context: Context, navController: NavController, alarmViewModel: AlarmViewModel) { //알람 정보 받아랑 알람 뷰모델 받아와서 알람 뷰모델에 기입 ㄱㄱ
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -35,7 +36,7 @@ fun CancelSave(navController: NavController, alarmViewModel: AlarmViewModel) { /
         }
         TextButton(
             onClick = {
-                alarmViewModel.makeAlarm()
+                alarmViewModel.makeAlarm(context)
                 navController.navigate(Routes.MainScreen.route)
             },
             modifier = Modifier

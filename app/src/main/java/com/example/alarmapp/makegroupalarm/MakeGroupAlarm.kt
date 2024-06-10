@@ -43,7 +43,7 @@ fun MakeGroupAlarm(navController: NavController, alarmViewModel: AlarmViewModel)
 
     val verticalSpace = 24.dp
     Scaffold(
-        bottomBar = {CancelSave(navController, alarmViewModel)}
+        bottomBar = {CancelSave(context,navController, alarmViewModel)}
     ) {
         Column (
         verticalArrangement = Arrangement.Center,
