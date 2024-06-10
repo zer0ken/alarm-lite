@@ -288,25 +288,25 @@ class AlarmViewModel : ViewModel() {
         _alarms.value = AlarmManager.alarmList
     }
 
-//    fun turnOnAll(alarmGroup: AlarmGroup) {
-//        AlarmManager.turnOnAll(alarmGroup)
-//        _alarms.value = AlarmManager.alarmList
-//    }
-//
-//    fun turnOffAll(alarmGroup: AlarmGroup) {
-//        AlarmManager.turnOffAll(alarmGroup)
-//        _alarms.value = AlarmManager.alarmList
-//    }
-//
-//    fun sortAbsolute() {
-//        AlarmManager.sortAbsolute()
-//        _alarms.value = AlarmManager.alarmList
-//    }
-//
-//    fun sortRelative() {
-//        AlarmManager.sortRelative()
-//        _alarms.value = AlarmManager.alarmList
-//    }
+    fun turnOnAll(alarmGroup: AlarmGroup) {
+        AlarmManager.turnOnAll(alarmGroup)
+        _alarms.value = AlarmManager.alarmList
+    }
+
+    fun turnOffAll(alarmGroup: AlarmGroup) {
+        AlarmManager.turnOffAll(alarmGroup)
+        _alarms.value = AlarmManager.alarmList
+    }
+
+    fun sortAbsolute() {
+        AlarmManager.sortAbsolute()
+        _alarms.value = AlarmManager.alarmList
+    }
+
+    fun sortRelative() {
+        AlarmManager.sortRelative()
+        _alarms.value = AlarmManager.alarmList
+    }
 }
 
 

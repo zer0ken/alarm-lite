@@ -96,4 +96,30 @@ object AlarmManager {
         alarmGroupMap.remove(name)
         return getGroup(name)
     }
+
+    // 이 그룹에 소속된 알람을 전부 켬
+    fun turnOnAll(alarmGroup: AlarmGroup) {
+        alarmList.forEach { item ->
+            if (item.groupName == alarmGroup.groupName)
+                item.isOn = true
+        }
+    }
+
+    // 이 그룹에 소속된 알람을 전부 끔
+    fun turnOffAll(alarmGroup: AlarmGroup) {
+        alarmList.forEach { item ->
+            if (item.groupName == alarmGroup.groupName)
+                item.isOn = false
+        }
+    }
+
+    // alarmList를 절대적인 시간 기준으로 정렬
+    fun sortAbsolute() {
+        alarmList.sortWith(AlarmComparator.absolute)
+    }
+
+    // alarmList를 상대적인 시간 기준으로 정렬 (켜져있는 것을 우선으로)
+    fun sortRelative() {
+        alarmList.sortWith(AlarmComparator.relative)
+    }
 }
