@@ -10,8 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,8 +22,7 @@ import com.example.alarmapp.R
 import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun UsingOrNot(alarmViewModel: AlarmViewModel) {
-    val isOn = remember { mutableStateOf(true)}
+fun UsingOrNot(alarmViewModel: AlarmViewModel, isOn: MutableState<Boolean>) {
     val usingOrNot = if (isOn.value) stringResource(id = R.string.using) else stringResource(id = R.string.not_using)
     val backgroundColor = if (isOn.value) Color.LightGray else Color.White
     Row (
@@ -40,10 +38,12 @@ fun UsingOrNot(alarmViewModel: AlarmViewModel) {
         Text(text = usingOrNot)
         Switch(
             checked = isOn.value,
-            onCheckedChange = {isOn.value = !isOn.value},
+            onCheckedChange = {
+                alarmViewModel.setRingAgain(!isOn.value)
+                isOn.value = alarmViewModel.getRingAgain()
+            },
             modifier = Modifier
                 .scale(0.6f)
         )
     }
-    alarmViewModel.setRingAgain(isOn.value)
 }

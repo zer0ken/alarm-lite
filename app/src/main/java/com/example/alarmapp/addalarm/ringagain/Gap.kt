@@ -1,14 +1,12 @@
 package com.example.alarmapp.addalarm.ringagain
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -20,11 +18,8 @@ import com.example.alarmapp.R
 import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
-fun Gap(gapCheckList : SnapshotStateList<Boolean>, alarmViewModel: AlarmViewModel) {
-    val isOn = remember { mutableStateOf(true) }
-    isOn.value = alarmViewModel.getRingAgain()
+fun Gap(gapCheckList : SnapshotStateList<Boolean>, alarmViewModel: AlarmViewModel, isOn: MutableState<Boolean>) {
     val alpha = if (isOn.value) 1f else 0.5f
-
     Text(
         text = stringResource(id = R.string.gap),
         modifier = Modifier
@@ -34,7 +29,6 @@ fun Gap(gapCheckList : SnapshotStateList<Boolean>, alarmViewModel: AlarmViewMode
         modifier = Modifier
             .clip(shape = RoundedCornerShape(16.dp))
             .background(Color.White)
-            .clickable { isOn.value = !isOn.value } // 추후 변경
             .alpha(alpha)
     ) {
         GapRow(colIndex = 0, time = 5, gapCheckList = gapCheckList,alarmViewModel)

@@ -23,7 +23,7 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun RingAgain(navController:NavController , alarmViewModel: AlarmViewModel) {
-    val ringAgainIsOn = remember { mutableStateOf(true) }
+    val ringAgainIsOn = remember { mutableStateOf(alarmViewModel.getRingAgain()) }
     val selectedRingAgain = remember { mutableStateOf("") }
     val gap = when(alarmViewModel.getRepeatGap()){
         5 -> "5분"
@@ -56,11 +56,13 @@ fun RingAgain(navController:NavController , alarmViewModel: AlarmViewModel) {
         }
         Switch(
             checked = ringAgainIsOn.value,
-            onCheckedChange = {ringAgainIsOn.value = !ringAgainIsOn.value},
+            onCheckedChange = {
+                alarmViewModel.setRingAgain(!ringAgainIsOn.value)
+                ringAgainIsOn.value = alarmViewModel.getRingAgain()
+            },
             modifier = Modifier
                 .scale(0.6f)
         )
     }
-    alarmViewModel.setRingAgain(ringAgainIsOn.value)
     alarmViewModel.setSelectedRingtone(selectedRingAgain.value)
 }
