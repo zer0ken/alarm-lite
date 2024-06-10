@@ -54,6 +54,7 @@ fun Vibrator(context:Context, alarmViewModel: AlarmViewModel) {
             onPatternSelected = { pattern ->
                 selectedVibrationPattern.value = pattern
                 showVibrationDialog.value = false
+                alarmViewModel.setVibrationPattern(selectedVibrationPattern.value)
             }
         )
     }

@@ -50,6 +50,7 @@ fun AlarmSound(context: Context, alarmViewModel: AlarmViewModel) {
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri: Uri? = result.data?.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)
                 selectedSoundUri.value = uri
+                alarmViewModel.setAlarmSoundUri(selectedSoundUri.value)
             }
         }
     )

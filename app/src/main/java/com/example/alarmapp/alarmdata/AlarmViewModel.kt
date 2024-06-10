@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -23,6 +24,20 @@ class AlarmViewModel : ViewModel() {
 
     private val _alarms = MutableLiveData<List<Alarm>>()
     val alarms: LiveData<List<Alarm>> get() = _alarms
+
+    private val _alarmSoundUri = MutableLiveData<Uri?>()
+    val alarmSoundUri: LiveData<Uri?> get() = _alarmSoundUri
+
+    private val _vibrationPattern = MutableLiveData<String>()
+    val vibrationPattern: LiveData<String> get() = _vibrationPattern
+
+    fun setAlarmSoundUri(uri: Uri?) {
+        _alarmSoundUri.value = uri
+    }
+
+    fun setVibrationPattern(pattern: String) {
+        _vibrationPattern.value = pattern
+    }
 
     // 알람 필드
     private val alarmName = MutableLiveData<String>()
@@ -201,7 +216,10 @@ class AlarmViewModel : ViewModel() {
     @SuppressLint("ScheduleExactAlarm")
     fun setAlarmRing(context: Context, hour:Int, minute: Int){
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AM
-        val intent = Intent(context, AlarmReceiver::class.java)
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra("ALARM_SOUND_URI", alarmSoundUri.value.toString())
+            putExtra("VIBRATION_PATTERN", vibrationPattern.value)
+        }
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
