@@ -17,7 +17,11 @@ data class Alarm (
     var weekTerm: Int = 1,          // n주마다 반복(기본값: 1(주마다 반복))
     var selectedRingtone : String = "선택 안함",
     var selectedVibrationPattern : String = "무음",
-    var selectedRingAgain : String = "5분, 3회"
+    var selectedRingAgain : String = "5분, 3회",
+    var repeatGap : Int = 5,
+    var repeatNumber: Int = 3,
+    var gapCheckList: SnapshotStateList<Boolean>,
+    var repeatCheckList :SnapshotStateList<Boolean>
 ) {
     // 다음은 Alarm 객체 생성 시에 임의로 결정할 수 없는 값
     val id: Int = getNextId()       // 알람 고유 식별자(생성 시 0부터 부여하며, 순차적으로 1씩 증가시킴)

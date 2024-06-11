@@ -48,7 +48,8 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 fun AlarmItemView(
     alarm: Alarm,
     alarmViewModel: AlarmViewModel,
-    modifier: Modifier
+    modifier: Modifier,
+    onClick : () -> Unit
 ) {
     val alarmState = alarmViewModel.getAlarmState(alarm.id)
     val groupState = alarmViewModel.getAlarmGroupState(alarm.groupName)
@@ -72,7 +73,11 @@ fun AlarmItemView(
                 if (alarmViewModel.isSelectMode) {
                     alarmState.isSelected = !alarmState.isSelected
                 }
-            }, onLongClick = {
+                else{
+                    onClick()
+                }
+            },
+            onLongClick = {
                 if (!alarmViewModel.isSelectMode) {
                     alarmViewModel.isSelectMode = true
                 }

@@ -31,9 +31,9 @@ fun Gap(gapCheckList : SnapshotStateList<Boolean>, alarmViewModel: AlarmViewMode
             .background(Color.White)
             .alpha(alpha)
     ) {
-        GapRow(colIndex = 0, time = 5, gapCheckList = gapCheckList,alarmViewModel)
-        GapRow(colIndex = 1, time = 10, gapCheckList = gapCheckList,alarmViewModel)
-        GapRow(colIndex = 2, time = 15, gapCheckList = gapCheckList,alarmViewModel)
-        GapRow(colIndex = 3, time = 30, gapCheckList = gapCheckList, alarmViewModel)
+        GapRow(colIndex = 0, time = 5, gapCheckList = gapCheckList,alarmViewModel, isOn)
+        GapRow(colIndex = 1, time = 10, gapCheckList = gapCheckList,alarmViewModel,isOn)
+        GapRow(colIndex = 2, time = 15, gapCheckList = gapCheckList,alarmViewModel, isOn)
+        GapRow(colIndex = 3, time = 30, gapCheckList = gapCheckList, alarmViewModel, isOn)
     }
 }

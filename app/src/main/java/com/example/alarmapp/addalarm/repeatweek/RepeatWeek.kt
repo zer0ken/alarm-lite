@@ -13,7 +13,11 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun RepeatWeek(alarmViewModel: AlarmViewModel) {
-    val repeatDays = remember { mutableStateListOf(false, false, false, false, false, false, false) }
+    val repeatDays = if(alarmViewModel.flag==1){
+        remember { mutableStateListOf(false, false, false, false, false, false, false) }
+    } else {
+        alarmViewModel.getRepeatDays()
+    }
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,

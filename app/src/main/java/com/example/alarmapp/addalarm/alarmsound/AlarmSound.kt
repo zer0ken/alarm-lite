@@ -28,9 +28,16 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun AlarmSound(context: Context, alarmViewModel: AlarmViewModel) {
-    val selectedSoundUri = remember{ mutableStateOf<Uri?>(null)}
-    val ringtoneIsOn = remember { mutableStateOf(true)}
-    val selectedRingtone = remember{ mutableStateOf("")}
+    val selectedSoundUri = remember { mutableStateOf<Uri?>(null) }
+    val ringtoneIsOn = remember { mutableStateOf(true) }
+    val selectedRingtone = remember { mutableStateOf("") }
+
+    if (alarmViewModel.flag == 2) {
+        ringtoneIsOn.value = alarmViewModel.getAlarmSound()
+        selectedSoundUri.value = alarmViewModel.getAlarmSoundUri()
+        selectedRingtone.value = alarmViewModel.getSelectedRingtone()
+    }
+
     selectedRingtone.value = if (selectedSoundUri.value != null){
         RingtoneManager.getRingtone(context, selectedSoundUri.value).getTitle(context)
     }
@@ -73,11 +80,13 @@ fun AlarmSound(context: Context, alarmViewModel: AlarmViewModel) {
         
         Switch(
             checked = ringtoneIsOn.value,
-            onCheckedChange = {ringtoneIsOn.value = !ringtoneIsOn.value},
+            onCheckedChange = {
+                alarmViewModel.setAlarmSound(!ringtoneIsOn.value)
+                ringtoneIsOn.value = alarmViewModel.getAlarmSound()
+            },
             modifier = Modifier
                 .scale(0.6f)
         )
     }
-    alarmViewModel.setAlarmSound(ringtoneIsOn.value)
     alarmViewModel.setSelectedRingtone(selectedRingtone.value)
 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +23,8 @@ fun RepeatRow(
     colIndex : Int,
     number: Int,
     repeatCheckList : SnapshotStateList<Boolean>,
-    alarmViewModel: AlarmViewModel
+    alarmViewModel: AlarmViewModel,
+    isOn: MutableState<Boolean>
 ) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
@@ -36,10 +38,12 @@ fun RepeatRow(
                 Checkbox(
                     checked = repeatCheckList[colIndex],
                     onCheckedChange = {
-                        for ( i in 0 until repeatCheckList.size){
-                            repeatCheckList[i] = (i == colIndex)
+                        if (isOn.value){
+                            for ( i in 0 until repeatCheckList.size){
+                                repeatCheckList[i] = (i == colIndex)
+                            }
+                            alarmViewModel.setRepeatNumber(number)
                         }
-                        alarmViewModel.setRepeatNumber(number)
                     }
                 )
                 when(number){
@@ -52,4 +56,5 @@ fun RepeatRow(
                 HorizontalDivider(modifier = Modifier.padding(start = 48.dp,end = 12.dp), color= Color.LightGray)
         }
     }
+    alarmViewModel.setRepeatCheckList(repeatCheckList)
 }

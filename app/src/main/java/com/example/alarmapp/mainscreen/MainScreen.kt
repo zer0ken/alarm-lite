@@ -2,12 +2,9 @@ package com.example.alarmapp.mainscreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -42,7 +39,7 @@ import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
 import com.example.alarmapp.alarmdata.AlarmViewModel
-import com.example.alarmapp.view.alarm.AlarmItemView
+import com.example.alarmapp.view.alarm.AlarmListView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +59,7 @@ fun MainScreen(navController: NavController, alarmViewModel: AlarmViewModel) {
                 ),
                 title = {
                     Text(
-                        "Large Top App Bar 1시간 23분 뒤에 알람이 울립니다.",
+                        "1시간 23분 뒤에 알람이 울립니다.",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -132,7 +129,10 @@ fun MainScreen(navController: NavController, alarmViewModel: AlarmViewModel) {
                             contentDescription = "임시 그룹 설정 화면"
                         )
                     }
-                    IconButton(onClick = { navController.navigate(Routes.AddUnitAlarm.route)}) {
+                    IconButton(onClick = {
+                        navController.navigate(Routes.AddUnitAlarm.route)
+                        alarmViewModel.flag = 1
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = "Add Alarm"
@@ -150,18 +150,7 @@ fun MainScreen(navController: NavController, alarmViewModel: AlarmViewModel) {
         },
     ) { innerPadding ->
         val alarmList = alarmViewModel.getAlarmList()
-
-        for (i in alarmList.indices){
-            AlarmItemView(alarm = alarmList[i], alarmViewModel = alarmViewModel, modifier = Modifier)
-        }
-
-        LazyColumn(
-            contentPadding = innerPadding,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(alarmList) { alarm ->
-                AlarmItemView(alarm = alarm, alarmViewModel = alarmViewModel, modifier = Modifier)
-            }
-        }
+        val alarmGroup = alarmViewModel.getAlarmGroup()
+        AlarmListView(alarmList, alarmGroup, innerPadding, navController, alarmViewModel)
     }
 }

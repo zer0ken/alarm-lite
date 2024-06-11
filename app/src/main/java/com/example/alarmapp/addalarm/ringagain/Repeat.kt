@@ -32,9 +32,9 @@ fun Repeat(repeatCheckList : SnapshotStateList<Boolean>, alarmViewModel : AlarmV
             .alpha(alpha)
     ) {
         Column () {
-            RepeatRow(colIndex = 0, number = 3, repeatCheckList = repeatCheckList, alarmViewModel)
-            RepeatRow(colIndex = 1, number = 5, repeatCheckList = repeatCheckList, alarmViewModel)
-            RepeatRow(colIndex = 2, number = 100000, repeatCheckList = repeatCheckList, alarmViewModel)
+            RepeatRow(colIndex = 0, number = 3, repeatCheckList = repeatCheckList, alarmViewModel, isOn)
+            RepeatRow(colIndex = 1, number = 5, repeatCheckList = repeatCheckList, alarmViewModel, isOn)
+            RepeatRow(colIndex = 2, number = 100000, repeatCheckList = repeatCheckList, alarmViewModel, isOn)
         }
     }
 }

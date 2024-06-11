@@ -22,9 +22,16 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun Vibrator(context:Context, alarmViewModel: AlarmViewModel) {
-    val vibrationIsOn = remember { mutableStateOf(true)}
+    val vibrationIsOn =  remember { mutableStateOf(true) }
+    val selectedVibrationPattern = remember { mutableStateOf("무음") }
+
+    if (alarmViewModel.flag == 2) {
+        vibrationIsOn.value = alarmViewModel.getVibrate()
+        selectedVibrationPattern.value = alarmViewModel.getSelectedVibrationPattern()
+    }
+
     val showVibrationDialog = remember{ mutableStateOf(false) }
-    val selectedVibrationPattern = remember{ mutableStateOf("무음") }
+
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -42,7 +49,10 @@ fun Vibrator(context:Context, alarmViewModel: AlarmViewModel) {
         }
         Switch(
             checked = vibrationIsOn.value,
-            onCheckedChange = {vibrationIsOn.value = !vibrationIsOn.value},
+            onCheckedChange = {
+                alarmViewModel.setVibrate(!vibrationIsOn.value)
+                vibrationIsOn.value = alarmViewModel.getVibrate()
+            },
             modifier = Modifier
                 .scale(0.6f)
         )
@@ -55,9 +65,8 @@ fun Vibrator(context:Context, alarmViewModel: AlarmViewModel) {
                 selectedVibrationPattern.value = pattern
                 showVibrationDialog.value = false
                 alarmViewModel.setVibrationPattern(selectedVibrationPattern.value)
+                alarmViewModel.setSelectedVibrationPattern(selectedVibrationPattern.value)
             }
         )
     }
-    alarmViewModel.setVibrate(vibrationIsOn.value)
-    alarmViewModel.setSelectedVibrationPattern(selectedVibrationPattern.value)
 }

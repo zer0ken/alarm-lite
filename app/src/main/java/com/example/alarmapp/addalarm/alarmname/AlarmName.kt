@@ -1,20 +1,13 @@
 package com.example.alarmapp.addalarm.alarmname
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -23,30 +16,19 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun AlarmName(alarmViewModel: AlarmViewModel ) {
-    val alarmName = remember { mutableStateOf("") }
-    var isFocused by remember { mutableStateOf(false) }
-    val focusRequester = remember{FocusRequester()}
-    Box {
-        BasicTextField(
-            value = alarmName.value,
-            onValueChange = { alarmName.value = it },
-            textStyle = TextStyle(color = Color.Black, fontSize = 20.sp),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { focusState ->
-                    isFocused = focusState.isFocused
-                }
-                .focusRequester(focusRequester)
-        )
-
-        if (!isFocused) {
-            Text(
-                text = "알람 이름",
-                color = Color.Gray,
-            )
-        }
+    val alarmName = if(alarmViewModel.flag==1){
+        remember { mutableStateOf("") }
+    } else {
+        remember { mutableStateOf(alarmViewModel.getAlarmName()) }
     }
-    HorizontalDivider(color = Color.Black)
+    OutlinedTextField(
+        value = alarmName.value,
+        onValueChange = {alarmName.value = it},
+        textStyle = TextStyle(color=Color.Black, fontSize =  18.sp),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+        label = { Text(text = "알람 이름")},
+        modifier = Modifier
+            .fillMaxWidth()
+    )
     alarmViewModel.setAlarmName(alarmName.value)
 }

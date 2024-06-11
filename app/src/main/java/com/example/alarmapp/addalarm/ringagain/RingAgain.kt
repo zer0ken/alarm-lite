@@ -23,20 +23,27 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun RingAgain(navController:NavController , alarmViewModel: AlarmViewModel) {
-    val ringAgainIsOn = remember { mutableStateOf(alarmViewModel.getRingAgain()) }
+    val ringAgainIsOn = remember { mutableStateOf(true) }
     val selectedRingAgain = remember { mutableStateOf("") }
+
+    if (alarmViewModel.flag == 2) {
+        ringAgainIsOn.value = alarmViewModel.getRingAgain()
+    }
+
     val gap = when(alarmViewModel.getRepeatGap()){
         5 -> "5분"
         10-> "10분"
         15-> "15분"
         else -> "30분"
     }
+
     val repeat = when(alarmViewModel.getRepeatNumber()){
         3 -> "3회"
         5-> "5회"
         else -> "계속 반복"
     }
     selectedRingAgain.value = "$gap, $repeat"
+
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,

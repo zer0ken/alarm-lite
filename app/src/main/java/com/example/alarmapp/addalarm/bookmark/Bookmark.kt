@@ -20,7 +20,11 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun Bookmark(alarmViewModel: AlarmViewModel) {
-    val bookmark = remember { mutableStateOf(false) }
+    val bookmark = if(alarmViewModel.flag==1){
+        remember { mutableStateOf(false) }
+    } else {
+        remember { mutableStateOf(alarmViewModel.getBookmark()) }
+    }
     val star = if(bookmark.value) ImageVector.vectorResource(id = R.drawable.baseline_star_rate_24)
                 else ImageVector.vectorResource(id = R.drawable.baseline_star_outline_24)
     val starColor = if(bookmark.value) Color(0xFFF5EE31)  else Color.Gray

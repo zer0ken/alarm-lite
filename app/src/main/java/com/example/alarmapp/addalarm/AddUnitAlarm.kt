@@ -31,7 +31,7 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 @Composable
 fun AddUnitAlarm(navController: NavController, alarmViewModel: AlarmViewModel) {
     val context = LocalContext.current
-    val verticalSpace = 24.dp
+    val verticalSpace = 12.dp
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -46,17 +46,17 @@ fun AddUnitAlarm(navController: NavController, alarmViewModel: AlarmViewModel) {
         ) {
             Spacer(modifier = Modifier.height(verticalSpace))
             RepeatWeek(alarmViewModel)
-            Spacer(modifier = Modifier.height(verticalSpace))
+            Spacer(modifier = Modifier.height(8.dp))
             AlarmName(alarmViewModel)
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(verticalSpace))
             AlarmGroupSelect(alarmViewModel)
-            Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
+            Divider(modifier = Modifier.padding(vertical= 12.dp) ,color = Color.LightGray)
             Bookmark(alarmViewModel)
-            Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
+            Divider(modifier = Modifier.padding(vertical= 12.dp) ,color = Color.LightGray)
             AlarmSound(context, alarmViewModel)
-            Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
+            Divider(modifier = Modifier.padding(vertical= 12.dp) ,color = Color.LightGray)
             Vibrator(context, alarmViewModel)
-            Divider(modifier = Modifier.padding(vertical=12.dp) ,color = Color.LightGray)
+            Divider(modifier = Modifier.padding(vertical= 12.dp) ,color = Color.LightGray)
             RingAgain(navController, alarmViewModel)
             Spacer(modifier = Modifier.height(verticalSpace))
         }

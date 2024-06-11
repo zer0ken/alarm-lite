@@ -27,7 +27,9 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.alarmapp.R
+import com.example.alarmapp.Routes
 import com.example.alarmapp.alarmdata.Alarm
 import com.example.alarmapp.alarmdata.AlarmGroup
 import com.example.alarmapp.alarmdata.AlarmViewModel
@@ -46,7 +48,8 @@ import com.example.alarmapp.view.IconToggleButton_
 fun LazyListScope.groupedAlarmItems(
     alarms: List<Alarm>,
     alarmGroup: AlarmGroup,
-    alarmViewModel: AlarmViewModel
+    alarmViewModel: AlarmViewModel,
+    navController: NavController
 ) {
     val alarmGroupState = alarmViewModel.getAlarmGroupState(alarmGroup.groupName)
 
@@ -55,9 +58,9 @@ fun LazyListScope.groupedAlarmItems(
         alarmViewModel = alarmViewModel
     )
     if (alarmGroupState.isFolded) {
-        foldedAlarmGroupItems(alarms, alarmViewModel)
+        foldedAlarmGroupItems(alarms, alarmViewModel, navController)
     } else {
-        expandedAlarmGroupItems(alarms, alarmViewModel)
+        expandedAlarmGroupItems(alarms, alarmViewModel, navController)
     }
     stickyHeader {}
 }
@@ -124,7 +127,8 @@ fun LazyListScope.alarmGroupStickyHeader(
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.foldedAlarmGroupItems(
     alarms: List<Alarm>,
-    alarmViewModel: AlarmViewModel
+    alarmViewModel: AlarmViewModel,
+    navController: NavController
 ) {
     item(key = alarms.hashCode()) {
         LazyRow(
@@ -138,7 +142,11 @@ fun LazyListScope.foldedAlarmGroupItems(
                     alarm = alarm,
                     alarmViewModel = alarmViewModel,
                     modifier = Modifier.animateItemPlacement()
-                )
+                ){
+                    alarmViewModel.editAlarm(alarm)
+                    alarmViewModel.removeAlarm(alarm.id)
+                    navController.navigate(Routes.AddUnitAlarm.route)
+                }
             }
         }
         Spacer(
@@ -159,7 +167,8 @@ fun LazyListScope.foldedAlarmGroupItems(
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.expandedAlarmGroupItems(
     alarms: List<Alarm>,
-    alarmViewModel: AlarmViewModel
+    alarmViewModel: AlarmViewModel,
+    navController :NavController
 ) {
     items(alarms, key = { it.id }) { alarm ->
         Box(
@@ -171,7 +180,11 @@ fun LazyListScope.expandedAlarmGroupItems(
                 alarm = alarm,
                 alarmViewModel = alarmViewModel,
                 modifier = Modifier.animateItemPlacement()
-            )
+            ){
+                alarmViewModel.editAlarm(alarm)
+                alarmViewModel.removeAlarm(alarm.id)
+                navController.navigate(Routes.AddUnitAlarm.route)
+            }
         }
     }
     item {

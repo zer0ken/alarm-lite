@@ -8,8 +8,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.alarmapp.Routes
 import com.example.alarmapp.alarmdata.Alarm
 import com.example.alarmapp.alarmdata.AlarmGroup
 import com.example.alarmapp.alarmdata.AlarmViewModel
@@ -29,14 +29,17 @@ import com.example.alarmapp.ui.theme.background
 fun AlarmListView(
     alarms: List<Alarm>,
     alarmGroups: Map<String, AlarmGroup>,
+    innerPadding : PaddingValues,
+    navController: NavController,
+    alarmViewModel: AlarmViewModel
 ) {
     val lazyListState = rememberLazyListState()
 
-    val alarmViewModel: AlarmViewModel = viewModel()
+    //val alarmViewModel: AlarmViewModel = viewModel()
 
     LazyColumn(
         state = lazyListState,
-        contentPadding = PaddingValues(vertical = 4.dp),
+        contentPadding = innerPadding, //PaddingValues(vertical = 4.dp),
         modifier = Modifier
             .fillMaxWidth()
             .background(color = background)
@@ -53,6 +56,7 @@ fun AlarmListView(
                     alarms = alarms.filter { it.groupName == alarm.groupName },
                     alarmGroup = alarmGroups[alarm.groupName]!!,
                     alarmViewModel = alarmViewModel,
+                    navController = navController
                 )
             } else if (!insertedGroup.contains(alarm.groupName)) {
                 item(key = alarm.id) {
@@ -60,7 +64,12 @@ fun AlarmListView(
                         alarm = alarm,
                         alarmViewModel = alarmViewModel,
                         modifier = Modifier.animateItemPlacement()
-                    )
+                    ){
+                        alarmViewModel.editAlarm(alarm)
+                        alarmViewModel.removeAlarm(alarm.id)
+                        navController.navigate(Routes.AddUnitAlarm.route)
+                        alarmViewModel.flag=2
+                    }
                 }
             }
         }

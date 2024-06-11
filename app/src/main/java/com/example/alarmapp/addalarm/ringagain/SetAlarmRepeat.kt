@@ -15,9 +15,15 @@ import com.example.alarmapp.alarmdata.AlarmViewModel
 
 @Composable
 fun SetAlarmRepeat(navController: NavController, alarmViewModel: AlarmViewModel) {
-    val gapCheckList = remember { mutableStateListOf(true,false,false,false)}
-    val repeatCheckList = remember { mutableStateListOf(true,false,false)}
-    val isOn = remember { mutableStateOf(alarmViewModel.getRingAgain())}
+    var gapCheckList = remember { mutableStateListOf(true,false,false,false) }
+    var repeatCheckList = remember { mutableStateListOf(true,false,false)}
+    val isOn = remember { mutableStateOf(true)}
+
+    if (alarmViewModel.flag == 2) {
+        gapCheckList = alarmViewModel.getGapCheckList()
+        repeatCheckList =alarmViewModel.getRepeatCheckList()
+        isOn.value = alarmViewModel.getRingAgain()
+    }
 
     val gapList = listOf(5,10,15,30)
     val repeatList = listOf(3,5,100000)

@@ -14,8 +14,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.alarmapp.addalarm.alarmsound.AlarmReceiver
-import com.example.alarmapp.model.AlarmGroupState
-import com.example.alarmapp.model.AlarmState
 import java.util.Calendar
 import android.app.AlarmManager as AM
 
@@ -25,19 +23,31 @@ class AlarmViewModel : ViewModel() {
     private val _alarms = MutableLiveData<List<Alarm>>()
     val alarms: LiveData<List<Alarm>> get() = _alarms
 
+    private val _alarmGroup = MutableLiveData<Map<String,AlarmGroup>>()
+    val alarmGroup: LiveData<Map<String,AlarmGroup>> get() = _alarmGroup
+
     private val _alarmSoundUri = MutableLiveData<Uri?>()
     val alarmSoundUri: LiveData<Uri?> get() = _alarmSoundUri
 
     private val _vibrationPattern = MutableLiveData<String>()
     val vibrationPattern: LiveData<String> get() = _vibrationPattern
 
+    var flag = 1 //1 신규 2 편집
+
     fun setAlarmSoundUri(uri: Uri?) {
         _alarmSoundUri.value = uri
+    }
+
+    fun getAlarmSoundUri(): Uri? {
+        return _alarmSoundUri.value
     }
 
     fun setVibrationPattern(pattern: String) {
         _vibrationPattern.value = pattern
     }
+
+
+
 
     // 알람 필드
     private val alarmName = MutableLiveData<String>()
@@ -57,7 +67,8 @@ class AlarmViewModel : ViewModel() {
     private val repeatGap= MutableLiveData<Int>()
     private val repeatNumber= MutableLiveData<Int>()
 
-
+    private val gapCheckList = MutableLiveData<SnapshotStateList<Boolean>>()
+    private val repeatCheckList = MutableLiveData<SnapshotStateList<Boolean>>()
 
     /**
      * AlarmListView에서 사용하는 상태 정보 등을 저장하는 ViewModel입니다.
@@ -97,15 +108,39 @@ class AlarmViewModel : ViewModel() {
         isOn.value = true
         weekTerm.value = 1
         selectedRingtone.value = "선택 안함"
-        selectedVibrationPattern.value = ""
+        selectedVibrationPattern.value = "무음"
         selectedRingAgain.value = "5분, 3회"
         repeatGap.value = 5
         repeatNumber.value = 3
+        gapCheckList.value = mutableStateListOf(true, false, false, false)
+        repeatCheckList.value = mutableStateListOf(true, false, false)
+    }
+
+    fun editAlarm(alarm: Alarm){
+        hour.value =  alarm.hour
+        minute.value =  alarm.minute
+        repeatDays.value = alarm.repeatDays
+        alarmName.value = alarm.name
+        groupName.value = alarm.groupName
+        bookmark.value = alarm.bookmark
+        alarmSound.value = alarm.alarmSound
+        vibrate.value = alarm.vibrate
+        ringAgain.value = alarm.ringAgain
+        isOn.value = alarm.isOn
+        weekTerm.value = alarm.weekTerm
+        selectedRingtone.value = alarm.selectedRingtone
+        selectedVibrationPattern.value =alarm.selectedVibrationPattern
+        selectedRingAgain.value = alarm.selectedRingAgain
+        repeatGap.value = alarm.repeatGap
+        repeatNumber.value = alarm.repeatNumber
+        gapCheckList.value = alarm.gapCheckList
+        repeatCheckList.value = alarm.repeatCheckList
     }
 
     init {
         makeAlarmDefault()
         _alarms.value = AlarmManager.alarmList
+        _alarmGroup.value = AlarmManager.alarmGroupMap
     }
 
     fun getAlarmList(): List<Alarm> {
@@ -116,12 +151,28 @@ class AlarmViewModel : ViewModel() {
         alarmName.value = newAlarmName
     }
 
+    fun getAlarmName(): String {
+        return alarmName.value!!
+    }
+
+    fun getAlarmGroup(): Map<String,AlarmGroup> {
+        return _alarmGroup.value ?: emptyMap<String,AlarmGroup>()
+    }
+
     fun setHour(newHour: Int) {
         hour.value = newHour
     }
 
+    fun getHour(): Int {
+        return hour.value!!
+    }
+
     fun setMinute(newMinute: Int) {
         minute.value = newMinute
+    }
+
+    fun getMinute(): Int {
+        return minute.value!!
     }
 
     fun setGroupName(newGroupName: String) {
@@ -130,6 +181,10 @@ class AlarmViewModel : ViewModel() {
 
     fun setBookmark(newBookmark: Boolean) {
         bookmark.value = newBookmark
+    }
+
+    fun getBookmark(): Boolean {
+        return bookmark.value!!
     }
 
     fun setWeekTerm(newWeekTerm: Int) {
@@ -144,11 +199,24 @@ class AlarmViewModel : ViewModel() {
         repeatDays.value = newRepeatDays
     }
 
+    fun getRepeatDays():SnapshotStateList<Boolean> {
+        return repeatDays.value!!
+    }
+
     fun setAlarmSound(newAlarmSound: Boolean) {
         alarmSound.value = newAlarmSound
     }
+
+    fun getAlarmSound(): Boolean {
+        return alarmSound.value!!
+    }
+
     fun setVibrate(newVibrate: Boolean) {
         vibrate.value = newVibrate
+    }
+
+    fun getVibrate(): Boolean {
+        return vibrate.value!!
     }
 
     fun setRingAgain(newRingAgain: Boolean) {
@@ -163,12 +231,24 @@ class AlarmViewModel : ViewModel() {
         selectedRingtone.value = newSelectedRingtone
     }
 
+    fun getSelectedRingtone(): String {
+        return selectedRingtone.value!!
+    }
+
     fun setSelectedVibrationPattern(newSelectedVibrationPattern: String) {
         selectedVibrationPattern.value = newSelectedVibrationPattern
     }
 
+    fun getSelectedVibrationPattern(): String {
+        return selectedVibrationPattern.value!!
+    }
+
     fun setSelectedRingAgain(newSelectedRingAgain: String) {
         selectedRingAgain.value = newSelectedRingAgain
+    }
+
+    fun getSelectedRingAgain(): String {
+        return selectedRingAgain.value!!
     }
 
     fun setRepeatGap(newRepeatGap: Int) {
@@ -185,6 +265,22 @@ class AlarmViewModel : ViewModel() {
 
     fun getRepeatNumber() : Int {
         return repeatNumber.value!!
+    }
+
+    fun setGapCheckList(newRepeatDays: SnapshotStateList<Boolean>) {
+        gapCheckList.value = newRepeatDays
+    }
+
+    fun getGapCheckList():SnapshotStateList<Boolean> {
+        return gapCheckList.value!!
+    }
+
+    fun setRepeatCheckList(newRepeatDays: SnapshotStateList<Boolean>) {
+        repeatCheckList.value = newRepeatDays
+    }
+
+    fun getRepeatCheckList():SnapshotStateList<Boolean> {
+        return repeatCheckList.value!!
     }
 
     // 새로운 알람을 생성하고 추가
@@ -204,7 +300,11 @@ class AlarmViewModel : ViewModel() {
             weekTerm = weekTerm.value ?: 1,
             selectedRingtone = selectedRingtone.value ?: "선택 안함",
             selectedVibrationPattern = selectedVibrationPattern.value ?: "무음",
-            selectedRingAgain = selectedRingAgain.value ?: "5분, 3회"
+            selectedRingAgain = selectedRingAgain.value ?: "5분, 3회",
+            repeatGap = repeatGap.value ?: 5,
+            repeatNumber = repeatNumber.value ?: 3,
+            gapCheckList =  gapCheckList.value ?: mutableStateListOf(true, false, false, false),
+            repeatCheckList = repeatCheckList.value ?: mutableStateListOf(true, false, false)
         )
         makeAlarmDefault()
         AlarmManager.addAlarm(alarm)
