@@ -319,6 +319,8 @@ class AlarmViewModel : ViewModel() {
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("ALARM_SOUND_URI", alarmSoundUri.value.toString())
             putExtra("VIBRATION_PATTERN", vibrationPattern.value)
+            putExtra("REPEAT_GAP",repeatGap.value)
+            putExtra("REPEAT_NUMBER", repeatNumber.value)
         }
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
