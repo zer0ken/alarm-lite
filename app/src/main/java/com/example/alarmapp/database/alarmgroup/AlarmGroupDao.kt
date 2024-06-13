@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface AlarmGroupDao {
     @Query("select * from alarm_group")
-    fun getAll(): Flow<List<AlarmGroupEntity>>
+    suspend fun getAll(): List<AlarmGroupEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(alarmGroupEntity: AlarmGroupEntity)
+    suspend fun insert(alarmGroupEntity: AlarmGroupEntity)
 
     @Update
-    fun update(alarmGroupEntity: AlarmGroupEntity)
+    suspend fun update(alarmGroupEntity: AlarmGroupEntity)
 
     @Delete
-    fun delete(alarmGroupEntity: AlarmGroupEntity)
+    suspend fun delete(alarmGroupEntity: AlarmGroupEntity)
 }

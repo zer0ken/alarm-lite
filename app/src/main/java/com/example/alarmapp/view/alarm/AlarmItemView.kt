@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Switch
@@ -38,6 +39,9 @@ import com.example.alarmapp.Routes
 import com.example.alarmapp.model.AlarmGroupState
 import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.MainViewModel
+import com.example.alarmapp.ui.theme.PurpleGrey80
+import com.example.alarmapp.ui.theme.background
+import com.example.alarmapp.ui.theme.surface
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -48,7 +52,6 @@ fun AlarmItemView(
     navController: NavController,
     modifier: Modifier,
 ) {
-
     var cardShape = CardDefaults.shape
 
     var enabled by remember { mutableStateOf(false) }
@@ -67,8 +70,10 @@ fun AlarmItemView(
                 if (mainViewModel.isSelectMode) {
                     alarm.isSelected = !alarm.isSelected
                 } else {
-                    navController.navigate(Routes.UpdateAlarm.slottedRoute?.format(alarm.id)
-                        ?: Routes.CreateAlarm.route)
+                    navController.navigate(
+                        Routes.UpdateAlarm.slottedRoute?.format(alarm.id)
+                            ?: Routes.CreateAlarm.route
+                    )
                 }
             },
             onLongClick = {

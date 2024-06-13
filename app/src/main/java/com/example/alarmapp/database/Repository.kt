@@ -14,54 +14,48 @@ class Repository(private val db: AlarmDatabase) {
     private val alarmGroupDao = db.alarmGroupDao()
     private val filterDao = db.filterDao()
 
-    fun getAlarms(): Flow<List<AlarmState>> = alarmDao.getAll()
-        .map { alarms ->
-            alarms.map { alarm -> fromAlarmEntity(alarm) }
-        }
+    suspend fun getAlarms(): List<AlarmState> = alarmDao.getAll()
+        .map { alarm -> fromAlarmEntity(alarm) }
 
-    fun getAlarmGroups(): Flow<List<AlarmGroupState>> = alarmGroupDao.getAll()
-        .map { alarmGroups ->
-            alarmGroups.map { alarmGroup -> fromAlarmGroupEntity(alarmGroup) }
-        }
+    suspend fun getAlarmGroups(): List<AlarmGroupState> = alarmGroupDao.getAll()
+        .map { alarmGroup -> fromAlarmGroupEntity(alarmGroup) }
 
-    fun getFilters(): Flow<List<Filter>> = filterDao.getAll()
-        .map { filters ->
-            filters.map { filter -> fromFilterEntity(filter) }
-        }
+    suspend fun getFilters(): List<Filter> = filterDao.getAll()
+        .map { filter -> fromFilterEntity(filter) }
 
-    fun insert(alarm: AlarmState) {
+    suspend fun insert(alarm: AlarmState) {
         alarmDao.insert(toAlarmEntity(alarm))
     }
 
-    fun insert(alarmGroup: AlarmGroupState) {
+    suspend fun insert(alarmGroup: AlarmGroupState) {
         alarmGroupDao.insert(toAlarmGroupEntity(alarmGroup))
     }
 
-    fun insert(filter: Filter) {
+    suspend fun insert(filter: Filter) {
         filterDao.insert(toFilterEntity(filter))
     }
 
-    fun update(alarm: AlarmState) {
+    suspend fun update(alarm: AlarmState) {
         alarmDao.update(toAlarmEntity(alarm))
     }
 
-    fun update(alarmGroup: AlarmGroupState) {
+    suspend fun update(alarmGroup: AlarmGroupState) {
         alarmGroupDao.update(toAlarmGroupEntity(alarmGroup))
     }
 
-    fun update(filter: Filter) {
+    suspend fun update(filter: Filter) {
         filterDao.update(toFilterEntity(filter))
     }
 
-    fun delete(alarm: AlarmState) {
+    suspend fun delete(alarm: AlarmState) {
         alarmDao.delete(toAlarmEntity(alarm))
     }
 
-    fun delete(alarmGroup: AlarmGroupState) {
+    suspend fun delete(alarmGroup: AlarmGroupState) {
         alarmGroupDao.delete(toAlarmGroupEntity(alarmGroup))
     }
 
-    fun delete(filter: Filter) {
+    suspend fun delete(filter: Filter) {
         filterDao.delete(toFilterEntity(filter))
     }
 
@@ -75,7 +69,6 @@ class Repository(private val db: AlarmDatabase) {
         isOn = value.isOn,
         isBookmarked = value.isBookmarked
     )
-
 
     private fun toAlarmEntity(value: AlarmState) = AlarmEntity(
         id = value.id,

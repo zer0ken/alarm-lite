@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -66,7 +67,7 @@ fun LazyListScope.alarmGroupStickyHeader(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.verticalGradient(
-                        0.7f to background,
+                        0.7f to MaterialTheme.colorScheme.background,
                         1.0f to Color.Transparent,
                         startY = 0.8f,
                     )

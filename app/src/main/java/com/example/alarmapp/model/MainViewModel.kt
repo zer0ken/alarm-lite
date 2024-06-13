@@ -1,7 +1,6 @@
 package com.example.alarmapp.model
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +20,11 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     val filterMap = mutableStateMapOf<String, Filter>()
 
     private val _isSelectMode: MutableState<Boolean> = mutableStateOf(false)
+
+    init {
+        fetchAll()
+    }
+
     var isSelectMode: Boolean
         get() = _isSelectMode.value
         set(value) {
@@ -28,22 +32,28 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         }
 
     fun updateAlarm(alarmState: AlarmState) {
-        if (alarmState.groupName.isNotBlank() && alarmGroupStateMap[alarmState.groupName] == null) {
-            addGroup(alarmState.groupName)
-        }
-
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insert(alarmState)
-            fetchAlarms()
+            _updateAlarm(alarmState)
         }
+    }
+    private suspend fun _updateAlarm(alarmState: AlarmState) {
+        if (alarmState.groupName.isNotBlank() && alarmGroupStateMap[alarmState.groupName] == null) {
+            _addGroup(alarmState.groupName)
+        }
+        repository.insert(alarmState)
+        fetchAlarms()
     }
 
     fun addGroup(name: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _addGroup(name)
+        }
+    }
+
+    private suspend fun _addGroup(name: String) {
         val alarmGroupState = AlarmGroupState(name)
         alarmGroupStateMap[alarmGroupState.groupName] = alarmGroupState
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.insert(alarmGroupState)
-        }
+        repository.insert(alarmGroupState)
     }
 
     fun getAlarmInGroup(groupName: String) =
@@ -61,30 +71,24 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     }
 
     private suspend fun fetchAlarms() {
-        repository.getAlarms().collect {
-            it.forEach {
-                val old = alarmStateMap[it.id]
-                if (old != null) {
-                    it.isSelected = old.isSelected
-                }
-                alarmStateMap[it.id] = it
+        repository.getAlarms().forEach {
+            val old = alarmStateMap[it.id]
+            if (old != null) {
+                it.isSelected = old.isSelected
             }
+            alarmStateMap[it.id] = it
         }
     }
 
     private suspend fun fetchAlarmGroups() {
-        repository.getAlarmGroups().collect {
-            it.forEach {
-                alarmGroupStateMap[it.groupName] = it
-            }
+        repository.getAlarmGroups().forEach {
+            alarmGroupStateMap[it.groupName] = it
         }
     }
 
     private suspend fun fetchFilter() {
-        repository.getFilters().collect {
-            it.forEach {
-                filterMap[it.title] = it
-            }
+        repository.getFilters().forEach {
+            filterMap[it.title] = it
         }
     }
 

@@ -28,10 +28,6 @@ fun MainNaviGraph(navController: NavHostController) {
     val navStoreOwner = rememberViewModelStoreOwner()
     val mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory(LocalContext.current))
 
-    LaunchedEffect(Unit) {
-        mainViewModel.fetchAll()
-    }
-
     NavHost(navController = navController, startDestination = Routes.MainScreen.route) {
         composable(route = Routes.MainScreen.route) {
             MainScreen(navController, mainViewModel)

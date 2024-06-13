@@ -110,6 +110,10 @@ fun UpdateAlarmScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        third.captureFocus()
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -172,7 +176,9 @@ fun UpdateAlarmScreen(
                             state = timePickerState,
                             modifier = Modifier
                                 .focusRequester(first)
-                                .focusProperties { next = third }
+                                .focusProperties {
+                                    next = third
+                                }
                         )
                     }
                 }
@@ -189,7 +195,9 @@ fun UpdateAlarmScreen(
                             state = timePickerState,
                             modifier = Modifier
                                 .focusRequester(second)
-                                .focusProperties { next = third }
+                                .focusProperties {
+                                    next = third
+                                }
                         )
                     }
                 }
@@ -204,7 +212,7 @@ fun UpdateAlarmScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .verticalScroll(scrollState)
-                        .padding(vertical = 22.dp, horizontal = 22.dp)
+                        .padding(vertical = 22.dp)
                         .onFocusChanged {
                             if (it.hasFocus) {
                                 collapse = true
@@ -213,7 +221,7 @@ fun UpdateAlarmScreen(
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp)
                     ) {
                         repeat(7) { idx ->
                             val modifier = if (alarmState.repeatOnWeekdays[idx]) {
@@ -253,8 +261,27 @@ fun UpdateAlarmScreen(
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
                         ),
+                        trailingIcon = {
+                            Icon(
+                                Icons.Filled.Clear,
+                                contentDescription = "이름 제거",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .padding(all = 2.dp)
+                                    .combinedClickable(
+                                        onClick = {
+                                            alarmState.name = ""
+                                        }
+                                    )
+                            )
+                        },
                         modifier = Modifier
+                            .padding(horizontal = 22.dp)
                             .focusRequester(third)
+                            .focusProperties {
+                                previous = first
+                                next = fourth
+                            }
                             .fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -262,7 +289,8 @@ fun UpdateAlarmScreen(
                         expanded = groupNameDropdownExposed,
                         onExpandedChange = {
                             groupNameDropdownExposed = !existingGroups.isEmpty() && it
-                        }
+                        },
+                        modifier = Modifier.padding(horizontal = 22.dp)
                     ) {
                         TextField(
                             value = alarmState.groupName,
@@ -288,6 +316,9 @@ fun UpdateAlarmScreen(
                             ),
                             modifier = Modifier
                                 .focusRequester(fourth)
+                                .focusProperties {
+                                    previous = third
+                                }
                                 .fillMaxWidth()
                                 .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                         )
@@ -314,7 +345,7 @@ fun UpdateAlarmScreen(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp)
+                                .padding(horizontal = 32.dp, vertical = 12.dp)
                         ) {
                             Text(text = "즐겨찾기", fontSize = 17.sp)
                             Switch(
