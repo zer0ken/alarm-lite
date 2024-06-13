@@ -14,6 +14,11 @@ class Repository(private val db: AlarmDatabase) {
     private val alarmGroupDao = db.alarmGroupDao()
     private val filterDao = db.filterDao()
 
+    fun getAlarm(id: Int): Flow<List<AlarmState>> = alarmDao.findById(id)
+        .map { alarms ->
+            alarms.map { alarm -> fromAlarmEntity(alarm) }
+        }
+
     fun getAlarms(): Flow<List<AlarmState>> = alarmDao.getAll()
         .map { alarms ->
             alarms.map { alarm -> fromAlarmEntity(alarm) }
@@ -65,13 +70,28 @@ class Repository(private val db: AlarmDatabase) {
         filterDao.delete(toFilterEntity(filter))
     }
 
-    private fun fromAlarmEntity(value: AlarmEntity): AlarmState {
-        TODO()
-    }
+    private fun fromAlarmEntity(value: AlarmEntity) = AlarmState(
+        id = value.id,
+        hour = value.hour,
+        minute = value.minute,
+        repeatOnWeekdays = value.repeatOnWeekdays,
+        name = value.name,
+        groupName = value.groupName ?: "",
+        isOn = value.isOn,
+        isBookmarked = value.isBookmarked
+    )
 
-    private fun toAlarmEntity(value: AlarmState): AlarmEntity {
-        TODO()
-    }
+
+    private fun toAlarmEntity(value: AlarmState) = AlarmEntity(
+        id = value.id,
+        hour = value.hour,
+        minute = value.minute,
+        repeatOnWeekdays = value.repeatOnWeekdays,
+        name = value.name,
+        groupName = value.groupName.ifBlank { null },
+        isOn = value.isOn,
+        isBookmarked = value.isBookmarked
+    )
 
     private fun fromAlarmGroupEntity(value: AlarmGroupEntity) = AlarmGroupState(
         value.name

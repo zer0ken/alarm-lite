@@ -22,7 +22,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    AlarmAppPrev()
+                    val navController = rememberNavController()
+                    MainNaviGraph(navController = navController)
                 }
             }
         }

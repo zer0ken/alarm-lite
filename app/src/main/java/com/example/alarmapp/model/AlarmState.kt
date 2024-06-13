@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 
 @Stable
 class AlarmState(
+    val id: Int = 0,
     hour: Int = LocalDateTime.now().hour,
     minute: Int = LocalDateTime.now().minute,
     repeatOnWeekdays: MutableList<Boolean> = mutableListOf(
@@ -24,23 +25,23 @@ class AlarmState(
     ),
     name: String = "",
     groupName: String = "",
-    bookmarked: Boolean = false,
+    isBookmarked: Boolean = false,
     isOn: Boolean = true,
     isSelected: Boolean = false
 ) {
-    val id: Int = 0
     var hour by mutableStateOf(hour)
     var minute by mutableStateOf(minute)
     val repeatOnWeekdays = mutableStateListOf<Boolean>().also { it.addAll(repeatOnWeekdays) }
     var name by mutableStateOf(name)
     var groupName by mutableStateOf(groupName)
-    var bookmarked by mutableStateOf(bookmarked)
+    var isBookmarked by mutableStateOf(isBookmarked)
     var isOn by mutableStateOf(isOn)
     var isSelected by mutableStateOf(isSelected)
 }
 
 @Composable
 fun rememberAlarmState(
+    id: Int = 0,
     hour: Int = LocalDateTime.now().hour,
     minute: Int = LocalDateTime.now().minute,
     repeatOnWeekdays: MutableList<Boolean> = mutableListOf(
@@ -54,20 +55,21 @@ fun rememberAlarmState(
     ),
     name: String = "",
     groupName: String = "",
-    bookmarked: Boolean = false,
+    isBookmarked: Boolean = false,
     isOn: Boolean = true,
     isSelected: Boolean = false
 ): AlarmState {
     return remember {
         AlarmState(
-            hour,
-            minute,
-            repeatOnWeekdays,
-            name,
-            groupName,
-            bookmarked,
-            isOn,
-            isSelected
+            id = id,
+            hour = hour,
+            minute = minute,
+            repeatOnWeekdays = repeatOnWeekdays,
+            name = name,
+            groupName = groupName,
+            isBookmarked = isBookmarked,
+            isOn = isOn,
+            isSelected = isSelected
         )
     }
 }

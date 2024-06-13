@@ -44,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,12 +70,15 @@ import com.example.alarmapp.ui.theme.SaturdayBlue
 import com.example.alarmapp.ui.theme.SundayRed
 import com.example.alarmapp.view.CancelSaveBottomBar
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.alarmapp.Routes
+import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdateAlarmScreen(
     navController: NavController,
-    viewModel: MainViewModel,
+    mainViewModel: MainViewModel,
     alarmState: AlarmState = rememberAlarmState()
 ) {
     val timePickerState: TimePickerState = rememberTimePickerState()
@@ -94,16 +98,12 @@ fun UpdateAlarmScreen(
 
     val weekdays = listOf("일", "월", "화", "수", "목", "금", "토")
 
-    val existingGroups = viewModel.alarmGroupStateMap.values
+    val existingGroups = mainViewModel.alarmGroupStateMap.values
 
     LaunchedEffect(scrollState.value) {
         if (scrollState.lastScrolledForward) {
             collapse = true
         }
-    }
-    LaunchedEffect(Unit) {
-        viewModel.fetchAlarms()
-        viewModel.fetchAlarmGroups()
     }
 
     Scaffold(
@@ -135,8 +135,10 @@ fun UpdateAlarmScreen(
         bottomBar = {
             CancelSaveBottomBar {
                 if (it) {
+                    mainViewModel.updateAlarm(alarmState)
+                    navController.navigate(Routes.MainScreen)
                 } else {
-                    TODO("이전 화면으로 돌아가기")
+                    navController.navigate(Routes.MainScreen)
                 }
             }
         }
@@ -262,7 +264,7 @@ fun UpdateAlarmScreen(
                             label = { Text(text = "그룹 이름") },
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Next,
+                                imeAction = ImeAction.Done,
                             ),
                             modifier = Modifier
                                 .focusRequester(fourth)
@@ -285,7 +287,7 @@ fun UpdateAlarmScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { alarmState.bookmarked = !alarmState.bookmarked }
+                            .clickable { alarmState.isBookmarked = !alarmState.isBookmarked }
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -296,8 +298,8 @@ fun UpdateAlarmScreen(
                         ) {
                             Text(text = "즐겨찾기", fontSize = 17.sp)
                             Switch(
-                                checked = alarmState.bookmarked,
-                                onCheckedChange = { alarmState.bookmarked = it },
+                                checked = alarmState.isBookmarked,
+                                onCheckedChange = { alarmState.isBookmarked = it },
                                 modifier = Modifier
                                     .size(10.dp)
                                     .scale(0.6f)

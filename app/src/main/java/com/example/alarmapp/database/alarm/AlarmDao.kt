@@ -13,6 +13,9 @@ interface AlarmDao {
     @Query("select * from alarm")
     fun getAll(): Flow<List<AlarmEntity>>
 
+    @Query("select * from alarm where id=:id")
+    fun findById(id: Int): Flow<List<AlarmEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(alarmEntity: AlarmEntity)
 

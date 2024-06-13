@@ -1,6 +1,5 @@
 package com.example.alarmapp.view
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.alarmapp.R
 
 @Composable
-fun CancelSaveBottomBar(onClick: (Boolean) -> Unit) {
+fun CancelSaveBottomBar(onSave: (Boolean) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -22,7 +21,7 @@ fun CancelSaveBottomBar(onClick: (Boolean) -> Unit) {
             .fillMaxWidth()
     ) {
         TextButton(
-            onClick = { onClick(false) },
+            onClick = { onSave(false) },
             modifier = Modifier
                 .weight(1f)
         ) {
@@ -32,7 +31,7 @@ fun CancelSaveBottomBar(onClick: (Boolean) -> Unit) {
             )
         }
         TextButton(
-            onClick = { onClick(true) },
+            onClick = { onSave(true) },
             modifier = Modifier
                 .weight(1f)
         ) {

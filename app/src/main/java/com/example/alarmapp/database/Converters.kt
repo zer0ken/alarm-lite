@@ -8,14 +8,20 @@ import kotlinx.serialization.json.Json
 
 class Converters {
     @TypeConverter
-    fun fromRepeatFilter(value: RepeatFilter): String = Json.encodeToString(value);
+    fun fromMutableList(value: MutableList<Boolean>): String = Json.encodeToString(value)
 
     @TypeConverter
-    fun toRepeatFilter(value: String): RepeatFilter = Json.decodeFromString(value);
+    fun toMutableList(value: String): MutableList<Boolean> = Json.decodeFromString(value)
 
     @TypeConverter
-    fun fromGroupFilter(value: GroupFilter): String = Json.encodeToString(value);
+    fun fromRepeatFilter(value: RepeatFilter): String = Json.encodeToString(value)
 
     @TypeConverter
-    fun toGroupFilter(value: String): GroupFilter = Json.decodeFromString(value);
+    fun toRepeatFilter(value: String): RepeatFilter = Json.decodeFromString(value)
+
+    @TypeConverter
+    fun fromGroupFilter(value: GroupFilter): String = Json.encodeToString(value)
+
+    @TypeConverter
+    fun toGroupFilter(value: String): GroupFilter = Json.decodeFromString(value)
 }

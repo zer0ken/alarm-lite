@@ -44,7 +44,7 @@ fun MainNaviGraph(navController: NavHostController) {
             }
 
             composable(
-                route = Routes.CreateAlarm.route + "?alarmId={alarmId}",
+                route = Routes.UpdateAlarm.route,
                 arguments = listOf(navArgument("alarmId") { defaultValue = -1 })
             ) {
                 val target = it.arguments?.getInt("alarmId")
