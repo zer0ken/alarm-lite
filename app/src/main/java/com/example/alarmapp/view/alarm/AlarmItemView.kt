@@ -67,7 +67,8 @@ fun AlarmItemView(
                 if (mainViewModel.isSelectMode) {
                     alarm.isSelected = !alarm.isSelected
                 } else {
-                    navController.navigate(Routes.UpdateAlarm.route.format(alarm.id))
+                    navController.navigate(Routes.UpdateAlarm.slottedRoute?.format(alarm.id)
+                        ?: Routes.CreateAlarm.route)
                 }
             },
             onLongClick = {

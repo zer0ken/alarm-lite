@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -43,7 +45,7 @@ fun LazyListScope.groupedAlarmItems(
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
-    alarmGroupStickyHeader(alarmGroup = alarmGroup)
+    alarmGroupStickyHeader(alarmGroup = alarmGroup, navController)
     if (alarmGroup.isFolded) {
         foldedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController)
     } else {
@@ -54,7 +56,8 @@ fun LazyListScope.groupedAlarmItems(
 
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.alarmGroupStickyHeader(
-    alarmGroup: AlarmGroupState
+    alarmGroup: AlarmGroupState,
+    navController: NavController
 ) {
     stickyHeader(key = alarmGroup.groupName) {
         Row(
@@ -63,7 +66,6 @@ fun LazyListScope.alarmGroupStickyHeader(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.verticalGradient(
-                        0.0f to background,
                         0.7f to background,
                         1.0f to Color.Transparent,
                         startY = 0.8f,
@@ -79,7 +81,9 @@ fun LazyListScope.alarmGroupStickyHeader(
                 }
                 .animateItemPlacement(),
         ) {
-            FoldButton(isFolded = alarmGroup.isFolded, onFoldedChange = { alarmGroup.isFolded = it })
+            FoldButton(
+                isFolded = alarmGroup.isFolded,
+                onFoldedChange = { alarmGroup.isFolded = it })
             Text(
                 text = alarmGroup.groupName,
                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -88,8 +92,31 @@ fun LazyListScope.alarmGroupStickyHeader(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            IconToggleButton_(imageVector = Icons.Outlined.Add)
-            IconToggleButton_(imageVector = Icons.Outlined.MoreVert)
+            IconButton(onClick = {
+                navController.navigate(
+                    Routes.CreateAlarmInGroup.slottedRoute!!.format(
+                        alarmGroup.groupName
+                    )
+                )
+            }) {
+                Icon(
+                    Icons.Outlined.Add,
+                    contentDescription = "그룹에 알람 추가",
+                )
+            }
+
+            IconButton(onClick = {
+                navController.navigate(
+                    Routes.CreateAlarmInGroup.slottedRoute!!.format(
+                        alarmGroup.groupName
+                    )
+                )
+            }) {
+                Icon(
+                    Icons.Outlined.MoreVert,
+                    contentDescription = "???",
+                )
+            }
         }
     }
 }
@@ -130,7 +157,7 @@ fun LazyListScope.expandedAlarmGroupItems(
     alarms: List<AlarmState>,
     alarmGroup: AlarmGroupState,
     alarmViewModel: MainViewModel,
-    navController :NavController
+    navController: NavController
 ) {
     items(alarms, key = { it.id }) { alarm ->
         Box(

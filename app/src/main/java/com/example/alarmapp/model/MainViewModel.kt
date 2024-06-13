@@ -12,13 +12,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: Repository) : ViewModel() {
-    private val suspendScope = CoroutineScope(Dispatchers.IO)
-
     val alarmStateMap = mutableStateMapOf<Int, AlarmState>()
     val alarmGroupStateMap = mutableStateMapOf<String, AlarmGroupState>()
     val filterMap = mutableStateMapOf<String, Filter>()
@@ -30,39 +27,46 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             _isSelectMode.value = value
         }
 
-    init {
-        suspendScope.launch {
-            fetchAlarms()
-            fetchAlarmGroups()
-            fetchFilter()
-        }
-    }
-
     fun updateAlarm(alarmState: AlarmState) {
-        suspendScope.launch {
-            if (alarmState.groupName.isNotBlank()) {
-                addGroup(alarmState.groupName)
-            }
-            repository.insert(alarmState)
-            fetchAlarmGroups()
-            fetchAlarms()
+        if (alarmState.groupName.isNotBlank() && alarmGroupStateMap[alarmState.groupName] == null) {
+            addGroup(alarmState.groupName)
+        }
 
-            Log.d("MainViewModel", "created: $alarmState")
-            Log.d("MainViewModel", "alarms: $alarmStateMap")
-            Log.d("MainViewModel", "alarmGroups: $alarmGroupStateMap")
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insert(alarmState)
+            fetchAlarms()
         }
     }
 
     fun addGroup(name: String) {
         val alarmGroupState = AlarmGroupState(name)
         alarmGroupStateMap[alarmGroupState.groupName] = alarmGroupState
-        repository.insert(alarmGroupState)
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.insert(alarmGroupState)
+        }
+    }
+
+    fun getAlarmInGroup(groupName: String) =
+        alarmStateMap.filter { it.value.groupName == groupName }
+
+    fun getSelectedAlarms() =
+        alarmStateMap.filter { it.value.isSelected }
+
+    fun fetchAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            fetchAlarmGroups()
+            fetchAlarms()
+            fetchFilter()
+        }
     }
 
     private suspend fun fetchAlarms() {
         repository.getAlarms().collect {
-            alarmStateMap.clear()
             it.forEach {
+                val old = alarmStateMap[it.id]
+                if (old != null) {
+                    it.isSelected = old.isSelected
+                }
                 alarmStateMap[it.id] = it
             }
         }
@@ -70,7 +74,6 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     private suspend fun fetchAlarmGroups() {
         repository.getAlarmGroups().collect {
-            alarmGroupStateMap.clear()
             it.forEach {
                 alarmGroupStateMap[it.groupName] = it
             }
@@ -79,7 +82,6 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     private suspend fun fetchFilter() {
         repository.getFilters().collect {
-            filterMap.clear()
             it.forEach {
                 filterMap[it.title] = it
             }
@@ -98,6 +100,13 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
                     repository = Repository(AlarmDatabase.getInstance(application as Context))
                 ) as T
             }
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    class Factory(private val context: Context) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            return MainViewModel(Repository(AlarmDatabase.getInstance(context))) as T
         }
     }
 }

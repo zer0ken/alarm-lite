@@ -14,11 +14,6 @@ class Repository(private val db: AlarmDatabase) {
     private val alarmGroupDao = db.alarmGroupDao()
     private val filterDao = db.filterDao()
 
-    fun getAlarm(id: Int): Flow<List<AlarmState>> = alarmDao.findById(id)
-        .map { alarms ->
-            alarms.map { alarm -> fromAlarmEntity(alarm) }
-        }
-
     fun getAlarms(): Flow<List<AlarmState>> = alarmDao.getAll()
         .map { alarms ->
             alarms.map { alarm -> fromAlarmEntity(alarm) }

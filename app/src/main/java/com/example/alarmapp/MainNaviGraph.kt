@@ -1,13 +1,13 @@
 package com.example.alarmapp
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -23,39 +23,48 @@ fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
     return remember(context) { context as ViewModelStoreOwner }
 }
 
-val LocalNavGraphViewModelStoreOwner = staticCompositionLocalOf<ViewModelStoreOwner> {
-    error("Undefined")
-}
-
 @Composable
 fun MainNaviGraph(navController: NavHostController) {
     val navStoreOwner = rememberViewModelStoreOwner()
-    val mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory)
-    CompositionLocalProvider(
-        LocalNavGraphViewModelStoreOwner provides navStoreOwner
-    ) {
-        NavHost(navController = navController, startDestination = Routes.MainScreen.route) {
-            composable(Routes.MainScreen.route) {
-                MainScreen(navController, mainViewModel)
-            }
+    val mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory(LocalContext.current))
 
-            composable(Routes.Setting.route) {
-                SettingScreen()
-            }
+    LaunchedEffect(Unit) {
+        mainViewModel.fetchAll()
+    }
 
-            composable(
-                route = Routes.UpdateAlarm.route,
-                arguments = listOf(navArgument("alarmId") { defaultValue = -1 })
-            ) {
-                val target = it.arguments?.getInt("alarmId")
-                val targetAlarmState = if (target==-1) {
-                    rememberAlarmState()
-                } else{
-                    mainViewModel.alarmStateMap[target] ?: rememberAlarmState()
-                }
-                UpdateAlarmScreen(navController, mainViewModel, targetAlarmState)
-            }
-            // 추가적인 화면 등등
+    NavHost(navController = navController, startDestination = Routes.MainScreen.route) {
+        composable(route = Routes.MainScreen.route) {
+            MainScreen(navController, mainViewModel)
         }
+
+        composable(route = Routes.Setting.route) {
+            SettingScreen()
+        }
+
+        composable(
+            route = Routes.CreateAlarm.route
+        ) {
+            UpdateAlarmScreen(navController, mainViewModel, rememberAlarmState())
+        }
+
+        composable(
+            route = Routes.UpdateAlarm.route,
+            arguments = listOf(navArgument("alarmId") { type = NavType.IntType })
+        ) {
+            val alarmId = it.arguments?.getInt("alarmId")
+            UpdateAlarmScreen(navController, mainViewModel, mainViewModel.alarmStateMap[alarmId]!!)
+        }
+
+        composable(
+            route = Routes.CreateAlarmInGroup.route,
+            arguments = listOf(navArgument("groupName") { type = NavType.StringType })
+        ) {
+            val groupName = it.arguments?.getString("groupName")
+            val alarm = rememberAlarmState()
+            alarm.groupName = groupName!!
+            UpdateAlarmScreen(navController, mainViewModel, alarm)
+        }
+
+        // 추가적인 화면 등등
     }
 }
