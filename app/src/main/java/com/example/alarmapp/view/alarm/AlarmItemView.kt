@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Switch
@@ -39,9 +38,6 @@ import com.example.alarmapp.Routes
 import com.example.alarmapp.model.AlarmGroupState
 import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.MainViewModel
-import com.example.alarmapp.ui.theme.PurpleGrey80
-import com.example.alarmapp.ui.theme.background
-import com.example.alarmapp.ui.theme.surface
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -147,6 +143,16 @@ fun AlarmItemView(
                     text = "${alarm.hour} : ${alarm.minute}",
                     fontSize = timeFontSize
                 )
+                if (alarm.repeatOnWeekdays.any { it }) {
+                    val weekdays = arrayOf("일", "월", "화", "수", "목", "금", "토")
+                    var repeatOn = "반복:"
+                    repeat(7) { idx ->
+                        if (alarm.repeatOnWeekdays[idx]) {
+                            repeatOn += " " + weekdays[idx]
+                        }
+                    }
+                    Text(text = repeatOn, fontSize = contentFontSize)
+                }
             }
             Spacer(modifier = Modifier.weight(weight = 1.0f))
             Switch(
