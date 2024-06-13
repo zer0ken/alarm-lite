@@ -30,55 +30,32 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
-import com.example.alarmapp.alarmdata.Alarm
-import com.example.alarmapp.alarmdata.AlarmGroup
-import com.example.alarmapp.alarmdata.AlarmViewModel
+import com.example.alarmapp.model.AlarmGroupState
+import com.example.alarmapp.model.AlarmState
+import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.ui.theme.background
 import com.example.alarmapp.view.IconToggleButton_
 
-/**
- * LazyColumn 내에서 알람 그룹과 그에 속한 알람을 표시하는 LazyListScope 함수입니다.
- *
- * @param alarms 표시하고자 하는 알람이 담긴 List
- * @param alarmGroup 표시하고자 하는 알람 그룹의 정보
- * @param alarmViewModel AlarmViewModel의 인스턴스
- * @author 이현령
- */
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.groupedAlarmItems(
-    alarms: List<Alarm>,
-    alarmGroup: AlarmGroup,
-    alarmViewModel: AlarmViewModel,
+    alarms: List<AlarmState>,
+    alarmGroup: AlarmGroupState,
+    mainViewModel: MainViewModel,
     navController: NavController
 ) {
-    val alarmGroupState = alarmViewModel.getAlarmGroupState(alarmGroup.groupName)
-
-    alarmGroupStickyHeader(
-        alarmGroup = alarmGroup,
-        alarmViewModel = alarmViewModel
-    )
-    if (alarmGroupState.isFolded) {
-        foldedAlarmGroupItems(alarms, alarmViewModel, navController)
+    alarmGroupStickyHeader(alarmGroup = alarmGroup)
+    if (alarmGroup.isFolded) {
+        foldedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController)
     } else {
-        expandedAlarmGroupItems(alarms, alarmViewModel, navController)
+        expandedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController)
     }
     stickyHeader {}
 }
 
-/**
- * LazyColumn 내에서 알람 그룹의 stickyHeader 내에 들어갈 요소를 표시하는 컴포저블 함수입니다.
- *
- * @param alarmGroup 표시하고자 하는 알람 그룹의 정보
- * @param alarmViewModel AlarmViewModel의 인스턴스
- * @author 이현령
- */
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.alarmGroupStickyHeader(
-    alarmGroup: AlarmGroup,
-    alarmViewModel: AlarmViewModel
+    alarmGroup: AlarmGroupState
 ) {
-    val state = alarmViewModel.getAlarmGroupState(alarmGroup.groupName)
-
     stickyHeader(key = alarmGroup.groupName) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -96,13 +73,13 @@ fun LazyListScope.alarmGroupStickyHeader(
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onTap = {
-                            state.isFolded = !state.isFolded
+                            alarmGroup.isFolded = !alarmGroup.isFolded
                         }
                     )
                 }
                 .animateItemPlacement(),
         ) {
-            FoldButton(isFolded = state.isFolded, onFoldedChange = { state.isFolded = it })
+            FoldButton(isFolded = alarmGroup.isFolded, onFoldedChange = { alarmGroup.isFolded = it })
             Text(
                 text = alarmGroup.groupName,
                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -117,20 +94,14 @@ fun LazyListScope.alarmGroupStickyHeader(
     }
 }
 
-/**
- * LazyColumn 내에서 접힌 그룹을 표시하는 LazyListScope 함수입니다.
- *
- * @param alarms 표시하고자 하는 알람이 담긴 List
- * @param alarmViewModel AlarmViewModel의 인스턴스
- * @author 이현령
- */
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.foldedAlarmGroupItems(
-    alarms: List<Alarm>,
-    alarmViewModel: AlarmViewModel,
+    alarms: List<AlarmState>,
+    groupState: AlarmGroupState,
+    mainViewModel: MainViewModel,
     navController: NavController
 ) {
-    item(key = alarms.hashCode()) {
+    item(key = groupState.groupName.hashCode()) {
         LazyRow(
             contentPadding = PaddingValues(start = 32.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
             modifier = Modifier
@@ -140,13 +111,10 @@ fun LazyListScope.foldedAlarmGroupItems(
             items(alarms, key = { it.id }) { alarm ->
                 AlarmItemView(
                     alarm = alarm,
-                    alarmViewModel = alarmViewModel,
+                    mainViewModel = mainViewModel,
+                    navController = navController,
                     modifier = Modifier.animateItemPlacement()
-                ){
-                    alarmViewModel.editAlarm(alarm)
-                    alarmViewModel.removeAlarm(alarm.id)
-                    navController.navigate(Routes.AddUnitAlarm.route)
-                }
+                )
             }
         }
         Spacer(
@@ -157,17 +125,11 @@ fun LazyListScope.foldedAlarmGroupItems(
     }
 }
 
-/**
- * LazyColumn 내에서 펼져진 그룹을 표시하는 LazyListScope 함수입니다.
- *
- * @param alarms 표시하고자 하는 알람이 담긴 List
- * @param alarmViewModel AlarmViewModel의 인스턴스
- * @author 이현령
- */
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.expandedAlarmGroupItems(
-    alarms: List<Alarm>,
-    alarmViewModel: AlarmViewModel,
+    alarms: List<AlarmState>,
+    alarmGroup: AlarmGroupState,
+    alarmViewModel: MainViewModel,
     navController :NavController
 ) {
     items(alarms, key = { it.id }) { alarm ->
@@ -178,13 +140,11 @@ fun LazyListScope.expandedAlarmGroupItems(
         ) {
             AlarmItemView(
                 alarm = alarm,
-                alarmViewModel = alarmViewModel,
+                alarmGroup = alarmGroup,
+                mainViewModel = alarmViewModel,
+                navController = navController,
                 modifier = Modifier.animateItemPlacement()
-            ){
-                alarmViewModel.editAlarm(alarm)
-                alarmViewModel.removeAlarm(alarm.id)
-                navController.navigate(Routes.AddUnitAlarm.route)
-            }
+            )
         }
     }
     item {
@@ -196,13 +156,6 @@ fun LazyListScope.expandedAlarmGroupItems(
     }
 }
 
-/**
- * 알람 그룹의 접힘 여부를 바꾸는 버튼을 표시하는 컴포저블 함수입니다.
- *
- * @param isFolded 알람 그룹의 접힘 여부
- * @param onFoldedChange 접힘 여부를 바꾸는 콜백 함수
- * @author 이현령
- */
 @Composable
 fun FoldButton(isFolded: Boolean, onFoldedChange: (Boolean) -> Unit) {
     val isExpanded = !isFolded

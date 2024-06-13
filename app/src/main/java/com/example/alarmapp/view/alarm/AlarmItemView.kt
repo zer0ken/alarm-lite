@@ -33,27 +33,21 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.alarmapp.alarmdata.Alarm
-import com.example.alarmapp.alarmdata.AlarmViewModel
+import androidx.navigation.NavController
+import com.example.alarmapp.Routes
+import com.example.alarmapp.model.AlarmGroupState
+import com.example.alarmapp.model.AlarmState
+import com.example.alarmapp.model.MainViewModel
 
-/**
- * 리스트 내에서 알람 하나를 표시하는 컴포저블 함수입니다.
- *
- * @param alarm 표시할 알람 정보
- * @param alarmViewModel AlarmViewModel 인스턴스
- * @author 이현령
- */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlarmItemView(
-    alarm: Alarm,
-    alarmViewModel: AlarmViewModel,
+    alarm: AlarmState,
+    alarmGroup: AlarmGroupState? = null,
+    mainViewModel: MainViewModel,
+    navController: NavController,
     modifier: Modifier,
-    onClick : () -> Unit
 ) {
-    val alarmState = alarmViewModel.getAlarmState(alarm.id)
-    val groupState = alarmViewModel.getAlarmGroupState(alarm.groupName)
-    val setSelected = { isSelected: Boolean -> alarmState.isSelected = isSelected }
 
     var cardShape = CardDefaults.shape
 
@@ -70,16 +64,15 @@ fun AlarmItemView(
         .clip(cardShape)
         .combinedClickable(
             onClick = {
-                if (alarmViewModel.isSelectMode) {
-                    alarmState.isSelected = !alarmState.isSelected
-                }
-                else{
-                    onClick()
+                if (mainViewModel.isSelectMode) {
+                    alarm.isSelected = !alarm.isSelected
+                } else {
+                    navController.navigate(Routes.UpdateAlarm.route.format(alarm.id))
                 }
             },
             onLongClick = {
-                if (!alarmViewModel.isSelectMode) {
-                    alarmViewModel.isSelectMode = true
+                if (!mainViewModel.isSelectMode) {
+                    mainViewModel.isSelectMode = true
                 }
             }
         )
@@ -91,11 +84,11 @@ fun AlarmItemView(
     var contentFontSize: TextUnit
     var timeFontSize: TextUnit
 
-    if (alarmViewModel.isSelectMode && !alarmState.isSelected) {
+    if (mainViewModel.isSelectMode && !alarm.isSelected) {
         cardShape = CardDefaults.outlinedShape
     }
 
-    if (groupState.isFolded) {
+    if (alarmGroup?.isFolded == true) {
         cardModifier = cardModifier
             .height(76.dp)
         rowModifier = rowModifier
@@ -132,8 +125,8 @@ fun AlarmItemView(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            if (alarmViewModel.isSelectMode) {
-                Checkbox(checked = alarmState.isSelected, onCheckedChange = setSelected)
+            if (mainViewModel.isSelectMode) {
+                Checkbox(checked = alarm.isSelected, onCheckedChange = { alarm.isSelected = it })
             } else {
                 Spacer(modifier = Modifier.width(22.dp))
             }

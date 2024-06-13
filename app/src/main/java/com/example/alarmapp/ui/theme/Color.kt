@@ -10,8 +10,11 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val background = Color(0xFFFFFBFE)
-val surface = Color(0xFFFFFBFE)
+val SundayRed = Color(0xFFC22055)
+val SaturdayBlue = Color(0xFF376EFC)
+
+val background = Color(0xFFE9E9E9)
+val surface = Color(0xFFD8C7D4)
 val onPrimary = Color.White
 val onSecondary = Color.White
 val onTertiary = Color.White

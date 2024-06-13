@@ -10,32 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
-import com.example.alarmapp.alarmdata.Alarm
-import com.example.alarmapp.alarmdata.AlarmGroup
-import com.example.alarmapp.alarmdata.AlarmViewModel
+import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.ui.theme.background
 
-/**
- * 알람 목록을 표시하는 컴포저블 함수입니다.
- *
- * 내부에 개별 알람 뿐만 아니라 알람 그룹 또한 표시해야 하므로 이에 대한 표시 방식도 이 함수에서 정의됩니다.
- *
- * @param alarms 표시하고자 하는 알람이 담긴 List
- * @param alarmGroups 알람 그룹의 이름과 알람 그룹 객체를 대응시키는 Map
- * @author 이현령
- */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlarmListView(
-    alarms: List<Alarm>,
-    alarmGroups: Map<String, AlarmGroup>,
-    innerPadding : PaddingValues,
     navController: NavController,
-    alarmViewModel: AlarmViewModel
+    mainViewModel: MainViewModel,
+    innerPadding : PaddingValues
 ) {
     val lazyListState = rememberLazyListState()
-
-    //val alarmViewModel: AlarmViewModel = viewModel()
 
     LazyColumn(
         state = lazyListState,
@@ -45,31 +30,27 @@ fun AlarmListView(
             .background(color = background)
     ) {
         val insertedGroup = LinkedHashSet<String>()
-        for (alarm in alarms) {
+        for (alarm in mainViewModel.alarmStateMap.values) {
             if (
                 alarm.groupName != "" &&
-                alarmGroups[alarm.groupName] != null &&
+                mainViewModel.alarmGroupStateMap[alarm.groupName] != null &&
                 !insertedGroup.contains(alarm.groupName)
             ) {
                 insertedGroup.add(alarm.groupName)
                 groupedAlarmItems(
-                    alarms = alarms.filter { it.groupName == alarm.groupName },
-                    alarmGroup = alarmGroups[alarm.groupName]!!,
-                    alarmViewModel = alarmViewModel,
+                    alarms = mainViewModel.alarmStateMap.values.filter { it.groupName == alarm.groupName },
+                    alarmGroup = mainViewModel.alarmGroupStateMap[alarm.groupName]!!,
+                    mainViewModel = mainViewModel,
                     navController = navController
                 )
             } else if (!insertedGroup.contains(alarm.groupName)) {
                 item(key = alarm.id) {
                     AlarmItemView(
                         alarm = alarm,
-                        alarmViewModel = alarmViewModel,
+                        mainViewModel = mainViewModel,
+                        navController = navController,
                         modifier = Modifier.animateItemPlacement()
-                    ){
-                        alarmViewModel.editAlarm(alarm)
-                        alarmViewModel.removeAlarm(alarm.id)
-                        navController.navigate(Routes.AddUnitAlarm.route)
-                        alarmViewModel.flag=2
-                    }
+                    )
                 }
             }
         }

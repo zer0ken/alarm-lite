@@ -1,8 +1,8 @@
 package com.example.alarmapp.database
 
 import androidx.room.TypeConverter
-import com.example.alarmapp.filter.GroupFilter
-import com.example.alarmapp.filter.RepeatFilter
+import com.example.alarmapp.model.GroupFilter
+import com.example.alarmapp.model.RepeatFilter
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

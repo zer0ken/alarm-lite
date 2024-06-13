@@ -1,11 +1,11 @@
 package com.example.alarmapp.database
 
-import com.example.alarmapp.alarmdata.Alarm
-import com.example.alarmapp.alarmdata.AlarmGroup
 import com.example.alarmapp.database.alarm.AlarmEntity
 import com.example.alarmapp.database.alarmgroup.AlarmGroupEntity
 import com.example.alarmapp.database.filter.FilterEntity
-import com.example.alarmapp.filter.FilterSet
+import com.example.alarmapp.model.AlarmGroupState
+import com.example.alarmapp.model.AlarmState
+import com.example.alarmapp.model.Filter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -14,80 +14,80 @@ class Repository(private val db: AlarmDatabase) {
     private val alarmGroupDao = db.alarmGroupDao()
     private val filterDao = db.filterDao()
 
-    fun getAlarms(): Flow<List<Alarm>> = alarmDao.getAll()
+    fun getAlarms(): Flow<List<AlarmState>> = alarmDao.getAll()
         .map { alarms ->
             alarms.map { alarm -> fromAlarmEntity(alarm) }
         }
 
-    fun getAlarmGroups(): Flow<List<AlarmGroup>> = alarmGroupDao.getAll()
+    fun getAlarmGroups(): Flow<List<AlarmGroupState>> = alarmGroupDao.getAll()
         .map { alarmGroups ->
             alarmGroups.map { alarmGroup -> fromAlarmGroupEntity(alarmGroup) }
         }
 
-    fun getFilters(): Flow<List<FilterSet>> = filterDao.getAll()
+    fun getFilters(): Flow<List<Filter>> = filterDao.getAll()
         .map { filters ->
             filters.map { filter -> fromFilterEntity(filter) }
         }
 
-    fun insert(alarm: Alarm) {
+    fun insert(alarm: AlarmState) {
         alarmDao.insert(toAlarmEntity(alarm))
     }
 
-    fun insert(alarmGroup: AlarmGroup) {
+    fun insert(alarmGroup: AlarmGroupState) {
         alarmGroupDao.insert(toAlarmGroupEntity(alarmGroup))
     }
 
-    fun insert(filter: FilterSet) {
+    fun insert(filter: Filter) {
         filterDao.insert(toFilterEntity(filter))
     }
 
-    fun update(alarm: Alarm) {
+    fun update(alarm: AlarmState) {
         alarmDao.update(toAlarmEntity(alarm))
     }
 
-    fun update(alarmGroup: AlarmGroup) {
+    fun update(alarmGroup: AlarmGroupState) {
         alarmGroupDao.update(toAlarmGroupEntity(alarmGroup))
     }
 
-    fun update(filter: FilterSet) {
+    fun update(filter: Filter) {
         filterDao.update(toFilterEntity(filter))
     }
 
-    fun delete(alarm: Alarm) {
+    fun delete(alarm: AlarmState) {
         alarmDao.delete(toAlarmEntity(alarm))
     }
 
-    fun delete(alarmGroup: AlarmGroup) {
+    fun delete(alarmGroup: AlarmGroupState) {
         alarmGroupDao.delete(toAlarmGroupEntity(alarmGroup))
     }
 
-    fun delete(filter: FilterSet) {
+    fun delete(filter: Filter) {
         filterDao.delete(toFilterEntity(filter))
     }
 
-    private fun fromAlarmEntity(value: AlarmEntity): Alarm {
+    private fun fromAlarmEntity(value: AlarmEntity): AlarmState {
         TODO()
     }
 
-    private fun toAlarmEntity(value: Alarm): AlarmEntity {
+    private fun toAlarmEntity(value: AlarmState): AlarmEntity {
         TODO()
     }
 
-    private fun fromAlarmGroupEntity(value: AlarmGroupEntity) = AlarmGroup(
+    private fun fromAlarmGroupEntity(value: AlarmGroupEntity) = AlarmGroupState(
         value.name
     )
 
-    private fun toAlarmGroupEntity(value: AlarmGroup) = AlarmGroupEntity(
+    private fun toAlarmGroupEntity(value: AlarmGroupState) = AlarmGroupEntity(
         value.groupName
     )
 
-    private fun fromFilterEntity(value: FilterEntity) = FilterSet(
+    private fun fromFilterEntity(value: FilterEntity) = Filter(
         value.name,
         value.repeatFilter,
         value.groupFilter
     )
 
-    private fun toFilterEntity(value: FilterSet) = FilterEntity(
+    private fun toFilterEntity(value: Filter) = FilterEntity(
         value.title,
         value.repeatFilter,
         value.groupFilter
