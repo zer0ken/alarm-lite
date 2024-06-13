@@ -1,5 +1,6 @@
 package com.example.alarmapp.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -50,6 +50,8 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     val sortList = listOf<String>("정렬 방식 1", "정렬 2", "정렬 방식 3") //시스템에서 설정된 정렬 방식으로 정렬 진행
     var selectedSort by remember { mutableStateOf(sortList[0]) }
     var menuExpanded by remember { mutableStateOf(false) }
+
+    BackHandler(mainViewModel.isSelectMode) { mainViewModel.isSelectMode = false }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
