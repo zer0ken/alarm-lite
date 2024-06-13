@@ -152,7 +152,10 @@ fun AlarmItemView(
             Switch(
                 checked = alarm.isOn,
                 modifier = switchModifier,
-                onCheckedChange = { /*TODO*/ }
+                onCheckedChange = {
+                    alarm.isOn = it
+                    mainViewModel.updateAlarm(alarm)
+                }
             )
         }
     }

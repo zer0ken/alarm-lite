@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.example.alarmapp.R
 
 @Composable
-fun BasicBottomBar() {
+fun DefaultBottomBar() {
     var isFilterSetMenuExpanded by remember { mutableStateOf(false) }
 
     BottomAppBar {

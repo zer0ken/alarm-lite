@@ -18,7 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun MultiSelectBottomBar() {
+fun EditBottomBar() {
     val buttonOnOff by remember { mutableStateOf(false) }
     val textOnOff = if (!buttonOnOff) "끄기" else "켜기"
 

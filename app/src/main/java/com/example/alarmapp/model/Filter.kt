@@ -10,9 +10,7 @@ data class Filter(
 )
 
 data class RepeatFilter(
-    val week: List<DayOfWeek>? = null,
-    val month: List<Int>? = null,
-    val year: List<MonthDay>? = null
+    val week: List<DayOfWeek>? = null
 )
 
 data class GroupFilter(

@@ -40,6 +40,8 @@ import com.example.alarmapp.R
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.alarm.AlarmListView
+import com.example.alarmapp.view.bottomBar.DefaultBottomBar
+import com.example.alarmapp.view.bottomBar.EditBottomBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -141,6 +143,13 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 scrollBehavior = scrollBehavior
             )
         },
+        bottomBar = {
+            if (mainViewModel.isSelectMode) {
+                EditBottomBar()
+            } else {
+                DefaultBottomBar()
+            }
+        }
     ) { innerPadding ->
         AlarmListView(navController, mainViewModel, innerPadding)
     }
