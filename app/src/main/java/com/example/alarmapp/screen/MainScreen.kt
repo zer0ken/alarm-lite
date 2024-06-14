@@ -60,6 +60,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
 
+@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
@@ -102,14 +103,14 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 SATURDAY -> 6
                 SUNDAY -> 0
             }
-            if(alarms[0].repeatOnWeekdays.contains(true)){ //반복 없는 단발성 알람, 현재 시간 이전의 알람은 안 만들어진다는 가정 하에
-                var diff =0;
-                var realDay = day // 요일 의미
+            if(alarms[0].repeatOnWeekdays.contains(true)){ //반복 없는 단발성 알람의 조건에서 현재 시간 이전의 알람은 안 만들어진다는 가정 하에
+                var diff =0
+                var realDay: Int
                 for (i in day until day+7){
                     realDay = i % 7
                     if(alarms[0].repeatOnWeekdays[realDay]){
                         diff = abs(i- day)
-                        break;
+                        break
                     }
                 }
                 if (diff ==0) {
