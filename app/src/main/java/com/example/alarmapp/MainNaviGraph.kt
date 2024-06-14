@@ -16,6 +16,10 @@ import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
 import com.example.alarmapp.screen.SettingScreen
 import com.example.alarmapp.screen.UpdateAlarmScreen
+import com.example.alarmapp.screen.filterscreens.GroupFilterLabel
+import com.example.alarmapp.screen.filterscreens.RepeatFilterLabel
+import com.example.alarmapplication.AddFilterSetScreen
+import com.example.alarmapplication.FilterSetListScreen
 
 @Composable
 fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
@@ -61,6 +65,18 @@ fun MainNaviGraph(navController: NavHostController) {
             UpdateAlarmScreen(navController, mainViewModel, alarm)
         }
 
+        composable(Routes.FilterSetListScreen.route) {
+            FilterSetListScreen(navController, mainViewModel)
+        }
+        composable(Routes.AddFilterSetScreen.route) {
+            AddFilterSetScreen(navController, mainViewModel)
+        }
+        composable(Routes.RepeatFilterLabel.route) {
+            RepeatFilterLabel(navController, mainViewModel)
+        }
+        composable(Routes.GroupFilterLabel.route) {
+            GroupFilterLabel(mainViewModel)
+        }
         // 추가적인 화면 등등
     }
 }

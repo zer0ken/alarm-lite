@@ -2,8 +2,11 @@ package com.example.alarmapp.model
 
 import android.content.Context
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -12,7 +15,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 
 class MainViewModel(private val repository: Repository) : ViewModel() {
     val alarmStateMap = mutableStateMapOf<Int, AlarmState>()
@@ -112,6 +118,51 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return MainViewModel(Repository(AlarmDatabase.getInstance(context))) as T
+        }
+    }
+
+    private var _AlarmGroupList = MutableStateFlow<List<AlarmGroupState>>(emptyList())
+    val AlarmGroupList = _AlarmGroupList.asStateFlow()
+
+    val definedRepeatFilters: List<DayOfWeek> = listOf(
+        DayOfWeek.MONDAY,
+        DayOfWeek.TUESDAY,
+        DayOfWeek.WEDNESDAY,
+        DayOfWeek.THURSDAY,
+        DayOfWeek.FRIDAY,
+        DayOfWeek.SATURDAY,
+        DayOfWeek.SUNDAY
+    )
+
+    private val _selectedRepeatFilters = MutableLiveData<List<String>>(emptyList())
+    val selectedRepeatFilters: LiveData<List<String>> get() = _selectedRepeatFilters
+
+    fun setSelectedRepeatFilters(filters: List<String>) {
+        _selectedRepeatFilters.value = filters
+    }
+
+    fun getSelectedRepeatFilters(): List<String> {
+        return _selectedRepeatFilters.value ?: emptyList()
+    }
+
+    val selectedGroupFilters = mutableStateListOf<String>()
+    val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
+
+    var filterSetName = mutableStateOf("")
+    val filterSetRepeatFilter = mutableStateOf<RepeatFilter?>(null)
+    var filterSetGroupFilter = mutableStateOf<GroupFilter?>(null)
+
+    fun deleteFilter(filter: Filter){
+        viewModelScope.launch {
+            repository.delete(filter)
+//            getFilters()
+        }
+    }
+
+    fun insertFilter(filter: Filter){
+        viewModelScope.launch {
+            repository.insert(filter)
+//            getFilters()
         }
     }
 }

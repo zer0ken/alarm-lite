@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,17 +26,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.alarmapp.Routes
+import com.example.alarmapp.model.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterSetListScreen() {
+fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewModel) {
 
-    val filterSetList = listOf(1, 2, 3) // // List<FilterSet> 불러오기
+    val filterMap = remember {
+        mainViewModel.filterMap.values.toList()
+    }
 
     Scaffold(
         topBar = {
@@ -49,7 +56,7 @@ fun FilterSetListScreen() {
                     ) {
                         Text(
                             text = "필터 셋 목록",
-                            fontSize = 32.sp,
+//                            fontSize = 32.sp,
                             fontWeight = FontWeight(800)
                         )
 
@@ -75,14 +82,14 @@ fun FilterSetListScreen() {
                 .padding(it)
         ) {
             LazyColumn {
-                items(filterSetList) {
+                items(filterMap) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp)
                             .height(66.dp)
                             .clickable {
-                                /* 선택한 필터 셋 편집 화면으로 이동*/
+
                             }
                     ) {
                         Row(
@@ -90,12 +97,12 @@ fun FilterSetListScreen() {
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = it.toString(),
+                                text = it.title,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight(700)
                             )
                             Spacer(modifier = Modifier.weight(1f))
-                            IconButton(onClick = { /* 필터 셋 데이터베이스에서 삭제 */ }) {
+                            IconButton(onClick = { mainViewModel.deleteFilter(it) }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "delete",
@@ -107,6 +114,14 @@ fun FilterSetListScreen() {
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                 }
+            }
+            Button(
+                onClick = { navController.navigate(Routes.AddFilterSetScreen.route) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
+            ) {
+                Text(text = "필터 셋 추가")
             }
         }
     }
