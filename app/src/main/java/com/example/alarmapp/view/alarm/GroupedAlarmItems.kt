@@ -17,8 +17,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,7 +53,7 @@ fun LazyListScope.groupedAlarmItems(
     mainViewModel: MainViewModel,
     navController: NavController
 ) {
-    alarmGroupStickyHeader(alarmGroup = alarmGroup, navController)
+    alarmGroupStickyHeader(alarmGroup = alarmGroup, mainViewModel, navController)
     if (alarmGroup.isFolded) {
         foldedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController)
     } else {
@@ -63,12 +65,16 @@ fun LazyListScope.groupedAlarmItems(
 @OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.alarmGroupStickyHeader(
     alarmGroup: AlarmGroupState,
+    mainViewModel: MainViewModel,
     navController: NavController
 ) {
     stickyHeader(key = alarmGroup.groupName) {
         var menuExpanded by remember {
             mutableStateOf(false)
         }
+
+        val alarmInGroup = mainViewModel.getAlarmInGroup(alarmGroup.groupName).values
+        val containsOnAlarm = alarmInGroup.any { it.isOn }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -126,6 +132,16 @@ fun LazyListScope.alarmGroupStickyHeader(
                     onDismissRequest = { menuExpanded = false },
 
                     ) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = if (containsOnAlarm) "알람 모두 끄기" else "알람 모두 켜기")
+                        },
+                        onClick = {
+                            alarmInGroup.map { it.isOn = !containsOnAlarm }
+                        })
+
+                    HorizontalDivider()
+
                     DropdownMenuItem(
                         text = {
                             Text(text = "그룹 이름 변경")

@@ -44,6 +44,22 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         fetchAlarms()
     }
 
+    fun updateAlarms(alarmStates: List<AlarmState>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _updateAlarms(alarmStates)
+        }
+    }
+
+    private suspend fun _updateAlarms(alarmStates: List<AlarmState>) {
+        alarmStates.forEach {
+            if (it.groupName.isNotBlank() && alarmGroupStateMap[it.groupName] == null) {
+                _addGroup(it.groupName)
+            }
+            repository.insert(it)
+        }
+        fetchAlarms()
+    }
+
     fun addGroup(name: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _addGroup(name)
