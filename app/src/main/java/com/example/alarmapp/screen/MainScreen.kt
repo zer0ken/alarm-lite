@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,7 +59,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
-import kotlin.math.ceil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,7 +68,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     var selectedSort by remember { mutableStateOf(sortList[0]) }
     var menuExpanded by remember { mutableStateOf(false) }
 
-    val alarms = remember {mainViewModel.alarmStateMap.values.toList()}
+    val alarms = mainViewModel.alarmStateMap.values.toList() //remember쓰면 희한하게 안됨 이유는 모르겠음.
+    LaunchedEffect(Unit){ mainViewModel.fetchAll() }
+
     var firstText by remember { mutableStateOf("") }
     var secondText by remember { mutableStateOf("") }
     if (alarms.isEmpty()) {
@@ -81,7 +83,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             secondText = "알람을 켜주세요"
         }
         else{
-            val currentTime = remember {LocalDateTime.now().plusHours(9) }
+            val currentTime = remember {LocalDateTime.now() }
             var alarmTime =  remember {
                 LocalDateTime.of(
                     currentTime.year,
@@ -122,14 +124,16 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             val duration = java.time.Duration.between(currentTime,alarmTime)
             val hoursDifference = duration.toHours()
             val minutesDifference = duration.toMinutes()
-            if(hoursDifference >= 24){
-                firstText = "${ceil(hoursDifference.toDouble()/ 24).toInt()}일 후에 알람이 울립니다"
+            if(minutesDifference >= 24*60){
+                var temp = (7 + alarmTime.dayOfWeek.value - currentTime.dayOfWeek.value) % 7
+                if(temp ==0){ temp += 7 }
+                firstText = "${temp}일 후에 알람이 울립니다"
             }
             else{
                 firstText = "${hoursDifference}시간 ${(minutesDifference+1)%60}분 후에 알람이 울립니다"
             }
             val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.forLanguageTag("ko"))
-            secondText = "${alarmTime.format(formatter)} ${alarms[0].hour}:${alarms[0].minute}"
+            secondText = "${alarmTime.format(formatter)} ${alarmTime.hour}:${alarmTime.minute}"
         }
     }
 
