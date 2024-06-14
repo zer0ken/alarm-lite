@@ -17,11 +17,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -36,7 +42,6 @@ import com.example.alarmapp.Routes
 import com.example.alarmapp.model.AlarmGroupState
 import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.MainViewModel
-import com.example.alarmapp.ui.theme.background
 import com.example.alarmapp.view.IconToggleButton_
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -61,6 +66,10 @@ fun LazyListScope.alarmGroupStickyHeader(
     navController: NavController
 ) {
     stickyHeader(key = alarmGroup.groupName) {
+        var menuExpanded by remember {
+            mutableStateOf(false)
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -105,18 +114,29 @@ fun LazyListScope.alarmGroupStickyHeader(
                     contentDescription = "그룹에 알람 추가",
                 )
             }
-
-            IconButton(onClick = {
-                navController.navigate(
-                    Routes.CreateAlarmInGroup.slottedRoute!!.format(
-                        alarmGroup.groupName
+            Box {
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(
+                        Icons.Outlined.MoreVert,
+                        contentDescription = "그룹 메뉴",
                     )
-                )
-            }) {
-                Icon(
-                    Icons.Outlined.MoreVert,
-                    contentDescription = "???",
-                )
+                }
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false },
+
+                    ) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "그룹 이름 변경")
+                        },
+                        onClick = { /*TODO*/ })
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "그룹 해체")
+                        },
+                        onClick = { /*TODO*/ })
+                }
             }
         }
     }
