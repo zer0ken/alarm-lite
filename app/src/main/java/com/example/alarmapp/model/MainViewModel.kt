@@ -92,21 +92,6 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(
-                modelClass: Class<T>,
-                extras: CreationExtras
-            ): T {
-                val application = checkNotNull(extras[APPLICATION_KEY])
-                return MainViewModel(
-                    repository = Repository(AlarmDatabase.getInstance(application as Context))
-                ) as T
-            }
-        }
-    }
-
     @Suppress("UNCHECKED_CAST")
     class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {

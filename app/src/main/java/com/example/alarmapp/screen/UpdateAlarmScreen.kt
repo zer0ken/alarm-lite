@@ -364,13 +364,3 @@ fun UpdateAlarmScreen(
         }
     }
 }
-
-@Preview
-@Composable
-private fun UpdateAlarmScreenPreview() {
-    val navController = rememberNavController()
-    val alarmViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory)
-    alarmViewModel.addGroup("test")
-
-    UpdateAlarmScreen(navController, alarmViewModel)
-}
