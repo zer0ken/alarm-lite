@@ -1,6 +1,9 @@
 package com.example.alarmapp.screen
 
+import android.Manifest
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,26 +51,25 @@ import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.alarm.AlarmListView
 import com.example.alarmapp.view.bottomBar.DefaultBottomBar
 import com.example.alarmapp.view.bottomBar.EditBottomBar
-import java.time.DayOfWeek.FRIDAY
-import java.time.DayOfWeek.MONDAY
-import java.time.DayOfWeek.SATURDAY
-import java.time.DayOfWeek.SUNDAY
-import java.time.DayOfWeek.THURSDAY
-import java.time.DayOfWeek.TUESDAY
-import java.time.DayOfWeek.WEDNESDAY
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-import kotlin.math.abs
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val sortList = listOf<String>("정렬 방식 1", "정렬 2", "정렬 방식 3")
     var selectedSort by remember { mutableStateOf(sortList[0]) }
     var menuExpanded by remember { mutableStateOf(false) }
+
+    val postNotificationPermission=
+        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
+
+    LaunchedEffect(true){
+        if(!postNotificationPermission.status.isGranted){
+            postNotificationPermission.launchPermissionRequest()
+        }
+    }
 
     val alarms = mainViewModel.alarmStateMap.values.toList() //remember쓰면 희한하게 안됨 이유는 모르겠음.
     LaunchedEffect(Unit){ mainViewModel.fetchAll() }

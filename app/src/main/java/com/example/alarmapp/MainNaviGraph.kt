@@ -1,7 +1,9 @@
 package com.example.alarmapp
 
+import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelStoreOwner
@@ -11,6 +13,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
@@ -23,13 +26,23 @@ fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
     return remember(context) { context as ViewModelStoreOwner }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainNaviGraph(navController: NavHostController) {
     val navStoreOwner = rememberViewModelStoreOwner()
-    val mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory(LocalContext.current))
+    val mainViewModel: MainViewModel =
+        viewModel(factory = MainViewModel.Factory(LocalContext.current))
 
     NavHost(navController = navController, startDestination = Routes.MainScreen.route) {
-        composable(route = Routes.MainScreen.route) {
+        composable(
+            route = Routes.MainScreen.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "myapp://main_screen"
+                    action = Intent.ACTION_VIEW
+                }
+            )
+        ) {
             MainScreen(navController, mainViewModel)
         }
 

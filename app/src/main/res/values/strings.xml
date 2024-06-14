@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AlarmApp</string>
+    <string name="app_name">Alarm-lite</string>
     <string name="group">그룹</string>
     <string name="select_group">그룹 지정</string>
     <string name="cancel">취소</string>

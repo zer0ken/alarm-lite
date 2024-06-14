@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -14,22 +15,25 @@ import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel(private val repository: Repository) : ViewModel() {
+class MainViewModel(context: Context) : ViewModel() {
+    private val repository = Repository(AlarmDatabase.getInstance(context = context))
+
     val alarmStateMap = mutableStateMapOf<Int, AlarmState>()
     val alarmGroupStateMap = mutableStateMapOf<String, AlarmGroupState>()
     val filterMap = mutableStateMapOf<String, Filter>()
 
     private val _isSelectMode: MutableState<Boolean> = mutableStateOf(false)
-
-    init {
-        fetchAll()
-    }
-
     var isSelectMode: Boolean
         get() = _isSelectMode.value
         set(value) {
             _isSelectMode.value = value
         }
+
+    private val scheduler = MainAlarmScheduler(context)
+
+    init {
+        fetchAll()
+    }
 
     fun updateAlarm(alarmState: AlarmState) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -40,6 +44,12 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         if (alarmState.groupName.isNotBlank() && alarmGroupStateMap[alarmState.groupName] == null) {
             _addGroup(alarmState.groupName)
         }
+        if (!alarmState.isOn) {
+            scheduler.cancel(alarmState)
+        } else {
+            scheduler.schedule(alarmState)
+        }
+
         repository.insert(alarmState)
         fetchAlarms()
     }
@@ -54,6 +64,10 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         alarmStates.forEach {
             if (it.groupName.isNotBlank() && alarmGroupStateMap[it.groupName] == null) {
                 _addGroup(it.groupName)
+            }
+            scheduler.cancel(it)
+            if (it.isOn) {
+                scheduler.schedule(it)
             }
             repository.insert(it)
         }
@@ -111,7 +125,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     @Suppress("UNCHECKED_CAST")
     class Factory(private val context: Context) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return MainViewModel(Repository(AlarmDatabase.getInstance(context))) as T
+            return MainViewModel(context) as T
         }
     }
 }
