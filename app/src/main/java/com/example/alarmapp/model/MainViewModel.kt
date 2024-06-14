@@ -5,18 +5,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 
@@ -121,9 +115,6 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    private var _AlarmGroupList = MutableStateFlow<List<AlarmGroupState>>(emptyList())
-    val AlarmGroupList = _AlarmGroupList.asStateFlow()
-
     val definedRepeatFilters: List<DayOfWeek> = listOf(
         DayOfWeek.MONDAY,
         DayOfWeek.TUESDAY,
@@ -134,15 +125,15 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         DayOfWeek.SUNDAY
     )
 
-    private val _selectedRepeatFilters = MutableLiveData<List<String>>(emptyList())
-    val selectedRepeatFilters: LiveData<List<String>> get() = _selectedRepeatFilters
+    private val _selectedRepeatFilters = mutableStateOf<List<String>>(emptyList())
+    val selectedRepeatFilters: List<String> get() = _selectedRepeatFilters.value
 
     fun setSelectedRepeatFilters(filters: List<String>) {
         _selectedRepeatFilters.value = filters
     }
 
     fun getSelectedRepeatFilters(): List<String> {
-        return _selectedRepeatFilters.value ?: emptyList()
+        return _selectedRepeatFilters.value
     }
 
     val selectedGroupFilters = mutableStateListOf<String>()

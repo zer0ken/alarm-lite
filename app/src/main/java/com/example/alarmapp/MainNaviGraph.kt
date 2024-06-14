@@ -75,7 +75,7 @@ fun MainNaviGraph(navController: NavHostController) {
             RepeatFilterLabel(navController, mainViewModel)
         }
         composable(Routes.GroupFilterLabel.route) {
-            GroupFilterLabel(mainViewModel)
+            GroupFilterLabel(navController, mainViewModel)
         }
         // 추가적인 화면 등등
     }

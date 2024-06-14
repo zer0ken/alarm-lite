@@ -1,7 +1,6 @@
 package com.example.alarmapplication
 
 import android.util.Log
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,19 +15,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,9 +38,9 @@ import androidx.navigation.NavController
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.Filter
 import com.example.alarmapp.model.MainViewModel
+import com.example.alarmapp.view.FilterTopAppBar
 import java.time.DayOfWeek
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewModel) {
 
@@ -56,56 +51,31 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
     var filterSetRepeatFilter by mainViewModel.filterSetRepeatFilter
     var filterSetGroupFilter by mainViewModel.filterSetGroupFilter
 
-    fun clearFilter(){
+    fun clearFilterSet(){
         filterSetName = ""
         filterSetRepeatFilter = null
         filterSetGroupFilter = null
     }
+
     Log.d("test1", filterSetName)
     Log.d("test2", filterSetRepeatFilter.toString())
     Log.d("test3", filterSetGroupFilter.toString())
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
-//                    .padding(vertical = 10.dp),
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "필터 셋 작성",
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight(800)
+            FilterTopAppBar("필터 셋 작성") {
+                if (it) {
+                    mainViewModel.insertFilter(
+                        Filter(
+                            title = filterSetName,
+                            repeatFilter = filterSetRepeatFilter,
+                            groupFilter = filterSetGroupFilter
                         )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowLeft,
-                            contentDescription = "",
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
-                },
-                actions = {
-                    TextButton(onClick = {
-                        mainViewModel.insertFilter(
-                            Filter(
-                                title = filterSetName,
-                                repeatFilter = filterSetRepeatFilter,
-                                groupFilter = filterSetGroupFilter
-                            )
-                        )
-                        clearFilter()
-                    }) {
-                        Text(text = "저장")
-                    }
+                    )
                 }
-            )
+                clearFilterSet()
+                navController.navigate(Routes.FilterSetListScreen.route)
+            }
         }
     ) { PaddingValues ->
         Column(
