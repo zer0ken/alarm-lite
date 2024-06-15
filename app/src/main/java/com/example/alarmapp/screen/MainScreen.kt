@@ -54,15 +54,12 @@ import com.example.alarmapp.view.bottomBar.EditBottomBar
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
-@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
 @Composable
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     val scrollBehavior =
@@ -91,7 +88,6 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             alarms.sortedWith(AlarmComparator.relative)
         }
     }
-
     var firstText by remember { mutableStateOf("") }
     var secondText by remember { mutableStateOf("") }
     if (alarms.isEmpty()) {
@@ -104,46 +100,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             secondText = "알람을 켜주세요"
         } else {
             val currentTime = remember { LocalDateTime.now() }
-            var alarmTime = remember {
-                LocalDateTime.of(
-                    currentTime.year,
-                    currentTime.month,
-                    currentTime.dayOfMonth,
-                    alarms[0].hour,
-                    alarms[0].minute
-                )
-            }
-            val day = when (currentTime.dayOfWeek) {
-                DayOfWeek.MONDAY -> 1
-                DayOfWeek.TUESDAY -> 2
-                DayOfWeek.WEDNESDAY -> 3
-                DayOfWeek.THURSDAY -> 4
-                DayOfWeek.FRIDAY -> 5
-                DayOfWeek.SATURDAY -> 6
-                DayOfWeek.SUNDAY -> 0
-            }
-            if (alarms[0].repeatOnWeekdays.contains(true)) {
-                var diff = 0
-                var realDay: Int
-                for (i in day until day + 7) {
-                    realDay = i % 7
-                    if (alarms[0].repeatOnWeekdays[realDay]) {
-                        diff = abs(i - day)
-                        break
-                    }
-                }
-                if (diff == 0) {
-                    if (alarmTime.isBefore(currentTime)) {
-                        alarmTime = alarmTime.plusDays(7)
-                    }
-                } else {
-                    alarmTime = alarmTime.plusDays(diff.toLong())
-                }
-            }
-            else{
-                if(alarmTime.isBefore(currentTime))
-                    alarmTime = alarmTime.plusDays(1)
-            }
+            val alarmTime = alarms[0].getNextRingTime()
             val duration = java.time.Duration.between(currentTime, alarmTime)
             val hoursDifference = duration.toHours()
             val minutesDifference = duration.toMinutes()
@@ -154,7 +111,11 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 }
                 firstText = "${temp}일 후에 알람이 울립니다"
             } else {
-                firstText = "${hoursDifference}시간 ${(minutesDifference + 1) % 60}분 후에 알람이 울립니다"
+                firstText = if (minutesDifference%60 ==59L ){
+                    "${hoursDifference+1}시간 0분 후에 알람이 울립니다"
+                } else{
+                    "${hoursDifference}시간 ${(minutesDifference + 1) % 60}분 후에 알람이 울립니다"
+                }
             }
             val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.forLanguageTag("ko"))
             secondText = "${alarmTime.format(formatter)} ${alarmTime.hour}:${alarmTime.minute}"
