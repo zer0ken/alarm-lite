@@ -49,7 +49,7 @@ fun AlarmItemView(
     mainViewModel: MainViewModel,
     navController: NavController,
     modifier: Modifier,
-    is24HourView: Boolean = false
+    is24HourView: Boolean
 ) {
     var cardShape = CardDefaults.shape
 
@@ -76,7 +76,11 @@ fun AlarmItemView(
                 }
             },
             onLongClick = {
-                if (!mainViewModel.isSelectMode) {
+                if (mainViewModel.isSelectMode) {
+                    mainViewModel.clearAllSelections()
+                    mainViewModel.isSelectMode = false
+                } else {
+                    alarm.isSelected = true
                     mainViewModel.isSelectMode = true
                 }
             }
@@ -142,14 +146,8 @@ fun AlarmItemView(
                 if (alarm.name != "") {
                     Text(text = alarm.name, fontSize = contentFontSize)
                 }
-                val formatter = if (is24HourView) {
-                    DateTimeFormatter.ofPattern("HH:mm")
-                } else {
-                    DateTimeFormatter.ofPattern("hh:mm a")
-                }
-                val timeString = LocalTime.of(alarm.hour, alarm.minute).format(formatter)
                 Text(
-                    text = timeString,
+                    text = if (is24HourView) "${alarm.hour} : ${alarm.minute}" else "${alarm.hour % 12} : ${alarm.minute} ${if (alarm.hour < 12) "AM" else "PM"}",
                     fontSize = timeFontSize
                 )
                 if (alarm.repeatOnWeekdays.any { it }) {

@@ -133,4 +133,12 @@ class MainViewModel(context: Context) : ViewModel() {
         set(value) {
             _is24HourView.value = value
         }
+
+    fun toggleSelectMode() {
+        _isSelectMode.value = !_isSelectMode.value
+    }
+
+    fun clearAllSelections() {
+        alarmStateMap.values.forEach { it.isSelected = false }
+    }
 }

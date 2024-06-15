@@ -81,7 +81,15 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     }
 
     val alarms = mainViewModel.alarmStateMap.values.toList()
-    LaunchedEffect(Unit) { mainViewModel.fetchAll() }
+    var sortedAlarms by remember { mutableStateOf(alarms) }
+
+    LaunchedEffect(alarms, selectedSort) {
+        sortedAlarms = if (selectedSort == "시간순") {
+            alarms.sortedWith(AlarmComparator.absolute)
+        } else {
+            alarms.sortedWith(AlarmComparator.relative)
+        }
+    }
 
     var firstText by remember { mutableStateOf("") }
     var secondText by remember { mutableStateOf("") }
@@ -130,10 +138,6 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 } else {
                     alarmTime = alarmTime.plusDays(diff.toLong())
                 }
-            }
-            else{ //단발성
-                if(alarmTime.isBefore(currentTime))
-                    alarmTime = alarmTime.plusDays(1)
             }
             val duration = java.time.Duration.between(currentTime, alarmTime)
             val hoursDifference = duration.toHours()
@@ -233,7 +237,11 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                                 onClick = {
                                     selectedSort = sortItem
                                     menuExpanded = false
-                                    // 정렬 방식 변경으로 인한 알람들 나열 작업
+                                    sortedAlarms = if (selectedSort == "시간순") {
+                                        alarms.sortedWith(AlarmComparator.absolute)
+                                    } else {
+                                        alarms.sortedWith(AlarmComparator.relative)
+                                    }
                                 }
                             )
                         }
@@ -278,11 +286,6 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             }
         }
     ) { innerPadding ->
-        val sortedAlarms = when (selectedSort) {
-            "시간순" -> alarms.sortedWith(AlarmComparator.absolute)
-            "알림순" -> alarms.sortedWith(AlarmComparator.relative)
-            else -> alarms
-        }
         AlarmListView(navController, mainViewModel, innerPadding, mainViewModel.is24HourView, sortedAlarms)
     }
 }
