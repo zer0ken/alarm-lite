@@ -59,6 +59,7 @@ import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -81,6 +82,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     }
 
     val alarms = mainViewModel.alarmStateMap.values.toList()
+    LaunchedEffect(Unit) { mainViewModel.fetchAll() }
     var sortedAlarms by remember { mutableStateOf(alarms) }
 
     LaunchedEffect(alarms, selectedSort) {
@@ -127,7 +129,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 for (i in day until day + 7) {
                     realDay = i % 7
                     if (alarms[0].repeatOnWeekdays[realDay]) {
-                        diff = Math.abs(i - day)
+                        diff = abs(i - day)
                         break
                     }
                 }
@@ -138,6 +140,10 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 } else {
                     alarmTime = alarmTime.plusDays(diff.toLong())
                 }
+            }
+            else{
+                if(alarmTime.isBefore(currentTime))
+                    alarmTime = alarmTime.plusDays(1)
             }
             val duration = java.time.Duration.between(currentTime, alarmTime)
             val hoursDifference = duration.toHours()
