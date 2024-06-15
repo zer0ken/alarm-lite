@@ -21,6 +21,14 @@ class Repository(private val db: AlarmDatabase) {
     suspend fun getFilters(): List<Filter> = filterDao.getAll()
         .map { filter -> fromFilterEntity(filter) }
 
+    suspend fun getAlarm(id: Int): AlarmState? {
+        val found = alarmDao.get(id)
+        if (found.isEmpty()) {
+            return null
+        }
+        return fromAlarmEntity(found[0])
+    }
+
     suspend fun insert(alarm: AlarmState) {
         alarmDao.insert(toAlarmEntity(alarm))
     }

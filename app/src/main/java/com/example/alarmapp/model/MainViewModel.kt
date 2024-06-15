@@ -1,16 +1,12 @@
 package com.example.alarmapp.model
 
 import android.content.Context
-import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.Dispatchers
@@ -30,13 +26,6 @@ class MainViewModel(context: Context) : ViewModel() {
             _isSelectMode.value = value
         }
 
-    private val _selectedRingtoneUri = mutableStateOf<Uri?>(null)
-    var selectedRingtoneUri: Uri?
-        get() = _selectedRingtoneUri.value
-        set(value) {
-            _selectedRingtoneUri.value = value
-        }
-
     private val scheduler = MainAlarmScheduler(context)
 
     init {
@@ -48,6 +37,7 @@ class MainViewModel(context: Context) : ViewModel() {
             _updateAlarm(alarmState)
         }
     }
+
     private suspend fun _updateAlarm(alarmState: AlarmState) {
         if (alarmState.groupName.isNotBlank() && alarmGroupStateMap[alarmState.groupName] == null) {
             _addGroup(alarmState.groupName)
@@ -108,7 +98,7 @@ class MainViewModel(context: Context) : ViewModel() {
         }
     }
 
-    private suspend fun fetchAlarms() {
+    suspend fun fetchAlarms() {
         repository.getAlarms().forEach {
             val old = alarmStateMap[it.id]
             if (old != null) {

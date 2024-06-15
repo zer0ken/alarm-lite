@@ -85,9 +85,6 @@ fun AlarmSoundPicker(context: Context, alarmState: AlarmState, modifier: Modifie
                 checked = alarmState.isRingtoneOn,
                 onCheckedChange = {
                     alarmState.isRingtoneOn = it
-                    if (it && alarmState.selectedRingtoneUri == null) {
-                        ringtoneLauncher.launch(ringtonePickerIntent)
-                    }
                 },
                 modifier = Modifier
                     .size(10.dp)

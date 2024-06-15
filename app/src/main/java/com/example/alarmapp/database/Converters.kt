@@ -28,8 +28,8 @@ class Converters {
     fun toGroupFilter(value: String): GroupFilter = Json.decodeFromString(value)
 
     @TypeConverter
-    fun fromUri(value: Uri) = value.toString()
+    fun fromUri(value: Uri?) = value?.toString()
 
     @TypeConverter
-    fun toUri(value: String): Uri = Uri.parse(value)
+    fun toUri(value: String?): Uri? = value?.let { Uri.parse(it) }
 }

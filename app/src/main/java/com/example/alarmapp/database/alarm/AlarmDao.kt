@@ -13,6 +13,9 @@ interface AlarmDao {
     @Query("select * from alarm")
     suspend fun getAll(): List<AlarmEntity>
 
+    @Query("select * from alarm where id = :id limit 1")
+    suspend fun get(id: Int): List<AlarmEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(alarmEntity: AlarmEntity)
 

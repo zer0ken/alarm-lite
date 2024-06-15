@@ -6,16 +6,70 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.example.alarmapp.R
+import com.example.alarmapp.database.AlarmDatabase
+import com.example.alarmapp.database.Repository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+
+fun BroadcastReceiver.goAsync(
+    context: CoroutineContext = EmptyCoroutineContext,
+    block: suspend CoroutineScope.() -> Unit
+) {
+    val pendingResult = goAsync()
+    @OptIn(DelicateCoroutinesApi::class) // Must run globally; there's no teardown callback.
+    GlobalScope.launch(context) {
+        try {
+            block()
+        } finally {
+            pendingResult.finish()
+        }
+    }
+}
 
 class AlarmReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-        val alarmName = intent.getStringExtra("NAME")
-        val alarmId = intent.getIntExtra("ID", -1)
-        val pendingIntent = createPendingIntent(context, alarmId)
+    lateinit var repository: Repository
+    lateinit var alarmScheduler: MainAlarmScheduler
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onReceive(context: Context, intent: Intent) = goAsync {
+        repository = Repository(AlarmDatabase.getInstance(context = context))
+        alarmScheduler = MainAlarmScheduler(context)
+
+        val alarm = repository.getAlarm(intent.getIntExtra("ID", -1)) ?: return@goAsync
+        Log.d("@Receiver", "received alarm ${alarm.id}")
+
+        if (alarm.repeatOnWeekdays.none { it }) {
+            repository.delete(alarm)
+            Log.d("@Receiver", "deleted alarm ${alarm.id}")
+        } else {
+            alarmScheduler.schedule(alarm)
+        }
+
+        launch{
+            notify(context, alarm)
+            ring(context, alarm)
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun notify(context: Context, alarm: AlarmState) {
+        val pendingIntent = createPendingIntent(context, alarm.id)
 
         val channelId = "ReceivedAlarmChannel"
         val channelName = "ReceivedAlarmChannel"
@@ -29,10 +83,11 @@ class AlarmReceiver : BroadcastReceiver() {
 
         notificationManager.createNotificationChannel(notificationChannel)
 
+
         val notification = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(R.drawable.baseline_access_alarm_24)
             .setContentTitle("알람이 울립니다.")
-            .setContentText(alarmName?.ifBlank { null })
+            .setContentText(alarm.name.ifBlank { null })
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -56,6 +111,24 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         return pendingIntent
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    suspend fun ring(context: Context, alarm: AlarmState): Ringtone {
+        val ringtoneUri = alarm.selectedRingtoneUri
+            ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        val ringtone = RingtoneManager.getRingtone(context, ringtoneUri)
+        ringtone.play()
+
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 300, 150, 300), -1))
+
+        delay(10000)
+        if (ringtone.isPlaying) {
+            ringtone.stop()
+        }
+
+        return ringtone
     }
 }
 
