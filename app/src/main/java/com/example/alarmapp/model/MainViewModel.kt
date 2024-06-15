@@ -126,4 +126,11 @@ class MainViewModel(context: Context) : ViewModel() {
             return MainViewModel(context) as T
         }
     }
+
+    private val _is24HourView: MutableState<Boolean> = mutableStateOf(false)
+    var is24HourView: Boolean
+        get() = _is24HourView.value
+        set(value) {
+            _is24HourView.value = value
+        }
 }

@@ -277,6 +277,6 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             }
         }
     ) { innerPadding ->
-        AlarmListView(navController, mainViewModel, innerPadding)
+        AlarmListView(navController, mainViewModel, innerPadding, mainViewModel.is24HourView)
     }
 }

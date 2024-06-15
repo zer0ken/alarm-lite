@@ -1,5 +1,6 @@
 package com.example.alarmapp
 
+import SettingScreen
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -17,7 +18,6 @@ import androidx.navigation.navDeepLink
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
-import com.example.alarmapp.screen.SettingScreen
 import com.example.alarmapp.screen.UpdateAlarmScreen
 
 @Composable
@@ -47,7 +47,7 @@ fun MainNaviGraph(navController: NavHostController) {
         }
 
         composable(route = Routes.Setting.route) {
-            SettingScreen()
+            SettingScreen(navController, mainViewModel)
         }
 
         composable(

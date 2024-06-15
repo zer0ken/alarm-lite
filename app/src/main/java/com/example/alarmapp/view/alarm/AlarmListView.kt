@@ -19,7 +19,8 @@ import com.example.alarmapp.model.MainViewModel
 fun AlarmListView(
     navController: NavController,
     mainViewModel: MainViewModel,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    is24HourView: Boolean
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -49,7 +50,8 @@ fun AlarmListView(
                     alarms = alarms.values.filter { it.groupName == alarm.groupName },
                     alarmGroup = alarmGroups[alarm.groupName]!!,
                     mainViewModel = mainViewModel,
-                    navController = navController
+                    navController = navController,
+                    is24HourView = is24HourView
                 )
             } else if (!insertedGroup.contains(alarm.groupName)) {
                 item(key = alarm.id) {
@@ -57,7 +59,8 @@ fun AlarmListView(
                         alarm = alarm,
                         mainViewModel = mainViewModel,
                         navController = navController,
-                        modifier = Modifier.animateItemPlacement()
+                        modifier = Modifier.animateItemPlacement(),
+                        is24HourView = is24HourView
                     )
                 }
             }

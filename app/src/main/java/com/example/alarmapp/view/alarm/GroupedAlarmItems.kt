@@ -51,7 +51,8 @@ fun LazyListScope.groupedAlarmItems(
     alarms: List<AlarmState>,
     alarmGroup: AlarmGroupState,
     mainViewModel: MainViewModel,
-    navController: NavController
+    navController: NavController,
+    is24HourView: Boolean
 ) {
     alarmGroupStickyHeader(alarmGroup = alarmGroup, mainViewModel, navController)
     if (alarmGroup.isFolded) {

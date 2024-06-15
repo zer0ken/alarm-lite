@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -74,13 +75,16 @@ import com.example.alarmapp.ui.theme.SaturdayBlue
 import com.example.alarmapp.ui.theme.SundayRed
 import com.example.alarmapp.view.AlarmSoundPicker
 import com.example.alarmapp.view.CancelSaveBottomBar
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun UpdateAlarmScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
-    alarmState: AlarmState = rememberAlarmState()
+    alarmState: AlarmState = rememberAlarmState(),
+    is24HourView: Boolean = false
 ) {
     val timePickerState: TimePickerState = rememberTimePickerState()
     timePickerState.hour = alarmState.hour

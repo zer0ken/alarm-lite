@@ -38,6 +38,8 @@ import com.example.alarmapp.Routes
 import com.example.alarmapp.model.AlarmGroupState
 import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.MainViewModel
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -47,6 +49,7 @@ fun AlarmItemView(
     mainViewModel: MainViewModel,
     navController: NavController,
     modifier: Modifier,
+    is24HourView: Boolean = false
 ) {
     var cardShape = CardDefaults.shape
 
@@ -139,8 +142,14 @@ fun AlarmItemView(
                 if (alarm.name != "") {
                     Text(text = alarm.name, fontSize = contentFontSize)
                 }
+                val formatter = if (is24HourView) {
+                    DateTimeFormatter.ofPattern("HH:mm")
+                } else {
+                    DateTimeFormatter.ofPattern("hh:mm a")
+                }
+                val timeString = LocalTime.of(alarm.hour, alarm.minute).format(formatter)
                 Text(
-                    text = "${alarm.hour} : ${alarm.minute}",
+                    text = timeString,
                     fontSize = timeFontSize
                 )
                 if (alarm.repeatOnWeekdays.any { it }) {
