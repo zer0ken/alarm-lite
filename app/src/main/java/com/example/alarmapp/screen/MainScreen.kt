@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -207,7 +206,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                     IconButton(
                         onClick = { menuExpanded = true }) {
                         Icon(
-                            imageVector = Icons.Filled.KeyboardArrowDown,
+                            imageVector = ImageVector.vectorResource(R.drawable.baseline_sort_24),
                             contentDescription = "Sort"
                         )
                     }
