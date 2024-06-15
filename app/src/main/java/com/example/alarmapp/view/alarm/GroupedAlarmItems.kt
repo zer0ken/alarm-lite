@@ -56,9 +56,9 @@ fun LazyListScope.groupedAlarmItems(
 ) {
     alarmGroupStickyHeader(alarmGroup = alarmGroup, mainViewModel, navController)
     if (alarmGroup.isFolded) {
-        foldedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController)
+        foldedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController, is24HourView)
     } else {
-        expandedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController)
+        expandedAlarmGroupItems(alarms, alarmGroup, mainViewModel, navController, is24HourView)
     }
     stickyHeader {}
 }
@@ -164,7 +164,8 @@ fun LazyListScope.foldedAlarmGroupItems(
     alarms: List<AlarmState>,
     groupState: AlarmGroupState,
     mainViewModel: MainViewModel,
-    navController: NavController
+    navController: NavController,
+    is24HourView: Boolean
 ) {
     item(key = groupState.groupName.hashCode()) {
         LazyRow(
@@ -178,7 +179,8 @@ fun LazyListScope.foldedAlarmGroupItems(
                     alarm = alarm,
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    modifier = Modifier.animateItemPlacement()
+                    modifier = Modifier.animateItemPlacement(),
+                    is24HourView = is24HourView
                 )
             }
         }
@@ -195,7 +197,8 @@ fun LazyListScope.expandedAlarmGroupItems(
     alarms: List<AlarmState>,
     alarmGroup: AlarmGroupState,
     alarmViewModel: MainViewModel,
-    navController: NavController
+    navController: NavController,
+    is24HourView: Boolean
 ) {
     items(alarms, key = { it.id }) { alarm ->
         Box(
@@ -208,7 +211,8 @@ fun LazyListScope.expandedAlarmGroupItems(
                 alarmGroup = alarmGroup,
                 mainViewModel = alarmViewModel,
                 navController = navController,
-                modifier = Modifier.animateItemPlacement()
+                modifier = Modifier.animateItemPlacement(),
+                is24HourView = is24HourView
             )
         }
     }
@@ -220,6 +224,7 @@ fun LazyListScope.expandedAlarmGroupItems(
         )
     }
 }
+
 
 @Composable
 fun FoldButton(isFolded: Boolean, onFoldedChange: (Boolean) -> Unit) {

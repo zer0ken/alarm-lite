@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.MainViewModel
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -20,7 +20,8 @@ fun AlarmListView(
     navController: NavController,
     mainViewModel: MainViewModel,
     innerPadding: PaddingValues,
-    is24HourView: Boolean
+    is24HourView: Boolean,
+    sortedAlarms: List<AlarmState>
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -39,7 +40,7 @@ fun AlarmListView(
             .padding(innerPadding)
     ) {
         val insertedGroup = LinkedHashSet<String>()
-        for (alarm in alarms.values) {
+        for (alarm in sortedAlarms) {
             if (
                 alarm.groupName != "" &&
                 alarmGroups[alarm.groupName] != null &&
@@ -47,7 +48,7 @@ fun AlarmListView(
             ) {
                 insertedGroup.add(alarm.groupName)
                 groupedAlarmItems(
-                    alarms = alarms.values.filter { it.groupName == alarm.groupName },
+                    alarms = sortedAlarms.filter { it.groupName == alarm.groupName },
                     alarmGroup = alarmGroups[alarm.groupName]!!,
                     mainViewModel = mainViewModel,
                     navController = navController,

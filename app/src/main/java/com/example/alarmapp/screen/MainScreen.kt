@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
+import com.example.alarmapp.model.AlarmComparator
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.alarm.AlarmListView
 import com.example.alarmapp.view.bottomBar.DefaultBottomBar
@@ -66,7 +67,7 @@ import java.util.Locale
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-    val sortList = listOf<String>("정렬 방식 1", "정렬 2", "정렬 방식 3")
+    val sortList = listOf("시간순", "알림순")
     var selectedSort by remember { mutableStateOf(sortList[0]) }
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -79,7 +80,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
         }
     }
 
-    val alarms = mainViewModel.alarmStateMap.values.toList() //remember쓰면 희한하게 안됨 이유는 모르겠음.
+    val alarms = mainViewModel.alarmStateMap.values.toList()
     LaunchedEffect(Unit) { mainViewModel.fetchAll() }
 
     var firstText by remember { mutableStateOf("") }
@@ -277,6 +278,11 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             }
         }
     ) { innerPadding ->
-        AlarmListView(navController, mainViewModel, innerPadding, mainViewModel.is24HourView)
+        val sortedAlarms = when (selectedSort) {
+            "시간순" -> alarms.sortedWith(AlarmComparator.absolute)
+            "알림순" -> alarms.sortedWith(AlarmComparator.relative)
+            else -> alarms
+        }
+        AlarmListView(navController, mainViewModel, innerPadding, mainViewModel.is24HourView, sortedAlarms)
     }
 }
