@@ -51,28 +51,36 @@ import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.alarm.AlarmListView
 import com.example.alarmapp.view.bottomBar.DefaultBottomBar
 import com.example.alarmapp.view.bottomBar.EditBottomBar
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import java.time.DayOfWeek
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
 @Composable
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val sortList = listOf<String>("정렬 방식 1", "정렬 2", "정렬 방식 3")
     var selectedSort by remember { mutableStateOf(sortList[0]) }
     var menuExpanded by remember { mutableStateOf(false) }
 
-    val postNotificationPermission=
+    val postNotificationPermission =
         rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
 
-    LaunchedEffect(true){
-        if(!postNotificationPermission.status.isGranted){
+    LaunchedEffect(true) {
+        if (!postNotificationPermission.status.isGranted) {
             postNotificationPermission.launchPermissionRequest()
         }
     }
 
     val alarms = mainViewModel.alarmStateMap.values.toList() //remember쓰면 희한하게 안됨 이유는 모르겠음.
-    LaunchedEffect(Unit){ mainViewModel.fetchAll() }
+    LaunchedEffect(Unit) { mainViewModel.fetchAll() }
 
     var firstText by remember { mutableStateOf("") }
     var secondText by remember { mutableStateOf("") }
@@ -81,13 +89,12 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
         secondText = "알람을 추가해 주세요"
     } else {
         val allAlarmsOff = alarms.all { !it.isOn }
-        if (allAlarmsOff){
+        if (allAlarmsOff) {
             firstText = "모든 알람이 꺼진 상태입니다"
             secondText = "알람을 켜주세요"
-        }
-        else{
-            val currentTime = remember {LocalDateTime.now() }
-            var alarmTime =  remember {
+        } else {
+            val currentTime = remember { LocalDateTime.now() }
+            var alarmTime = remember {
                 LocalDateTime.of(
                     currentTime.year,
                     currentTime.month,
@@ -96,44 +103,44 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                     alarms[0].minute
                 )
             }
-            val day = when(currentTime.dayOfWeek){
-                MONDAY -> 1
-                TUESDAY -> 2
-                WEDNESDAY -> 3
-                THURSDAY -> 4
-                FRIDAY -> 5
-                SATURDAY -> 6
-                SUNDAY -> 0
+            val day = when (currentTime.dayOfWeek) {
+                DayOfWeek.MONDAY -> 1
+                DayOfWeek.TUESDAY -> 2
+                DayOfWeek.WEDNESDAY -> 3
+                DayOfWeek.THURSDAY -> 4
+                DayOfWeek.FRIDAY -> 5
+                DayOfWeek.SATURDAY -> 6
+                DayOfWeek.SUNDAY -> 0
             }
-            if(alarms[0].repeatOnWeekdays.contains(true)){ //반복 없는 단발성 알람의 조건에서 현재 시간 이전의 알람은 안 만들어진다는 가정 하에
-                var diff =0
+            if (alarms[0].repeatOnWeekdays.contains(true)) { //반복 없는 단발성 알람의 조건에서 현재 시간 이전의 알람은 안 만들어진다는 가정 하에
+                var diff = 0
                 var realDay: Int
-                for (i in day until day+7){
+                for (i in day until day + 7) {
                     realDay = i % 7
-                    if(alarms[0].repeatOnWeekdays[realDay]){
-                        diff = abs(i- day)
+                    if (alarms[0].repeatOnWeekdays[realDay]) {
+                        diff = Math.abs(i - day)
                         break
                     }
                 }
-                if (diff ==0) {
+                if (diff == 0) {
                     if (alarmTime.isBefore(currentTime)) {
                         alarmTime = alarmTime.plusDays(7)
                     }
-                }
-                else{
+                } else {
                     alarmTime = alarmTime.plusDays(diff.toLong())
                 }
             }
-            val duration = java.time.Duration.between(currentTime,alarmTime)
+            val duration = java.time.Duration.between(currentTime, alarmTime)
             val hoursDifference = duration.toHours()
             val minutesDifference = duration.toMinutes()
-            if(minutesDifference >= 24*60){
+            if (minutesDifference >= 24 * 60) {
                 var temp = (7 + alarmTime.dayOfWeek.value - currentTime.dayOfWeek.value) % 7
-                if(temp ==0){ temp += 7 }
+                if (temp == 0) {
+                    temp += 7
+                }
                 firstText = "${temp}일 후에 알람이 울립니다"
-            }
-            else{
-                firstText = "${hoursDifference}시간 ${(minutesDifference+1)%60}분 후에 알람이 울립니다"
+            } else {
+                firstText = "${hoursDifference}시간 ${(minutesDifference + 1) % 60}분 후에 알람이 울립니다"
             }
             val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.forLanguageTag("ko"))
             secondText = "${alarmTime.format(formatter)} ${alarmTime.hour}:${alarmTime.minute}"
@@ -152,7 +159,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 ),
                 expandedHeight = 280.dp,
                 title = {
-                    Column (
+                    Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -166,7 +173,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 24.sp,
                             )
-                        }else{
+                        } else {
                             Text(
                                 text = firstText,
                                 maxLines = 2,
@@ -183,7 +190,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 },
                 navigationIcon = {
                     IconButton(
-                        onClick = {menuExpanded = true}) {
+                        onClick = { menuExpanded = true }) {
                         Icon(
                             imageVector = Icons.Filled.KeyboardArrowDown,
                             contentDescription = "Sort"
@@ -198,16 +205,16 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                         sortList.forEach { sortItem ->
                             DropdownMenuItem(
                                 text = {
-                                    Row (
+                                    Row(
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.fillMaxWidth()
                                     ) {
                                         Text(
                                             text = sortItem,
-                                            color = if(sortItem == selectedSort) Color(0xFF734D4D) else Color.Black
+                                            color = if (sortItem == selectedSort) Color(0xFF734D4D) else Color.Black
                                         )
-                                        if (sortItem == selectedSort){
+                                        if (sortItem == selectedSort) {
                                             Icon(
                                                 imageVector = Icons.Default.Check,
                                                 contentDescription = "Selected sort",
