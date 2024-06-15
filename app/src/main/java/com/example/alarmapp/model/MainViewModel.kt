@@ -125,16 +125,16 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         DayOfWeek.SUNDAY
     )
 
-    private val _selectedRepeatFilters = mutableStateOf<List<String>>(emptyList())
-    val selectedRepeatFilters: List<String> get() = _selectedRepeatFilters.value
-
-    fun setSelectedRepeatFilters(filters: List<String>) {
-        _selectedRepeatFilters.value = filters
-    }
-
-    fun getSelectedRepeatFilters(): List<String> {
-        return _selectedRepeatFilters.value
-    }
+//    private val _selectedRepeatFilters = mutableStateOf<List<String>>(emptyList())
+//    val selectedRepeatFilters: List<String> get() = _selectedRepeatFilters.value
+//
+//    fun setSelectedRepeatFilters(filters: List<String>) {
+//        _selectedRepeatFilters.value = filters
+//    }
+//
+//    fun getSelectedRepeatFilters(): List<String> {
+//        return _selectedRepeatFilters.value
+//    }
 
     val selectedGroupFilters = mutableStateListOf<String>()
     val selectedRepeatFiltersIndex = mutableStateListOf<Int>()

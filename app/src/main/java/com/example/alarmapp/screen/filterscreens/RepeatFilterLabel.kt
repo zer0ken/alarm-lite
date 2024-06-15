@@ -37,11 +37,12 @@ import com.example.alarmapp.view.bottomBar.dayOfWeekToString
 fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel) {
 
     val definedRepeatFilters = remember { mainViewModel.definedRepeatFilters }
-    val selectedRepeatFilters = mainViewModel.selectedRepeatFilters
-
-    val checkedStates = remember { mutableStateListOf<Boolean>().apply {
-        addAll(definedRepeatFilters.map { it.toString() in selectedRepeatFilters })
-    }}
+//    val selectedRepeatFilters = mainViewModel.selectedRepeatFilters
+//
+//    val checkedStates = remember { mutableStateListOf<Boolean>().apply {
+//        addAll(definedRepeatFilters.map { it.toString() in selectedRepeatFilters })
+//    }}
+    val checkedStates = remember { mutableStateListOf<Boolean>().apply { addAll(List(definedRepeatFilters.size) { false }) } }
 
     Scaffold(
         topBar = {

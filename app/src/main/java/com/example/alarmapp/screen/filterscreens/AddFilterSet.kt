@@ -74,7 +74,7 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                     )
                 }
                 clearFilterSet()
-                navController.navigate(Routes.FilterSetListScreen.route)
+                navController.navigate(Routes.MainScreen.route)
             }
         }
     ) { PaddingValues ->

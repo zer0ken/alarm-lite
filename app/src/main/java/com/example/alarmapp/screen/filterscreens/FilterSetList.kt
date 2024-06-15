@@ -48,30 +48,25 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
         topBar = {
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-//                    .padding(vertical = 10.dp),
                 title = {
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
-//                        contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             text = "필터 셋 목록",
-//                            fontSize = 32.sp,
                             fontWeight = FontWeight(800)
                         )
 
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navController.navigate(Routes.MainScreen.route) }) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowLeft,
                             contentDescription = "",
                             modifier = Modifier.size(36.dp)
                         )
                     }
-                },
-                actions = {
                 }
             )
         }
@@ -115,14 +110,14 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
-            Button(
-                onClick = { navController.navigate(Routes.AddFilterSetScreen.route) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
-            ) {
-                Text(text = "필터 셋 추가")
-            }
+//            Button(
+//                onClick = { navController.navigate(Routes.AddFilterSetScreen.route) },
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(horizontal = 10.dp)
+//            ) {
+//                Text(text = "필터 셋 추가")
+//            }
         }
     }
 }

@@ -107,7 +107,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                     )
                     Divider()
                 }
-                filterMap.map { it.title }.forEach { filter ->
+                alarmGroups.map { it.groupName }.forEach { filter ->
                     DropdownMenuItem(
                         text = {
                             Row(
@@ -140,7 +140,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                     )
                     Divider()
                 }
-                alarmGroups.map { it.groupName }.forEach { filter ->
+                filterMap.map { it.title }.forEach { filter ->
                     DropdownMenuItem(
                         text = {
                             Row(
