@@ -252,14 +252,20 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                         )
                     }
                     IconButton(onClick = {
-                        navController.navigate(Routes.CreateAlarm.route)
+                        navController.navigate(Routes.CreateAlarm.route){
+                            popUpTo(Routes.MainScreen.route){inclusive= false}
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = "Add Alarm"
                         )
                     }
-                    IconButton(onClick = { navController.navigate(Routes.Setting.route) }) {
+                    IconButton(onClick = {
+                        navController.navigate(Routes.Setting.route) {
+                            popUpTo(Routes.MainScreen.route) { inclusive = false}
+                        }
+                    }) {
                         Icon(
                             imageVector = Icons.Filled.Settings,
                             contentDescription = "Setting"

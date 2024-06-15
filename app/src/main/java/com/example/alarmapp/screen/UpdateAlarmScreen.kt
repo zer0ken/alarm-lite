@@ -147,19 +147,19 @@ fun UpdateAlarmScreen(
                     val existingAlarm = mainViewModel.alarmStateMap.values.find {
                         it.hour == timePickerState.hour && it.minute == timePickerState.minute
                     }
-
                     if (existingAlarm != null){
                         Toast.makeText(current, "알람 목록에 동일한 알람이 있거나 시간이 수정되지 않았습니다.", Toast.LENGTH_LONG).show()
-                        navController.navigate(Routes.MainScreen.route)
+                        navController.popBackStack(Routes.MainScreen.route,false)
                     }
                     else{
                         alarmState.hour = timePickerState.hour
                         alarmState.minute = timePickerState.minute
                         mainViewModel.updateAlarm(alarmState)
-                        navController.navigate(Routes.MainScreen.route)
+                        navController.popBackStack(Routes.MainScreen.route,false)
                     }
-                } else {
-                    navController.navigate(Routes.MainScreen.route)
+                }
+                else {
+                    navController.popBackStack(Routes.MainScreen.route,false)
                 }
             }
         }
