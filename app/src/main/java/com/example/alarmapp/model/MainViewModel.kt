@@ -104,7 +104,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     private suspend fun fetchFilter() {
         repository.getFilters().forEach {
-            filterMap[it.title] = it
+            filterMap[it.name] = it
         }
     }
 
@@ -136,12 +136,12 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 //        return _selectedRepeatFilters.value
 //    }
 
-    val selectedGroupFilters = mutableStateListOf<String>()
-    val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
-
-    var filterSetName = mutableStateOf("")
-    val filterSetRepeatFilter = mutableStateOf<RepeatFilter?>(null)
-    var filterSetGroupFilter = mutableStateOf<GroupFilter?>(null)
+//    val selectedGroupFilters = mutableStateListOf<String>()
+//    val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
+//
+//    var filterSetName = mutableStateOf("")
+//    val filterSetRepeatFilter = mutableStateOf<RepeatFilter?>(null)
+//    var filterSetGroupFilter = mutableStateOf<GroupFilter?>(null)
 
     fun deleteFilter(filter: Filter){
         viewModelScope.launch {
