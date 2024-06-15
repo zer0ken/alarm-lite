@@ -112,7 +112,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 DayOfWeek.SATURDAY -> 6
                 DayOfWeek.SUNDAY -> 0
             }
-            if (alarms[0].repeatOnWeekdays.contains(true)) { //반복 없는 단발성 알람의 조건에서 현재 시간 이전의 알람은 안 만들어진다는 가정 하에
+            if (alarms[0].repeatOnWeekdays.contains(true)) {
                 var diff = 0
                 var realDay: Int
                 for (i in day until day + 7) {
@@ -129,6 +129,10 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 } else {
                     alarmTime = alarmTime.plusDays(diff.toLong())
                 }
+            }
+            else{ //단발성
+                if(alarmTime.isBefore(currentTime))
+                    alarmTime = alarmTime.plusDays(1)
             }
             val duration = java.time.Duration.between(currentTime, alarmTime)
             val hoursDifference = duration.toHours()
