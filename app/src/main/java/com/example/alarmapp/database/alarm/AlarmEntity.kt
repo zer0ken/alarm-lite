@@ -1,5 +1,6 @@
 package com.example.alarmapp.database.alarm
 
+import android.net.Uri
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -24,4 +25,6 @@ data class AlarmEntity(
     val groupName: String?,
     val isOn: Boolean,
     val isBookmarked: Boolean,
+    val isRingtoneOn: Boolean,
+    val selectedRingtoneUri: Uri?
 )

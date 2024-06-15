@@ -1,6 +1,7 @@
 package com.example.alarmapp.model
 
 import android.content.Context
+import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,13 @@ class MainViewModel(context: Context) : ViewModel() {
         get() = _isSelectMode.value
         set(value) {
             _isSelectMode.value = value
+        }
+
+    private val _selectedRingtoneUri = mutableStateOf<Uri?>(null)
+    var selectedRingtoneUri: Uri?
+        get() = _selectedRingtoneUri.value
+        set(value) {
+            _selectedRingtoneUri.value = value
         }
 
     private val scheduler = MainAlarmScheduler(context)

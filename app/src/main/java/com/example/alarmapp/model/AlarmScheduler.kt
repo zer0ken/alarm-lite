@@ -18,13 +18,9 @@ class MainAlarmScheduler(private val context: Context) : AlarmScheduler {
 
     override fun schedule(alarm: AlarmState) {
         // to test
-//        var targetTime = LocalDateTime.now().plusSeconds(5)
+        var targetTime = LocalDateTime.now().plusSeconds(5)
 
-        var targetTime = LocalDateTime.now().withHour(alarm.hour).withMinute(alarm.minute)
-        val now = LocalDateTime.now()
-        if (targetTime.isBefore(now)) {
-            targetTime = targetTime.plusDays(1)
-        }
+        // to release1
         val intent = Intent(context, AlarmReceiver::class.java).apply {
             putExtra("NAME", alarm.name)
             putExtra("ID", alarm.id)

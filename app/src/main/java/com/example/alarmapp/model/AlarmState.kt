@@ -1,5 +1,6 @@
 package com.example.alarmapp.model
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -7,7 +8,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
 @Stable
@@ -28,7 +28,9 @@ class AlarmState(
     groupName: String = "",
     isBookmarked: Boolean = false,
     isOn: Boolean = true,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    isRingtoneOn: Boolean = false,
+    selectedRingtoneUri: Uri? = null
 ) {
     var hour by mutableStateOf(hour)
     var minute by mutableStateOf(minute)
@@ -38,6 +40,8 @@ class AlarmState(
     var isBookmarked by mutableStateOf(isBookmarked)
     var isOn by mutableStateOf(isOn)
     var isSelected by mutableStateOf(isSelected)
+    var isRingtoneOn by mutableStateOf(isRingtoneOn)
+    var selectedRingtoneUri by mutableStateOf(selectedRingtoneUri)
 }
 
 @Composable
@@ -58,7 +62,9 @@ fun rememberAlarmState(
     groupName: String = "",
     isBookmarked: Boolean = false,
     isOn: Boolean = true,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    isRingtoneOn: Boolean = false,
+    selectedRingtoneUri: Uri? = null
 ): AlarmState {
     return remember {
         AlarmState(
@@ -70,7 +76,9 @@ fun rememberAlarmState(
             groupName = groupName,
             isBookmarked = isBookmarked,
             isOn = isOn,
-            isSelected = isSelected
+            isSelected = isSelected,
+            isRingtoneOn = isRingtoneOn,
+            selectedRingtoneUri = selectedRingtoneUri
         )
     }
 }

@@ -6,8 +6,6 @@ import com.example.alarmapp.database.filter.FilterEntity
 import com.example.alarmapp.model.AlarmGroupState
 import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.Filter
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class Repository(private val db: AlarmDatabase) {
     private val alarmDao = db.alarmDao()
@@ -67,7 +65,9 @@ class Repository(private val db: AlarmDatabase) {
         name = value.name,
         groupName = value.groupName ?: "",
         isOn = value.isOn,
-        isBookmarked = value.isBookmarked
+        isBookmarked = value.isBookmarked,
+        isRingtoneOn = value.isRingtoneOn,
+        selectedRingtoneUri = value.selectedRingtoneUri
     )
 
     private fun toAlarmEntity(value: AlarmState) = AlarmEntity(
@@ -78,7 +78,9 @@ class Repository(private val db: AlarmDatabase) {
         name = value.name,
         groupName = value.groupName.ifBlank { null },
         isOn = value.isOn,
-        isBookmarked = value.isBookmarked
+        isBookmarked = value.isBookmarked,
+        isRingtoneOn = value.isRingtoneOn,
+        selectedRingtoneUri = value.selectedRingtoneUri
     )
 
     private fun fromAlarmGroupEntity(value: AlarmGroupEntity) = AlarmGroupState(

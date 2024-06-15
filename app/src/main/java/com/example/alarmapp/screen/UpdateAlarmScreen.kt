@@ -57,16 +57,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.AlarmState
@@ -74,6 +72,7 @@ import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.ui.theme.SaturdayBlue
 import com.example.alarmapp.ui.theme.SundayRed
+import com.example.alarmapp.view.AlarmSoundPicker
 import com.example.alarmapp.view.CancelSaveBottomBar
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -221,7 +220,9 @@ fun UpdateAlarmScreen(
                 ) {
                     Row(
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 22.dp)
                     ) {
                         repeat(7) { idx ->
                             val modifier = if (alarmState.repeatOnWeekdays[idx]) {
@@ -347,7 +348,7 @@ fun UpdateAlarmScreen(
                                 .fillMaxWidth()
                                 .padding(horizontal = 32.dp, vertical = 12.dp)
                         ) {
-                            Text(text = "즐겨찾기", fontSize = 17.sp)
+                            Text(text = "즐겨찾기")
                             Switch(
                                 checked = alarmState.isBookmarked,
                                 onCheckedChange = { alarmState.isBookmarked = it },
@@ -358,6 +359,12 @@ fun UpdateAlarmScreen(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(20.dp))
+                    AlarmSoundPicker(
+                        LocalContext.current,
+                        alarmState,
+                        Modifier.padding(horizontal = 32.dp)
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
