@@ -1,5 +1,6 @@
 package com.example.alarmapp.screen
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -18,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -64,7 +64,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
@@ -75,8 +74,6 @@ import com.example.alarmapp.ui.theme.SaturdayBlue
 import com.example.alarmapp.ui.theme.SundayRed
 import com.example.alarmapp.view.AlarmSoundPicker
 import com.example.alarmapp.view.CancelSaveBottomBar
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -106,6 +103,8 @@ fun UpdateAlarmScreen(
     val weekdays = listOf("일", "월", "화", "수", "목", "금", "토")
 
     val existingGroups = mainViewModel.alarmGroupStateMap.values
+
+    val current = LocalContext.current
 
     LaunchedEffect(scrollState.value) {
         if (scrollState.lastScrolledForward) {
@@ -144,14 +143,24 @@ fun UpdateAlarmScreen(
             )
         },
         bottomBar = {
-            CancelSaveBottomBar {
-                if (it) {
-                    alarmState.hour = timePickerState.hour
-                    alarmState.minute = timePickerState.minute
-                    mainViewModel.updateAlarm(alarmState)
-                    navController.navigate(Routes.MainScreen.route)
-                } else {
-                    navController.navigate(Routes.MainScreen.route)
+            CancelSaveBottomBar { isSave->
+                if (isSave) {
+                    val existingAlarm = mainViewModel.alarmStateMap.values.find {
+                        it.hour == timePickerState.hour && it.minute == timePickerState.minute
+                    }
+                    if (existingAlarm != null){
+                        Toast.makeText(current, "알람 목록에 동일한 알람이 있거나 시간이 수정되지 않았습니다.", Toast.LENGTH_LONG).show()
+                        navController.popBackStack(Routes.MainScreen.route,false)
+                    }
+                    else{
+                        alarmState.hour = timePickerState.hour
+                        alarmState.minute = timePickerState.minute
+                        mainViewModel.updateAlarm(alarmState)
+                        navController.popBackStack(Routes.MainScreen.route,false)
+                    }
+                }
+                else {
+                    navController.popBackStack(Routes.MainScreen.route,false)
                 }
             }
         }
