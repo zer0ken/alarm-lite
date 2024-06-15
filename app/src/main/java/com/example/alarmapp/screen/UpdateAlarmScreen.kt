@@ -1,5 +1,6 @@
 package com.example.alarmapp.screen
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -63,7 +64,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
@@ -103,6 +103,8 @@ fun UpdateAlarmScreen(
 
     val existingGroups = mainViewModel.alarmGroupStateMap.values
 
+    val current = LocalContext.current
+
     LaunchedEffect(scrollState.value) {
         if (scrollState.lastScrolledForward) {
             collapse = true
@@ -140,12 +142,22 @@ fun UpdateAlarmScreen(
             )
         },
         bottomBar = {
-            CancelSaveBottomBar {
-                if (it) {
-                    alarmState.hour = timePickerState.hour
-                    alarmState.minute = timePickerState.minute
-                    mainViewModel.updateAlarm(alarmState)
-                    navController.navigate(Routes.MainScreen.route)
+            CancelSaveBottomBar {isSave ->
+                if (isSave) {
+                    val existingAlarm = mainViewModel.alarmStateMap.values.find {
+                        it.hour == timePickerState.hour && it.minute == timePickerState.minute
+                    }
+
+                    if (existingAlarm != null){
+                        Toast.makeText(current, "알람 목록에 동일한 알람이 있거나 시간이 수정되지 않았습니다.", Toast.LENGTH_LONG).show()
+                        navController.navigate(Routes.MainScreen.route)
+                    }
+                    else{
+                        alarmState.hour = timePickerState.hour
+                        alarmState.minute = timePickerState.minute
+                        mainViewModel.updateAlarm(alarmState)
+                        navController.navigate(Routes.MainScreen.route)
+                    }
                 } else {
                     navController.navigate(Routes.MainScreen.route)
                 }
