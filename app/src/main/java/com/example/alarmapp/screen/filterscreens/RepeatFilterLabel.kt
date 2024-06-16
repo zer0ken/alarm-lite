@@ -19,8 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,22 +36,14 @@ import com.example.alarmapp.view.FilterTopAppBar
 
 @Composable
 fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel) {
-
     val definedRepeatFilters = remember { mainViewModel.definedRepeatFilters }
-//    val selectedRepeatFilters = mainViewModel.selectedRepeatFilters
-//
-//    val checkedStates = remember { mutableStateListOf<Boolean>().apply {
-//        addAll(definedRepeatFilters.map { it.toString() in selectedRepeatFilters })
-//    }}
-//    val checkedStates = remember { mutableStateListOf<Boolean>().apply { addAll(List(definedRepeatFilters.size) { false }) } }
-
-    val checkedStates =  mainViewModel.filterSetRepeatFilter
+    var checkedStates by remember { mutableStateOf(mainViewModel.filterSetRepeatFilter.toList()) }
 
     Scaffold(
         topBar = {
             FilterTopAppBar("반복 필터") {
                 if (it) {
-                    mainViewModel.filterSetRepeatFilter = checkedStates
+                    mainViewModel.filterSetRepeatFilter = checkedStates.toMutableList()
                 }
                 navController.navigate(Routes.AddFilterSetScreen.route)
             }
@@ -79,7 +74,9 @@ fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel
                             bottom = if (index == definedRepeatFilters.size - 1) 16.dp else 0.dp
                         )
                         .clickable {
-                            checkedStates[index] = !checkedStates[index]
+                            checkedStates = checkedStates.mapIndexed { i, checked ->
+                                if (i == index) !checked else checked
+                            }
                         },
                     colors = CardDefaults.cardColors(containerColor = Color.LightGray)
                 ) {

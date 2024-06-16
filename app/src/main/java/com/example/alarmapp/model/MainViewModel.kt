@@ -162,6 +162,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
     fun deleteFilter(filter: Filter){
         viewModelScope.launch {
             repository.delete(filter)
+            filterMap.remove(filter.name)
             fetchFilter()
         }
     }
@@ -188,6 +189,7 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
             val selectedAlarms = alarmStateMap.filter { it.value.isSelected }.values.toList()
             selectedAlarms.forEach {
                 _deleteAlarm(it)
+                alarmStateMap.remove(it.id)
             }
             fetchAlarms()
         }

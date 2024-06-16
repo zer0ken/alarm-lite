@@ -49,7 +49,7 @@ import java.time.DayOfWeek
 fun AddFilterSetScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
-    filter: Filter = rememberFilter()
+    filter: Filter? = null
 ) {
     val scrollState = rememberScrollState()
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
@@ -59,9 +59,16 @@ fun AddFilterSetScreen(
 //    var filterSetName = mainViewModel.filterSetName
 //    var filterSetRepeatFilter = mainViewModel.filterSetRepeatFilter
 //    var filterSetGroupFilter = mainViewModel.filterSetGroupFilter
-    var filterSetName = filter.name
-    val filterSetRepeatFilter = filter.repeatFilter
-    val filterSetGroupFilter = filter.groupFilter
+
+    var filterSetName by remember {
+        mutableStateOf(filter?.name ?: mainViewModel.filterSetName)
+    }
+    val filterSetRepeatFilter by remember {
+        mutableStateOf(filter?.repeatFilter ?: mainViewModel.filterSetRepeatFilter)
+    }
+    val filterSetGroupFilter by remember {
+        mutableStateOf(filter?.groupFilter ?: mainViewModel.filterSetGroupFilter)
+    }
 
 //    // 필터 설정 초기화 함수
 //    fun clearFilterSet() {
@@ -205,6 +212,7 @@ fun AddFilterSetScreen(
                         }
                     },
                     onClick = {
+                        mainViewModel.filterSetName = filterSetName
                         navController.navigate(Routes.RepeatFilterLabel.route)
                     }
                 )
