@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.BottomAppBar
@@ -73,8 +74,8 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                 expanded = isDropdownMenuExpanded,
                 onDismissRequest = { isDropdownMenuExpanded = false },
                 modifier = Modifier
-                    .fillMaxWidth(0.5f)
-                    .height(300.dp)
+                    .fillMaxWidth(0.3f)
+                    .height(300.dp),
             ) {
                 alarmGroups.map { it.groupName }.forEach {
                     DropdownMenuItem(

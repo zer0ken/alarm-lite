@@ -53,13 +53,13 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
         mainViewModel.filterMap.values.toList()
     }
 
-    var selectedGroupFilters = mainViewModel.selectedGroupFilters
-    val selectedRepeatFiltersIndex = mainViewModel.selectedRepeatFiltersIndex
     val selectedFilterSet = mainViewModel.selectedFilterSet
+    val selectedRepeatFiltersIndex = mainViewModel.selectedRepeatFiltersIndex
+    val selectedGroupFilters = mainViewModel.selectedGroupFilters
 
-    Log.d("test", selectedGroupFilters.toString())
-    Log.d("test", selectedRepeatFiltersIndex.toString())
     Log.d("test", selectedFilterSet.toString())
+    Log.d("test", selectedRepeatFiltersIndex.toString())
+    Log.d("test", selectedGroupFilters.toString())
 
     val combinedFilters = remember {
         mutableListOf<String>().apply {

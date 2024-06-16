@@ -36,6 +36,10 @@ fun AlarmListView(
     val selectedGroupFilters = mainViewModel.selectedGroupFilters
     val selectedFilterSetNames = mainViewModel.selectedFilterSet
 
+    Log.d("test", selectedGroupFilters.toString())
+    Log.d("test", selectedRepeatFilters.toString())
+    Log.d("test", selectedGroupFilters.toString())
+
     val alarmList =
         if (selectedGroupFilters.isEmpty() && selectedRepeatFilters.isEmpty() && selectedFilterSetNames.isEmpty()) {
             sortedAlarms
