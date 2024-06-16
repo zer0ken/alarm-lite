@@ -5,8 +5,6 @@ import android.content.SharedPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -19,12 +17,8 @@ import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-<<<<<<< HEAD
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-=======
-import java.time.DayOfWeek
->>>>>>> e59fe76d15b7d327b233c9198ec9a27c54d4ac1e
 
 @Stable
 class MainViewModel(context: Context) : ViewModel() {

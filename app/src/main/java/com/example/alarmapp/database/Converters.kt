@@ -38,9 +38,9 @@ class Converters {
 //
 //    @TypeConverter
 //    fun toGroupFilter(value: String): GroupFilter = Json.decodeFromString(value)
-
-    @TypeConverter
-    fun toGroupFilter(value: String): GroupFilter = Json.decodeFromString(value)
+//
+//    @TypeConverter
+//    fun toGroupFilter(value: String): GroupFilter = Json.decodeFromString(value)
 
     @TypeConverter
     fun fromUri(value: Uri?) = value?.toString()
