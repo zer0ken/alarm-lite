@@ -61,7 +61,7 @@ fun MainNaviGraph(navController: NavHostController) {
             arguments = listOf(navArgument("alarmId") { type = NavType.IntType })
         ) {
             val alarmId = it.arguments?.getInt("alarmId")
-            UpdateAlarmScreen(navController, mainViewModel, mainViewModel.alarmStateMap[alarmId]!!)
+            UpdateAlarmScreen(navController, mainViewModel, mainViewModel.alarmStateMap[alarmId]!!, title="알람 수정")
         }
 
         composable(
@@ -71,7 +71,7 @@ fun MainNaviGraph(navController: NavHostController) {
             val groupName = it.arguments?.getString("groupName")
             val alarm = rememberAlarmState()
             alarm.groupName = groupName!!
-            UpdateAlarmScreen(navController, mainViewModel, alarm)
+            UpdateAlarmScreen(navController, mainViewModel, alarm, title="새 그룹 알람 추가")
         }
 
         // 추가적인 화면 등등

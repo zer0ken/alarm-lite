@@ -74,8 +74,8 @@ class MainViewModel(context: Context) : ViewModel() {
         }
         if (!alarmState.isOn) {
             scheduler.cancel(alarmState)
-        } else {
-            scheduler.schedule(alarmState)
+        } else if (!scheduler.schedule(alarmState)) {
+            alarmState.isOn = false
         }
 
         repository.insert(alarmState)

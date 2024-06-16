@@ -38,8 +38,6 @@ import com.example.alarmapp.Routes
 import com.example.alarmapp.model.AlarmGroupState
 import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.MainViewModel
-import java.time.LocalTime
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -98,8 +96,6 @@ fun AlarmItemView(
     }
 
     if (alarmGroup?.isFolded == true) {
-        cardModifier = cardModifier
-            .height(76.dp)
         rowModifier = rowModifier
             .padding(end = 14.dp, top = 4.dp, bottom = 4.dp)
         switchModifier = switchModifier
@@ -117,6 +113,11 @@ fun AlarmItemView(
 
         contentFontSize = 14.sp
         timeFontSize = 34.sp
+    }
+
+    var specifiedDateRange = alarm.getSpecifiedDateRange()
+    if (specifiedDateRange != null && alarmGroup != null) {
+        specifiedDateRange = specifiedDateRange.replace(" ~ ", "\n     ~ ")
     }
 
     LaunchedEffect(enabled) {
@@ -159,6 +160,9 @@ fun AlarmItemView(
                         }
                     }
                     Text(text = repeatOn, fontSize = contentFontSize)
+                }
+                if (specifiedDateRange != null) {
+                    Text(text = specifiedDateRange, fontSize = contentFontSize)
                 }
             }
             Spacer(modifier = Modifier.weight(weight = 1.0f))

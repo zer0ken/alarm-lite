@@ -177,6 +177,7 @@ fun LazyListScope.foldedAlarmGroupItems(
             items(alarms, key = { it.id }) { alarm ->
                 AlarmItemView(
                     alarm = alarm,
+                    alarmGroup = groupState,
                     mainViewModel = mainViewModel,
                     navController = navController,
                     modifier = Modifier.animateItemPlacement(),

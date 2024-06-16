@@ -24,6 +24,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset.UTC
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -45,6 +48,7 @@ fun BroadcastReceiver.goAsync(
 class AlarmReceiver : BroadcastReceiver() {
     lateinit var repository: Repository
     lateinit var alarmScheduler: MainAlarmScheduler
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onReceive(context: Context, intent: Intent) = goAsync {
         repository = Repository(AlarmDatabase.getInstance(context = context))
@@ -53,14 +57,13 @@ class AlarmReceiver : BroadcastReceiver() {
         val alarm = repository.getAlarm(intent.getIntExtra("ID", -1)) ?: return@goAsync
         Log.d("@Receiver", "received alarm ${alarm.id}")
 
-        if (alarm.repeatOnWeekdays.none { it }) {
-            repository.delete(alarm)
-            Log.d("@Receiver", "deleted alarm ${alarm.id}")
-        } else {
-            alarmScheduler.schedule(alarm)
+        if (alarm.repeatOnWeekdays.none {it} || !alarmScheduler.schedule(alarm)) {
+            Log.d("@Receiver", "alarm ${alarm.id} were turned off")
+            alarm.isOn = false
+            repository.update(alarm)
         }
 
-        launch{
+        launch {
             notify(context, alarm)
             ring(context, alarm)
         }

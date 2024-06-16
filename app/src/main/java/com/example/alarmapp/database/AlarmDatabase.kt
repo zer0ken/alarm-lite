@@ -14,7 +14,7 @@ import com.example.alarmapp.database.filter.FilterEntity
 
 @Database(
     entities = [AlarmEntity::class, AlarmGroupEntity::class, FilterEntity::class],
-    version = 6,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(Converters::class)

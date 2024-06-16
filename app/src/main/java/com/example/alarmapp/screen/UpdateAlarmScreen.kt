@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -43,6 +46,7 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,8 +66,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
@@ -81,11 +85,21 @@ fun UpdateAlarmScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     alarmState: AlarmState = rememberAlarmState(),
-    is24HourView: Boolean = false
+    is24HourView: Boolean = false,
+    title: String = "새 알람 추가"
 ) {
     val timePickerState: TimePickerState = rememberTimePickerState()
     timePickerState.hour = alarmState.hour
     timePickerState.minute = alarmState.minute
+
+    val dateRangePickerState = rememberDateRangePickerState()
+    var showDatePicker by remember {
+        mutableStateOf(false)
+    }
+    dateRangePickerState.setSelection(
+        startDateMillis = alarmState.startDate,
+        endDateMillis = alarmState.expireDate
+    )
 
     val focusManager = LocalFocusManager.current
     val (first, second, third, fourth) = remember { FocusRequester.createRefs() }
@@ -116,16 +130,13 @@ fun UpdateAlarmScreen(
         third.captureFocus()
     }
 
+    val specifiedDateRange: String? = alarmState.getSpecifiedDateRange()
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "알람 추가",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    )
+                    Text(text = "알람 추가")
                 },
                 actions = {
                     IconButton(
@@ -139,246 +150,338 @@ fun UpdateAlarmScreen(
                             contentDescription = "시간 선택기 펼치기"
                         )
                     }
+                    IconButton(
+                        onClick = {
+                            showDatePicker = true
+                        },
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_calendar_month_24),
+                            contentDescription = "날짜 선택하기"
+                        )
+                    }
                 }
             )
         },
         bottomBar = {
-            CancelSaveBottomBar { isSave->
-                if (isSave) {
+            CancelSaveBottomBar { isConfirmed ->
+                if (isConfirmed) {
+                    alarmState.hour = timePickerState.hour
+                    alarmState.minute = timePickerState.minute
+
                     val existingAlarm = mainViewModel.alarmStateMap.values.find {
-                        it.hour == timePickerState.hour && it.minute == timePickerState.minute
+                        it.id != alarmState.id
+                                && it.groupName == alarmState.groupName
+                                && it.hour == alarmState.hour && it.minute == alarmState.minute
+                                && it.repeatOnWeekdays.mapIndexed { i, b -> alarmState.repeatOnWeekdays[i] == b }
+                            .all { it }
+                                && it.startDate == alarmState.startDate
+                                && it.expireDate == alarmState.expireDate
                     }
-                    if (existingAlarm != null){
-                        Toast.makeText(current, "알람 목록에 동일한 알람이 있거나 시간이 수정되지 않았습니다.", Toast.LENGTH_LONG).show()
-                        navController.popBackStack(Routes.MainScreen.route,false)
-                    }
-                    else{
-                        alarmState.hour = timePickerState.hour
-                        alarmState.minute = timePickerState.minute
+                    if (existingAlarm != null) {
+                        Toast.makeText(
+                            current,
+                            "동일한 알람이 이미 존재합니다.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
                         mainViewModel.updateAlarm(alarmState)
-                        navController.popBackStack(Routes.MainScreen.route,false)
+                        navController.popBackStack(Routes.MainScreen.route, false)
                     }
-                }
-                else {
-                    navController.popBackStack(Routes.MainScreen.route,false)
+                } else {
+                    navController.popBackStack(Routes.MainScreen.route, false)
                 }
             }
         }
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .padding(it)
+                .fillMaxSize()
                 .fillMaxWidth()
-        ) {
-            Box(
+        )
+        {
+            Column(
                 modifier = Modifier
-                    .animateContentSize()
+                    .padding(it)
                     .fillMaxWidth()
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AnimatedVisibility(
-                        visible = !collapse,
-                        enter = fadeIn(),
-                        exit = fadeOut()
-                    ) {
-                        TimePicker(
-                            state = timePickerState,
-                            modifier = Modifier
-                                .focusRequester(first)
-                                .focusProperties {
-                                    next = third
-                                }
-                        )
-                    }
-                }
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    AnimatedVisibility(
-                        visible = collapse,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                    ) {
-                        TimeInput(
-                            state = timePickerState,
-                            modifier = Modifier
-                                .focusRequester(second)
-                                .focusProperties {
-                                    next = third
-                                }
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-            ) {
-                Column(
+                Box(
                     modifier = Modifier
+                        .animateContentSize()
                         .fillMaxWidth()
-                        .verticalScroll(scrollState)
-                        .padding(vertical = 22.dp)
-                        .onFocusChanged {
-                            if (it.hasFocus) {
-                                collapse = true
-                            }
-                        }
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 22.dp)
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        repeat(7) { idx ->
-                            val modifier = if (alarmState.repeatOnWeekdays[idx]) {
-                                Modifier.border(
-                                    2.dp,
-                                    MaterialTheme.colorScheme.primary,
-                                    CircleShape
-                                )
-                            } else {
-                                Modifier
-                            }
-                            TextButton(
-                                onClick = {
-                                    alarmState.repeatOnWeekdays[idx] =
-                                        !alarmState.repeatOnWeekdays[idx]
-                                },
-                                modifier = modifier
-                                    .size(42.dp)
-                            ) {
-                                Text(
-                                    text = weekdays[idx],
-                                    color = when (idx) {
-                                        0 -> SundayRed
-                                        6 -> SaturdayBlue
-                                        else -> MaterialTheme.colorScheme.primary
+                        AnimatedVisibility(
+                            visible = !collapse,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+                            TimePicker(
+                                state = timePickerState,
+                                modifier = Modifier
+                                    .focusRequester(first)
+                                    .focusProperties {
+                                        next = third
                                     }
-                                )
-                            }
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    TextField(
-                        value = alarmState.name,
-                        onValueChange = { alarmState.name = it },
-                        label = { Text(text = "알람 이름") },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            imeAction = ImeAction.Next,
-                        ),
-                        trailingIcon = {
-                            Icon(
-                                Icons.Filled.Clear,
-                                contentDescription = "이름 제거",
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        AnimatedVisibility(
+                            visible = collapse,
+                            enter = fadeIn(),
+                            exit = fadeOut(),
+                        ) {
+                            TimeInput(
+                                state = timePickerState,
                                 modifier = Modifier
-                                    .clip(CircleShape)
-                                    .padding(all = 2.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            alarmState.name = ""
+                                    .focusRequester(second)
+                                    .focusProperties {
+                                        next = third
+                                    }
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(scrollState)
+                            .padding(vertical = 22.dp)
+                            .onFocusChanged {
+                                if (it.hasFocus) {
+                                    collapse = true
+                                }
+                            }
+                    ) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 22.dp)
+                        ) {
+                            repeat(7) { idx ->
+                                val modifier = if (alarmState.repeatOnWeekdays[idx]) {
+                                    Modifier.border(
+                                        2.dp,
+                                        MaterialTheme.colorScheme.primary,
+                                        CircleShape
+                                    )
+                                } else {
+                                    Modifier
+                                }
+                                TextButton(
+                                    onClick = {
+                                        alarmState.repeatOnWeekdays[idx] =
+                                            !alarmState.repeatOnWeekdays[idx]
+                                    },
+                                    modifier = modifier
+                                        .size(42.dp)
+                                ) {
+                                    Text(
+                                        text = weekdays[idx],
+                                        color = when (idx) {
+                                            0 -> SundayRed
+                                            6 -> SaturdayBlue
+                                            else -> MaterialTheme.colorScheme.primary
                                         }
                                     )
-                            )
-                        },
-                        modifier = Modifier
-                            .padding(horizontal = 22.dp)
-                            .focusRequester(third)
-                            .focusProperties {
-                                previous = first
-                                next = fourth
+                                }
                             }
-                            .fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    ExposedDropdownMenuBox(
-                        expanded = groupNameDropdownExposed,
-                        onExpandedChange = {
-                            groupNameDropdownExposed = !existingGroups.isEmpty() && it
-                        },
-                        modifier = Modifier.padding(horizontal = 22.dp)
-                    ) {
-                        TextField(
-                            value = alarmState.groupName,
-                            onValueChange = { alarmState.groupName = it },
-                            label = { Text(text = "그룹 이름") },
-                            trailingIcon = {
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        if (specifiedDateRange != null) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier
+                                    .padding(horizontal = 32.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = specifiedDateRange,
+                                    fontSize = 14.sp
+                                )
                                 Icon(
                                     Icons.Filled.Clear,
-                                    contentDescription = "그룹에서 제외",
+                                    contentDescription = "이름 제거",
                                     modifier = Modifier
                                         .clip(CircleShape)
                                         .padding(all = 2.dp)
                                         .combinedClickable(
                                             onClick = {
-                                                alarmState.groupName = ""
+                                                alarmState.startDate = null
+                                                alarmState.expireDate = null
+                                            }
+                                        )
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(12.dp))
+                        }
+                        TextField(
+                            value = alarmState.name,
+                            onValueChange = { alarmState.name = it },
+                            label = { Text(text = "알람 이름") },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Next,
+                            ),
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Filled.Clear,
+                                    contentDescription = "이름 제거",
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .padding(all = 2.dp)
+                                        .combinedClickable(
+                                            onClick = {
+                                                alarmState.name = ""
                                             }
                                         )
                                 )
                             },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Done,
-                            ),
                             modifier = Modifier
-                                .focusRequester(fourth)
+                                .padding(horizontal = 22.dp)
+                                .focusRequester(third)
                                 .focusProperties {
-                                    previous = third
+                                    previous = first
+                                    next = fourth
                                 }
                                 .fillMaxWidth()
-                                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                         )
-                        ExposedDropdownMenu(
+                        Spacer(modifier = Modifier.height(12.dp))
+                        ExposedDropdownMenuBox(
                             expanded = groupNameDropdownExposed,
-                            onDismissRequest = { groupNameDropdownExposed = false }) {
-                            existingGroups.forEach {
-                                DropdownMenuItem(
-                                    text = { Text(text = it.groupName) },
-                                    onClick = { alarmState.groupName = it.groupName },
-                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                            onExpandedChange = {
+                                groupNameDropdownExposed = !existingGroups.isEmpty() && it
+                            },
+                            modifier = Modifier.padding(horizontal = 22.dp)
+                        ) {
+                            TextField(
+                                value = alarmState.groupName,
+                                onValueChange = { alarmState.groupName = it },
+                                label = { Text(text = "그룹 이름") },
+                                trailingIcon = {
+                                    Icon(
+                                        Icons.Filled.Clear,
+                                        contentDescription = "그룹에서 제외",
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .padding(all = 2.dp)
+                                            .combinedClickable(
+                                                onClick = {
+                                                    alarmState.groupName = ""
+                                                }
+                                            )
+                                    )
+                                },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Done,
+                                ),
+                                modifier = Modifier
+                                    .focusRequester(fourth)
+                                    .focusProperties {
+                                        previous = third
+                                    }
+                                    .fillMaxWidth()
+                                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                            )
+                            ExposedDropdownMenu(
+                                expanded = groupNameDropdownExposed,
+                                onDismissRequest = { groupNameDropdownExposed = false }) {
+                                existingGroups.forEach {
+                                    DropdownMenuItem(
+                                        text = { Text(text = it.groupName) },
+                                        onClick = { alarmState.groupName = it.groupName },
+                                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { alarmState.isBookmarked = !alarmState.isBookmarked }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 32.dp, vertical = 12.dp)
+                            ) {
+                                Text(text = "즐겨찾기")
+                                Switch(
+                                    checked = alarmState.isBookmarked,
+                                    onCheckedChange = { alarmState.isBookmarked = it },
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .scale(0.6f)
+                                        .padding(end = 12.dp)
                                 )
                             }
                         }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        AlarmSoundPicker(
+                            LocalContext.current,
+                            alarmState,
+                            Modifier.padding(horizontal = 32.dp)
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { alarmState.isBookmarked = !alarmState.isBookmarked }
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 32.dp, vertical = 12.dp)
+                }
+            }
+            if (showDatePicker) {
+                DatePickerDialog(
+                    onDismissRequest = { showDatePicker = false },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                if (dateRangePickerState.selectedStartDateMillis == null) {
+                                    Toast.makeText(
+                                        current,
+                                        "날짜를 선택해주세요.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    return@TextButton
+                                }
+                                alarmState.startDate =
+                                    dateRangePickerState.selectedStartDateMillis
+                                alarmState.expireDate =
+                                    dateRangePickerState.selectedEndDateMillis
+                                showDatePicker = false
+                            }
                         ) {
-                            Text(text = "즐겨찾기")
-                            Switch(
-                                checked = alarmState.isBookmarked,
-                                onCheckedChange = { alarmState.isBookmarked = it },
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .scale(0.6f)
-                                    .padding(end = 12.dp)
-                            )
+                            Text(text = "확인")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showDatePicker = false
+                            }
+                        ) {
+                            Text(text = "취소")
                         }
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    AlarmSoundPicker(
-                        LocalContext.current,
-                        alarmState,
-                        Modifier.padding(horizontal = 32.dp)
+                ) {
+                    DateRangePicker(
+                        state = dateRangePickerState
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
                 }
             }
         }

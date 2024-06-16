@@ -9,8 +9,8 @@ object AlarmComparator {
         val now = Calendar.getInstance()
 
         // 다음 울릴 시간 계산
-        val nextTriggerA1 = getNextTriggerTime(a1, now)
-        val nextTriggerA2 = getNextTriggerTime(a2, now)
+        val nextTriggerA1 = a1.getNextRingTime()
+        val nextTriggerA2 = a2.getNextRingTime()
 
         // isOn 값을 우선적으로 고려
         when {
@@ -28,23 +28,6 @@ object AlarmComparator {
         } else {
             hourCompare
         }
-    }
-
-    // 다음 울릴 시간을 계산하는 함수
-    private fun getNextTriggerTime(alarm: AlarmState, now: Calendar): Long {
-        val alarmTime = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, alarm.hour)
-            set(Calendar.MINUTE, alarm.minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        // 만약 현재 시간이 알람 시간 이후라면, 다음 날의 같은 시간으로 설정
-        if (alarmTime.before(now)) {
-            alarmTime.add(Calendar.DAY_OF_MONTH, 1)
-        }
-
-        return alarmTime.timeInMillis
     }
 }
 

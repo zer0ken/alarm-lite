@@ -26,5 +26,7 @@ data class AlarmEntity(
     val isOn: Boolean,
     val isBookmarked: Boolean,
     val isRingtoneOn: Boolean,
-    val selectedRingtoneUri: Uri?
+    val selectedRingtoneUri: Uri?,
+    val startDate: Long?,
+    val expireDate: Long?
 )

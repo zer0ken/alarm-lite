@@ -75,7 +75,9 @@ class Repository(private val db: AlarmDatabase) {
         isOn = value.isOn,
         isBookmarked = value.isBookmarked,
         isRingtoneOn = value.isRingtoneOn,
-        selectedRingtoneUri = value.selectedRingtoneUri
+        selectedRingtoneUri = value.selectedRingtoneUri,
+        startDate = value.startDate,
+        expireDate = value.expireDate
     )
 
     private fun toAlarmEntity(value: AlarmState) = AlarmEntity(
@@ -88,7 +90,9 @@ class Repository(private val db: AlarmDatabase) {
         isOn = value.isOn,
         isBookmarked = value.isBookmarked,
         isRingtoneOn = value.isRingtoneOn,
-        selectedRingtoneUri = value.selectedRingtoneUri
+        selectedRingtoneUri = value.selectedRingtoneUri,
+        startDate = value.startDate,
+        expireDate = value.expireDate
     )
 
     private fun fromAlarmGroupEntity(value: AlarmGroupEntity) = AlarmGroupState(
