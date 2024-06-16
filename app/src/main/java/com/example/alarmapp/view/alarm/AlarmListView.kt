@@ -41,17 +41,17 @@ fun AlarmListView(
 
     val alarmList =
         if (selectedGroupFilters.isEmpty() && selectedRepeatFilters.isEmpty() && selectedFilterSetNames.isEmpty()) {
-            alarms
+            sortedAlarms
         } else {
-            alarms.filter { alarm ->
-                val groupFilterCondition = selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.value.groupName)
-                val repeatFilterCondition = selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.value.repeatOnWeekdays[it] }
+            sortedAlarms.filter { alarm ->
+                val groupFilterCondition = selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.groupName)
+                val repeatFilterCondition = selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.repeatOnWeekdays[it] }
 
                 val filterSetCondition = if (selectedFilterSetNames.isNotEmpty()) {
                     val selectedFilterSets = selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
                     selectedFilterSets.any { selectedFilterSet ->
-                        selectedFilterSet.groupFilter.contains(alarm.value.groupName) &&
-                                selectedFilterSet.repeatFilter == alarm.value.repeatOnWeekdays.toList()
+                        selectedFilterSet.groupFilter.contains(alarm.groupName) &&
+                                selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList()
                     }
                 } else {
                     false
@@ -70,7 +70,7 @@ fun AlarmListView(
     ) {
         val insertedGroup = LinkedHashSet<String>()
 
-        for (alarm in alarmList.values) {
+        for (alarm in sortedAlarms) {
 
             if (
                 alarm.groupName != "" &&
@@ -79,7 +79,7 @@ fun AlarmListView(
             ) {
                 insertedGroup.add(alarm.groupName)
                 groupedAlarmItems(
-                    alarms = alarmList.values.filter { it.groupName == alarm.groupName },
+                    alarms = sortedAlarms.filter { it.groupName == alarm.groupName },
                     alarmGroup = alarmGroups[alarm.groupName]!!,
                     mainViewModel = mainViewModel,
                     navController = navController,
