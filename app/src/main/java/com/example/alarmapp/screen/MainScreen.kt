@@ -65,7 +65,6 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val sortList = listOf("시간순", "알림순")
-    var selectedSort by remember { mutableStateOf(sortList[0]) }
     var menuExpanded by remember { mutableStateOf(false) }
 
     val postNotificationPermission =
@@ -81,8 +80,8 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     LaunchedEffect(Unit) { mainViewModel.fetchAll() }
     var sortedAlarms by remember { mutableStateOf(alarms) }
 
-    LaunchedEffect(alarms, selectedSort) {
-        sortedAlarms = if (selectedSort == "시간순") {
+    LaunchedEffect(alarms, mainViewModel.selectedSort) {
+        sortedAlarms = if (mainViewModel.selectedSort == "시간순") {
             alarms.sortedWith(AlarmComparator.absolute)
         } else {
             alarms.sortedWith(AlarmComparator.relative)
@@ -111,9 +110,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 }
                 firstText = "${temp}일 후에 알람이 울립니다"
             } else {
-                firstText = if (minutesDifference%60 ==59L ){
-                    "${hoursDifference+1}시간 0분 후에 알람이 울립니다"
-                } else{
+                firstText = if (minutesDifference % 60 == 59L) {
+                    "${hoursDifference + 1}시간 0분 후에 알람이 울립니다"
+                } else {
                     "${hoursDifference}시간 ${(minutesDifference + 1) % 60}분 후에 알람이 울립니다"
                 }
             }
@@ -187,9 +186,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                                     ) {
                                         Text(
                                             text = sortItem,
-                                            color = if (sortItem == selectedSort) Color(0xFF734D4D) else Color.Black
+                                            color = if (sortItem == mainViewModel.selectedSort) Color(0xFF734D4D) else Color.Black
                                         )
-                                        if (sortItem == selectedSort) {
+                                        if (sortItem == mainViewModel.selectedSort) {
                                             Icon(
                                                 imageVector = Icons.Default.Check,
                                                 contentDescription = "Selected sort",
@@ -201,9 +200,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                                     }
                                 },
                                 onClick = {
-                                    selectedSort = sortItem
+                                    mainViewModel.selectedSort = sortItem
                                     menuExpanded = false
-                                    sortedAlarms = if (selectedSort == "시간순") {
+                                    sortedAlarms = if (mainViewModel.selectedSort == "시간순") {
                                         alarms.sortedWith(AlarmComparator.absolute)
                                     } else {
                                         alarms.sortedWith(AlarmComparator.relative)
@@ -227,8 +226,8 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                         )
                     }
                     IconButton(onClick = {
-                        navController.navigate(Routes.CreateAlarm.route){
-                            popUpTo(Routes.MainScreen.route){inclusive= false}
+                        navController.navigate(Routes.CreateAlarm.route) {
+                            popUpTo(Routes.MainScreen.route) { inclusive = false }
                         }
                     }) {
                         Icon(
@@ -238,7 +237,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                     }
                     IconButton(onClick = {
                         navController.navigate(Routes.Setting.route) {
-                            popUpTo(Routes.MainScreen.route) { inclusive = false}
+                            popUpTo(Routes.MainScreen.route) { inclusive = false }
                         }
                     }) {
                         Icon(

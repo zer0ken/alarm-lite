@@ -1,6 +1,7 @@
 package com.example.alarmapp.model
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -19,6 +20,8 @@ import kotlinx.coroutines.launch
 @Stable
 class MainViewModel(context: Context) : ViewModel() {
     private val repository = Repository(AlarmDatabase.getInstance(context))
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("AlarmAppPreferences", Context.MODE_PRIVATE)
 
     val alarmStateMap = mutableStateMapOf<Int, AlarmState>()
     val alarmGroupStateMap = mutableStateMapOf<String, AlarmGroupState>()
@@ -43,6 +46,14 @@ class MainViewModel(context: Context) : ViewModel() {
         get() = _isCleanupEnabled.value
         set(value) {
             _isCleanupEnabled.value = value
+        }
+
+    private val _selectedSort = mutableStateOf(loadSortPreference())
+    var selectedSort: String
+        get() = _selectedSort.value
+        set(value) {
+            _selectedSort.value = value
+            saveSortPreference(value)
         }
 
     private val scheduler = MainAlarmScheduler(context)
@@ -141,6 +152,14 @@ class MainViewModel(context: Context) : ViewModel() {
         repository.getFilters().forEach {
             filterMap[it.title] = it
         }
+    }
+
+    private fun loadSortPreference(): String {
+        return sharedPreferences.getString("selectedSort", "시간순") ?: "시간순"
+    }
+
+    private fun saveSortPreference(value: String) {
+        sharedPreferences.edit().putString("selectedSort", value).apply()
     }
 
     @Suppress("UNCHECKED_CAST")
