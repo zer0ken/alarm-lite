@@ -1,9 +1,10 @@
 package com.example.alarmapplication
 
-import androidx.compose.foundation.layout.Box
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,19 +14,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,49 +35,69 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.alarmapp.Routes
+import com.example.alarmapp.model.AlarmState
+import com.example.alarmapp.model.Filter
+import com.example.alarmapp.model.MainViewModel
+import com.example.alarmapp.model.rememberAlarmState
+import com.example.alarmapp.model.rememberFilter
+import com.example.alarmapp.view.FilterTopAppBar
+import java.time.DayOfWeek
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddFilterSetScreen() {
-
+fun AddFilterSetScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel,
+    filter: Filter? = null
+) {
     val scrollState = rememberScrollState()
-    var filterSetName by remember { mutableStateOf("")}
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
+
+    val definedRepeatFilters = mainViewModel.definedRepeatFilters
+
+//    var filterSetName = mainViewModel.filterSetName
+//    var filterSetRepeatFilter = mainViewModel.filterSetRepeatFilter
+//    var filterSetGroupFilter = mainViewModel.filterSetGroupFilter
+
+    var filterSetName by remember {
+        mutableStateOf(filter?.name ?: mainViewModel.filterSetName)
+    }
+    val filterSetRepeatFilter by remember {
+        mutableStateOf(filter?.repeatFilter ?: mainViewModel.filterSetRepeatFilter)
+    }
+    val filterSetGroupFilter by remember {
+        mutableStateOf(filter?.groupFilter ?: mainViewModel.filterSetGroupFilter)
+    }
+
+//    // 필터 설정 초기화 함수
+//    fun clearFilterSet() {
+//        filterSetName = ""
+//        filterSetRepeatFilter = mutableListOf(false, false, false, false, false, false, false)
+//        filterSetGroupFilter = mutableListOf()
+//    }
+
+    Log.d("test1", filterSetName)
+    Log.d("test2", filterSetRepeatFilter.toString())
+    Log.d("test3", filterSetGroupFilter.toString())
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
-//                    .padding(vertical = 10.dp),
-                title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "필터 셋 작성",
-                            fontSize = 32.sp,
-                            fontWeight = FontWeight(800)
+            FilterTopAppBar("필터 셋 작성") {
+                if (it) {
+                    mainViewModel.updateFilter(
+                        Filter(
+                            name = filterSetName,
+                            repeatFilter = filterSetRepeatFilter,
+                            groupFilter = filterSetGroupFilter
                         )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { }) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowLeft,
-                            contentDescription = "",
-                            modifier = Modifier.size(36.dp)
-                        )
-                    }
-                },
-                actions = {
-                    TextButton(onClick = { /* 데이터베이스에 필터 셋 추가 */ }) {
-                        Text(text = "저장")
-                    }
+                    )
                 }
-            )
+//                clearFilterSet()
+                navController.navigate(Routes.MainScreen.route)
+            }
         }
-    ) {PaddingValues ->
+    ) { PaddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -88,12 +107,84 @@ fun AddFilterSetScreen() {
             OutlinedTextField(
                 value = filterSetName,
                 onValueChange = { filterSetName = it },
-                label = { Text("필터 이름")},
+                label = { Text("필터 이름") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp))
-
+                    .padding(horizontal = 15.dp)
+            )
             /* 추가한 필터 불러오기 */
+            if (filterSetRepeatFilter.any { it }) {
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Column {
+                        Text(
+                            text = "반복 필터",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                        val selectedDays = mutableListOf<String>()
+
+                        filterSetRepeatFilter.forEachIndexed { index, isSelected ->
+                            if (isSelected) {
+                                selectedDays.add(definedRepeatFilters[index][0].toString())
+                            }
+                        }
+                        Text(
+                            text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = { filterSetRepeatFilter.clear() }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "delete",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+            }
+//            if (filterSetRepeatFilter.isNotEmpty()) {
+//                Row(
+//                    modifier = Modifier.fillMaxHeight(),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Column {
+//                        Text(
+//                            text = "반복 필터",
+//                            fontWeight = FontWeight.Bold,
+//                            fontSize = 20.sp,
+//                            modifier = Modifier.padding(vertical = 8.dp)
+//                        )
+//                        val selectedDays = mutableListOf<String>()
+//
+//                        filterSetRepeatFilter.forEachIndexed { index, isSelected ->
+//                            if (isSelected) {
+//                                selectedDays.add(definedRepeatFilters[index])
+//                            }
+//                        }
+//                        Text(
+//                            text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
+//                            modifier = Modifier.padding(bottom = 8.dp)
+//                        )
+//
+//                    }
+//                    Spacer(modifier = Modifier.weight(1f))
+//                    IconButton(onClick = { filterSetRepeatFilter.clear() }) {
+//                        Icon(
+//                            imageVector = Icons.Default.Close,
+//                            contentDescription = "delete",
+//                            modifier = Modifier.size(32.dp)
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.width(10.dp))
+//                }
+//            }
 
             Spacer(modifier = Modifier.height(50.dp))
             Button(
@@ -120,7 +211,10 @@ fun AddFilterSetScreen() {
                             )
                         }
                     },
-                    onClick = { /* LabelScreen 으로 이동 */ }
+                    onClick = {
+                        mainViewModel.filterSetName = filterSetName
+                        navController.navigate(Routes.RepeatFilterLabel.route)
+                    }
                 )
                 Divider()
                 DropdownMenuItem(
@@ -133,7 +227,9 @@ fun AddFilterSetScreen() {
                             )
                         }
                     },
-                    onClick = { /* LabelScreen 으로 이동 */ }
+                    onClick = {
+                        navController.navigate(Routes.GroupFilterLabel.route)
+                    }
                 )
             }
         }

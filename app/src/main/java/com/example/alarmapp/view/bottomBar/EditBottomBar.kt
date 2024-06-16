@@ -16,13 +16,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+import com.example.alarmapp.model.MainViewModel
 
 @Composable
-fun EditBottomBar() {
-    val buttonOnOff by remember { mutableStateOf(false) }
-    val textOnOff = if (!buttonOnOff) "끄기" else "켜기"
+fun EditBottomBar(mainViewModel: MainViewModel) {
+    var selected by remember { mutableStateOf(false) }
+    val selectedText = if (!selected) "전체 선택" else "전체 해제"
 
-    var isGroupMenuExpanded by remember { mutableStateOf(false) }
+    var onOff by remember { mutableStateOf(false) }
+    val onOffText = if (!onOff) "끄기" else "켜기"
 
     BottomAppBar {
         Row(
@@ -32,55 +35,26 @@ fun EditBottomBar() {
         ) {
             TextButton(
                 onClick = {
-                    /* 선택된 알람 객체의 isOn = buttonOnOff */
-                    !buttonOnOff
+                    selected = !selected
+                    mainViewModel.toggleSelectAll(selected)
                 }
             ) {
-                Text(text = textOnOff)
+                Text(text = selectedText)
             }
-            TextButton(onClick = { /*  */ }) {
-                Text(text = "뮤트")
+            TextButton(
+                onClick = {
+                    onOff = !onOff
+                    mainViewModel.OnOffSelectedAlarms(onOff)
+                }) {
+                Text(text = onOffText)
             }
-            TextButton(onClick = { isGroupMenuExpanded = true }) {
-                Text(text = "그룹 관리")
+//            TextButton(onClick = { isGroupMenuExpanded = true }) {
+//                Text(text = "그룹화")
+//            }
+            TextButton(onClick = { mainViewModel.clearGroupForSelectedAlarms() }) {
+                Text(text = "그룹 해제")
             }
-            DropdownMenu(
-                expanded = isGroupMenuExpanded,
-                onDismissRequest = { isGroupMenuExpanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "그룹 생성"
-                            )
-                        }
-                    },
-                    onClick = { /* 그룹 생성 화면으로 이동 */ }
-                )
-                Divider()
-                DropdownMenuItem(
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("그룹 해제")
-                        }
-                    },
-                    onClick = { /* 선택된 알람 객체의 groupName = "" */ }
-                )
-                Divider()
-                DropdownMenuItem(
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text("그룹 이동")
-                        }
-                    },
-                    onClick = { /* 존재하는 그룹들을 어떻게 보여줄거냐 */ }
-                )
-            }
-            TextButton(onClick = { /* ??? */ }) {
-                Text(text = "편집")
-            }
-            TextButton(onClick = { /* 알람 삭제 */ }) {
+            TextButton(onClick = { mainViewModel.deleteSelectedAlarms() }) {
                 Text(text = "삭제")
             }
         }

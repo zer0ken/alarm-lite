@@ -251,9 +251,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
         },
         bottomBar = {
             if (mainViewModel.isSelectMode) {
-                EditBottomBar()
+                EditBottomBar(mainViewModel)
             } else {
-                DefaultBottomBar()
+                DefaultBottomBar(navController, mainViewModel)
             }
         }
     ) { innerPadding ->
