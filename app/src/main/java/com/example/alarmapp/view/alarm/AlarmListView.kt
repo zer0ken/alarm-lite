@@ -1,5 +1,6 @@
 package com.example.alarmapp.view.alarm
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,6 +35,32 @@ fun AlarmListView(
         mainViewModel.alarmGroupStateMap
     }
 
+    val selectedRepeatFilters = mainViewModel.selectedRepeatFiltersIndex // [월요일마다..
+    val selectedGroupFilters = mainViewModel.selectedGroupFilters // [group1, group2, ...]
+    val selectedFilterSetNames = mainViewModel.selectedFilterSet // [filterSet1, ...]
+
+    val alarmList =
+        if (selectedGroupFilters.isEmpty() && selectedRepeatFilters.isEmpty() && selectedFilterSetNames.isEmpty()) {
+            sortedAlarms
+        } else {
+            sortedAlarms.filter { alarm ->
+                val groupFilterCondition = selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.groupName)
+                val repeatFilterCondition = selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.repeatOnWeekdays[it] }
+
+                val filterSetCondition = if (selectedFilterSetNames.isNotEmpty()) {
+                    val selectedFilterSets = selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
+                    selectedFilterSets.any { selectedFilterSet ->
+                        selectedFilterSet.groupFilter.contains(alarm.groupName) &&
+                                selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList()
+                    }
+                } else {
+                    false
+                }
+                groupFilterCondition || repeatFilterCondition || filterSetCondition
+            }
+        }
+
+
     LazyColumn(
         state = lazyListState,
         contentPadding = PaddingValues(vertical = 12.dp),
@@ -40,7 +69,9 @@ fun AlarmListView(
             .padding(innerPadding)
     ) {
         val insertedGroup = LinkedHashSet<String>()
+
         for (alarm in sortedAlarms) {
+
             if (
                 alarm.groupName != "" &&
                 alarmGroups[alarm.groupName] != null &&

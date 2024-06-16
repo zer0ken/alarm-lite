@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -25,46 +26,47 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import com.example.alarmapp.Routes
+import com.example.alarmapp.model.MainViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FilterSetListScreen() {
+fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewModel) {
 
-    val filterSetList = listOf(1, 2, 3) // // List<FilterSet> 불러오기
+    val filterMap = remember {
+        mainViewModel.filterMap.values.toList()
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-//                    .padding(vertical = 10.dp),
                 title = {
                     Box(
-                        modifier = Modifier.fillMaxWidth(),
-//                        contentAlignment = Alignment.Center
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             text = "필터 셋 목록",
-                            fontSize = 32.sp,
                             fontWeight = FontWeight(800)
                         )
-
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navController.navigate(Routes.MainScreen.route) }) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowLeft,
                             contentDescription = "",
                             modifier = Modifier.size(36.dp)
                         )
                     }
-                },
-                actions = {
                 }
             )
         }
@@ -75,27 +77,28 @@ fun FilterSetListScreen() {
                 .padding(it)
         ) {
             LazyColumn {
-                items(filterSetList) {
+                items(filterMap) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp)
                             .height(66.dp)
                             .clickable {
-                                /* 선택한 필터 셋 편집 화면으로 이동*/
+                                navController.navigate("UpdateFilterSetScreen/${it.name}")
                             }
                     ) {
                         Row(
                             modifier = Modifier.fillMaxHeight(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
+                            Spacer(modifier = Modifier.width(20.dp))
                             Text(
-                                text = it.toString(),
+                                text = it.name,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight(700)
                             )
                             Spacer(modifier = Modifier.weight(1f))
-                            IconButton(onClick = { /* 필터 셋 데이터베이스에서 삭제 */ }) {
+                            IconButton(onClick = { mainViewModel.deleteFilter(it) }) {
                                 Icon(
                                     imageVector = Icons.Default.Close,
                                     contentDescription = "delete",

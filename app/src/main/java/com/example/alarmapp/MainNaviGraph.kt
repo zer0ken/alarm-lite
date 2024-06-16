@@ -14,11 +14,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.example.alarmapp.model.Filter
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
 import com.example.alarmapp.screen.SettingScreen
 import com.example.alarmapp.screen.UpdateAlarmScreen
+import com.example.alarmapp.screen.filterscreens.GroupFilterLabel
+import com.example.alarmapp.screen.filterscreens.RepeatFilterLabel
+import com.example.alarmapplication.AddFilterSetScreen
+import com.example.alarmapplication.FilterSetListScreen
 
 @Composable
 fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
@@ -79,6 +84,28 @@ fun MainNaviGraph(navController: NavHostController) {
             UpdateAlarmScreen(navController, mainViewModel, alarm, title = "새 그룹 알람 추가")
         }
 
+        composable(Routes.FilterSetListScreen.route) {
+            FilterSetListScreen(navController, mainViewModel)
+        }
+
+        composable(
+            route = Routes.UpdateFilterSetScreen.route,
+            arguments = listOf(navArgument("filterName") { type = NavType.StringType })
+        ) {
+            val filterName = it.arguments?.getString("filterName")
+            val filter = mainViewModel.getFilterByName(filterName)!!
+            AddFilterSetScreen(navController, mainViewModel, filter)
+        }
+
+        composable(Routes.AddFilterSetScreen.route) {
+            AddFilterSetScreen(navController, mainViewModel)
+        }
+        composable(Routes.RepeatFilterLabel.route) {
+            RepeatFilterLabel(navController, mainViewModel)
+        }
+        composable(Routes.GroupFilterLabel.route) {
+            GroupFilterLabel(navController, mainViewModel)
+        }
         // 추가적인 화면 등등
     }
 }
