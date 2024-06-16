@@ -21,12 +21,8 @@ import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset.UTC
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -57,7 +53,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val alarm = repository.getAlarm(intent.getIntExtra("ID", -1)) ?: return@goAsync
         Log.d("@Receiver", "received alarm ${alarm.id}")
 
-        if (alarm.repeatOnWeekdays.none {it} || !alarmScheduler.schedule(alarm)) {
+        if (alarm.repeatOnWeekdays.none { it } || !alarmScheduler.schedule(alarm)) {
             Log.d("@Receiver", "alarm ${alarm.id} were turned off")
             alarm.isOn = false
             repository.update(alarm)

@@ -4,11 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -117,8 +115,7 @@ class MainViewModel(context: Context) : ViewModel() {
     fun getAlarmInGroup(groupName: String) =
         alarmStateMap.filter { it.value.groupName == groupName }
 
-    fun getSelectedAlarms() =
-        alarmStateMap.filter { it.value.isSelected }
+    fun getSelectedAlarms() = alarmStateMap.filter { it.value.isSelected }
 
     fun clearAllSelections() {
         alarmStateMap.values.forEach { it.isSelected = false }

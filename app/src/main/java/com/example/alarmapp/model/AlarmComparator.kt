@@ -6,8 +6,6 @@ object AlarmComparator {
 
     // 상대적인 시간 기준 Comparator
     val relative: Comparator<AlarmState> = Comparator { a1, a2 ->
-        val now = Calendar.getInstance()
-
         // 다음 울릴 시간 계산
         val nextTriggerA1 = a1.getNextRingTime()
         val nextTriggerA2 = a2.getNextRingTime()

@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -77,26 +76,26 @@ fun LazyListScope.alarmGroupStickyHeader(
         val alarmInGroup = mainViewModel.getAlarmInGroup(alarmGroup.groupName).values
         val containsOnAlarm = alarmInGroup.any { it.isOn }
 
+        Modifier
+            .fillMaxWidth()
+            .background(
+                brush = Brush.verticalGradient(
+                    0.7f to MaterialTheme.colorScheme.background,
+                    1.0f to Color.Transparent,
+                    startY = 0.8f,
+                )
+            )
+            .padding(start = 20.dp, end = 14.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = {
+                        alarmGroup.isFolded = !alarmGroup.isFolded
+                    }
+                )
+            }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.verticalGradient(
-                        0.7f to MaterialTheme.colorScheme.background,
-                        1.0f to Color.Transparent,
-                        startY = 0.8f,
-                    )
-                )
-                .padding(start = 20.dp, end = 14.dp)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = {
-                            alarmGroup.isFolded = !alarmGroup.isFolded
-                        }
-                    )
-                }
-                .animateItemPlacement(),
+            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
         ) {
             FoldButton(
                 isFolded = alarmGroup.isFolded,
@@ -168,11 +167,11 @@ fun LazyListScope.foldedAlarmGroupItems(
     is24HourView: Boolean
 ) {
     item(key = groupState.groupName.hashCode()) {
+        Modifier
+            .fillMaxWidth()
         LazyRow(
             contentPadding = PaddingValues(start = 32.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .animateItemPlacement()
+            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
         ) {
             items(alarms, key = { it.id }) { alarm ->
                 AlarmItemView(
@@ -180,7 +179,7 @@ fun LazyListScope.foldedAlarmGroupItems(
                     alarmGroup = groupState,
                     mainViewModel = mainViewModel,
                     navController = navController,
-                    modifier = Modifier.animateItemPlacement(),
+                    modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                     is24HourView = is24HourView
                 )
             }
@@ -202,17 +201,17 @@ fun LazyListScope.expandedAlarmGroupItems(
     is24HourView: Boolean
 ) {
     items(alarms, key = { it.id }) { alarm ->
+        Modifier
+            .padding(horizontal = 32.dp, vertical = 8.dp)
         Box(
-            modifier = Modifier
-                .padding(horizontal = 32.dp, vertical = 8.dp)
-                .animateItemPlacement()
+            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
         ) {
             AlarmItemView(
                 alarm = alarm,
                 alarmGroup = alarmGroup,
                 mainViewModel = alarmViewModel,
                 navController = navController,
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                 is24HourView = is24HourView
             )
         }

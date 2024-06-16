@@ -88,8 +88,8 @@ fun AlarmItemView(
     var rowModifier: Modifier = Modifier
     var switchModifier: Modifier = Modifier
 
-    var contentFontSize: TextUnit
-    var timeFontSize: TextUnit
+    val contentFontSize: TextUnit
+    val timeFontSize: TextUnit
 
     if (mainViewModel.isSelectMode && !alarm.isSelected) {
         cardShape = CardDefaults.outlinedShape
