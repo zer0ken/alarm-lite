@@ -213,18 +213,6 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* 김종권 작성 */ }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.rounded_undo_24),
-                            contentDescription = "Undo",
-                        )
-                    }
-                    IconButton(onClick = { /* 김종권 작성 */ }) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.rounded_redo_24),
-                            contentDescription = "Redo",
-                        )
-                    }
                     IconButton(onClick = {
                         navController.navigate(Routes.CreateAlarm.route) {
                             popUpTo(Routes.MainScreen.route) { inclusive = false }
