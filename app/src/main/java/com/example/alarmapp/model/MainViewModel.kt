@@ -14,6 +14,8 @@ import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Stable
 class MainViewModel(context: Context) : ViewModel() {
@@ -37,13 +39,6 @@ class MainViewModel(context: Context) : ViewModel() {
         get() = _is24HourView.value
         set(value) {
             _is24HourView.value = value
-        }
-
-    private val _isCleanupEnabled = mutableStateOf(false)
-    var isCleanupEnabled: Boolean
-        get() = _isCleanupEnabled.value
-        set(value) {
-            _isCleanupEnabled.value = value
         }
 
     private val _selectedSort = mutableStateOf(loadSortPreference())
@@ -157,6 +152,21 @@ class MainViewModel(context: Context) : ViewModel() {
 
     private fun saveSortPreference(value: String) {
         sharedPreferences.edit().putString("selectedSort", value).apply()
+    }
+
+    fun cleanupAlarms() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val now = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000
+            val alarms = repository.getAlarms()
+            alarms.forEach {
+                if (!it.isOn && it.repeatOnWeekdays.all { weekday -> !weekday } ||
+                    (it.expireDate != null && it.expireDate!! < now)
+                ) {
+                    repository.delete(it)
+                    alarmStateMap.remove(it.id)
+                }
+            }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
