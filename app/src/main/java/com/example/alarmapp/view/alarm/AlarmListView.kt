@@ -1,5 +1,6 @@
 package com.example.alarmapp.view.alarm
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -65,6 +67,7 @@ fun AlarmListView(
     ) {
         val insertedGroup = LinkedHashSet<String>()
         for (alarm in alarmList.values) {
+            Log.d("test", alarm.name)
             if (
                 alarm.groupName != "" &&
                 alarmGroups[alarm.groupName] != null &&

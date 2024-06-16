@@ -1,6 +1,7 @@
 package com.example.alarmapp.model
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -174,5 +175,41 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     fun getFilterByName(name: String?): Filter? {
         return filterMap[name]
+    }
+
+    fun toggleSelectAll(select: Boolean) {
+        alarmStateMap.forEach { (_, alarmState) ->
+            alarmState.isSelected = select
+        }
+    }
+
+    fun deleteSelectedAlarms() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val selectedAlarms = alarmStateMap.filter { it.value.isSelected }.values.toList()
+            selectedAlarms.forEach {
+                _deleteAlarm(it)
+            }
+            fetchAlarms()
+        }
+    }
+
+    private suspend fun _deleteAlarm(alarmState: AlarmState) {
+        repository.delete(alarmState)
+    }
+
+    fun OnOffSelectedAlarms(select: Boolean) {
+        alarmStateMap.forEach { (_, alarmState) ->
+            if (alarmState.isSelected) {
+                alarmState.isOn = !select
+            }
+        }
+    }
+
+    fun clearGroupForSelectedAlarms() {
+        alarmStateMap.forEach { (_, alarmState) ->
+            if (alarmState.isSelected) {
+                alarmState.groupName = ""
+            }
+        }
     }
 }
