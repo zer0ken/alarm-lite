@@ -1,6 +1,7 @@
 package com.example.alarmapplication
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -63,7 +64,7 @@ fun AddFilterSetScreen(
     var filterSetName by remember {
         mutableStateOf(filter?.name ?: mainViewModel.filterSetName)
     }
-    val filterSetRepeatFilter by remember {
+    var filterSetRepeatFilter by remember {
         mutableStateOf(filter?.repeatFilter ?: mainViewModel.filterSetRepeatFilter)
     }
     val filterSetGroupFilter by remember {
@@ -112,10 +113,15 @@ fun AddFilterSetScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp)
             )
-            /* 추가한 필터 불러오기 */
+            Spacer(modifier = Modifier.height(20.dp))
             if (filterSetRepeatFilter.any { it }) {
                 Row(
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .clickable {
+                            mainViewModel.filterSetName = filterSetName
+                            navController.navigate(Routes.RepeatFilterLabel.route)
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.width(20.dp))
@@ -127,7 +133,6 @@ fun AddFilterSetScreen(
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
                         val selectedDays = mutableListOf<String>()
-
                         filterSetRepeatFilter.forEachIndexed { index, isSelected ->
                             if (isSelected) {
                                 selectedDays.add(definedRepeatFilters[index][0].toString())
@@ -139,7 +144,10 @@ fun AddFilterSetScreen(
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { filterSetRepeatFilter.clear() }) {
+                    IconButton(onClick = {
+                        filterSetRepeatFilter = mainViewModel.defaultFilterSetRepeatFilter
+                        mainViewModel.filterSetRepeatFilter = filterSetRepeatFilter
+                    }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "delete",
@@ -149,43 +157,39 @@ fun AddFilterSetScreen(
                     Spacer(modifier = Modifier.width(10.dp))
                 }
             }
-//            if (filterSetRepeatFilter.isNotEmpty()) {
-//                Row(
-//                    modifier = Modifier.fillMaxHeight(),
-//                    verticalAlignment = Alignment.CenterVertically
-//                ) {
-//                    Column {
-//                        Text(
-//                            text = "반복 필터",
-//                            fontWeight = FontWeight.Bold,
-//                            fontSize = 20.sp,
-//                            modifier = Modifier.padding(vertical = 8.dp)
-//                        )
-//                        val selectedDays = mutableListOf<String>()
-//
-//                        filterSetRepeatFilter.forEachIndexed { index, isSelected ->
-//                            if (isSelected) {
-//                                selectedDays.add(definedRepeatFilters[index])
-//                            }
-//                        }
-//                        Text(
-//                            text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
-//                            modifier = Modifier.padding(bottom = 8.dp)
-//                        )
-//
-//                    }
-//                    Spacer(modifier = Modifier.weight(1f))
-//                    IconButton(onClick = { filterSetRepeatFilter.clear() }) {
-//                        Icon(
-//                            imageVector = Icons.Default.Close,
-//                            contentDescription = "delete",
-//                            modifier = Modifier.size(32.dp)
-//                        )
-//                    }
-//                    Spacer(modifier = Modifier.width(10.dp))
-//                }
-//            }
+            if (filterSetGroupFilter.isNotEmpty()) {
+                Row(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Column {
+                        Text(
+                            text = "그룹 필터",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+                        Text(
+                            text = "${filterSetGroupFilter.joinToString(", ")} 에 포함되는 알람",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
 
+                    }
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(onClick = {
+                        filterSetGroupFilter.clear()
+                        mainViewModel.filterSetGroupFilter.clear()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "delete",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+            }
             Spacer(modifier = Modifier.height(50.dp))
             Button(
                 onClick = { isDropDownMenuExpanded = true },
@@ -196,8 +200,6 @@ fun AddFilterSetScreen(
                 Text(text = "필터 추가")
             }
             DropdownMenu(
-                modifier = Modifier
-                    .width(100.dp),
                 expanded = isDropDownMenuExpanded,
                 onDismissRequest = { isDropDownMenuExpanded = false },
             ) {
@@ -205,9 +207,7 @@ fun AddFilterSetScreen(
                     text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "반복 필터",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight(500),
+                                text = "반복 필터"
                             )
                         }
                     },
@@ -221,9 +221,7 @@ fun AddFilterSetScreen(
                     text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = "그룹 필터",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight(500),
+                                text = "그룹 필터"
                             )
                         }
                     },

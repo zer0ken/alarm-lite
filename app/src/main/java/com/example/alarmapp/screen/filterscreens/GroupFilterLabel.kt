@@ -34,17 +34,20 @@ import com.example.alarmapp.view.FilterTopAppBar
 @Composable
 fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel) {
 
-//    val AlarmGroupList by mainViewModel.AlarmGroupList.collectAsState()
     val alarmGroups = remember {
         mainViewModel.alarmGroupStateMap.values.toList()
     }
-    val checkedStates = remember { mutableStateListOf<Boolean>().apply { addAll(List(alarmGroups.size) { false }) } }
+
+    val checkedStates = remember {
+        mutableStateListOf<String>()
+    }
 
     Scaffold(
         topBar = {
             FilterTopAppBar("그룹 필터") {
                 if (it) {
-
+                    mainViewModel.filterSetGroupFilter.clear()
+                    mainViewModel.filterSetGroupFilter.addAll(checkedStates)
                 }
                 navController.navigate(Routes.AddFilterSetScreen.route)
             }
@@ -69,7 +72,11 @@ fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel)
                         .padding(horizontal = 16.dp)
                         .padding(top = if (index == 0) 16.dp else 0.dp, bottom = if (index == alarmGroups.size - 1) 16.dp else 0.dp)
                         .clickable {
-                            checkedStates[index] = !checkedStates[index]
+                            if (checkedStates.contains(label.groupName)) {
+                                checkedStates.remove(label.groupName)
+                            } else {
+                                checkedStates.add(label.groupName)
+                            }
                         },
                     colors = CardDefaults.cardColors(containerColor = Color.LightGray)
                 ) {
@@ -84,7 +91,7 @@ fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel)
                                 text = label.groupName,
                                 modifier = Modifier.weight(1f)
                             )
-                            if (checkedStates[index]) {
+                            if (checkedStates.contains(label.groupName)) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
                                     contentDescription = "Checked",

@@ -178,7 +178,10 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add",
-                modifier = Modifier.clickable { navController.navigate(Routes.AddFilterSetScreen.route) }
+                modifier = Modifier.clickable {
+                    mainViewModel.resetFilter()
+                    navController.navigate(Routes.AddFilterSetScreen.route)
+                }
             )
             Spacer(modifier = Modifier.width(20.dp))
         }

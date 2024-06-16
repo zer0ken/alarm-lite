@@ -41,14 +41,17 @@ fun AlarmListView(
             sortedAlarms
         } else {
             sortedAlarms.filter { alarm ->
-                val groupFilterCondition = selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.groupName)
-                val repeatFilterCondition = selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.repeatOnWeekdays[it] }
+                val groupFilterCondition =
+                    selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.groupName)
+                val repeatFilterCondition =
+                    selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.repeatOnWeekdays[it] }
 
                 val filterSetCondition = if (selectedFilterSetNames.isNotEmpty()) {
-                    val selectedFilterSets = selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
+                    val selectedFilterSets =
+                        selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
                     selectedFilterSets.any { selectedFilterSet ->
-                        selectedFilterSet.groupFilter.contains(alarm.groupName) &&
-                                selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList()
+                        (selectedFilterSet.groupFilter.isNotEmpty() && selectedFilterSet.groupFilter.contains(alarm.groupName)) ||
+                                (selectedFilterSet.repeatFilter.isNotEmpty() && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList())
                     }
                 } else {
                     false

@@ -193,33 +193,56 @@ class MainViewModel(context: Context) : ViewModel() {
     val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
     val selectedFilterSet = mutableStateListOf<String>()
 
-    var filterSetName by mutableStateOf("")
-    var filterSetRepeatFilter by mutableStateOf(
-        mutableListOf(
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-        )
+//    private val defaultFilterSetName = ""
+    val defaultFilterSetRepeatFilter = mutableListOf(
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
     )
-    var filterSetGroupFilter by mutableStateOf(mutableListOf<String>())
+    private val defaultFilterSetGroupFilter = mutableListOf<String>()
+
+    var filterSetName by mutableStateOf("")
+    var filterSetRepeatFilter by mutableStateOf(defaultFilterSetRepeatFilter)
+    var filterSetGroupFilter by mutableStateOf(defaultFilterSetGroupFilter)
+
+    fun resetFilter() {
+        filterSetName = ""
+        filterSetRepeatFilter = defaultFilterSetRepeatFilter
+        filterSetGroupFilter.clear()
+    }
+
 
     fun updateFilter(filter: Filter) {
         viewModelScope.launch(Dispatchers.IO) {
             _updateFilter(filter)
+            fetchFilter()
         }
     }
 
     private suspend fun _updateFilter(filter: Filter) {
-        if (filter.name.isNotBlank() && filterMap[filter.name] == null) {
-            _addGroup(filter.name)
+        if (filter.name.isNotBlank()) {
+            if (filterMap.containsKey(filter.name)) {
+                _updateExistingFilter(filter)
+            } else {
+                _addFilter(filter)
+            }
         }
-        repository.insert(filter)
-        fetchFilter()
     }
+
+    private suspend fun _addFilter(filter: Filter) {
+        filterMap[filter.name] = filter
+        repository.insert(filter)
+    }
+
+    private suspend fun _updateExistingFilter(filter: Filter) {
+        filterMap[filter.name] = filter
+        repository.update(filter)
+    }
+
 
     fun deleteFilter(filter: Filter) {
         viewModelScope.launch {
