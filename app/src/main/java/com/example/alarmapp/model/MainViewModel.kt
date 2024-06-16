@@ -189,9 +189,25 @@ class MainViewModel(context: Context) : ViewModel() {
         "토요일마다",
     )
 
-    val selectedGroupFilters = mutableStateListOf<String>()
+    val repeatFilterDropdown: List<String> = listOf(
+        "일요일에 울리는 알람",
+        "월요일에 울리는 알람",
+        "화요일에 울리는 알람",
+        "수요일에 울리는 알람",
+        "목요일에 울리는 알람",
+        "금요일에 울리는 알람",
+        "토요일에 울리는 알람",
+    )
+
+    var selectedGroupFilters = mutableStateListOf<String>()
     val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
     val selectedFilterSet = mutableStateListOf<String>()
+
+    fun resetSelect() {
+        selectedGroupFilters.clear()
+        selectedRepeatFiltersIndex.clear()
+        selectedFilterSet.clear()
+    }
 
 //    private val defaultFilterSetName = ""
     val defaultFilterSetRepeatFilter = mutableListOf(
@@ -296,6 +312,14 @@ class MainViewModel(context: Context) : ViewModel() {
         alarmStateMap.forEach { (_, alarmState) ->
             if (alarmState.isSelected) {
                 alarmState.groupName = ""
+            }
+        }
+    }
+
+    fun updateSelectedAlarmsGroup(groupName: String) {
+        alarmStateMap.forEach { (_, alarmState) ->
+            if (alarmState.isSelected) {
+                alarmState.groupName = groupName
             }
         }
     }

@@ -31,7 +31,6 @@ fun FilterTopAppBar(title: String, onClick: (Boolean) -> Unit) {
             ) {
                 Text(
                     text = title,
-                    fontSize = 32.sp,
                     fontWeight = FontWeight(800)
                 )
             }

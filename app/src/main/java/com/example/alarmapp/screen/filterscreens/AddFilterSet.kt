@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,7 +48,6 @@ fun AddFilterSetScreen(
     filter: Filter? = null
 ) {
     val scrollState = rememberScrollState()
-    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     val definedRepeatFilters = mainViewModel.definedRepeatFilters
 
@@ -61,19 +61,27 @@ fun AddFilterSetScreen(
         mutableStateOf(filter?.groupFilter ?: mainViewModel.filterSetGroupFilter)
     }
 
+    var isFilterNameSet by remember { mutableStateOf(true) }
+
     Scaffold(
         topBar = {
-            FilterTopAppBar("필터 셋 작성") {
+            FilterTopAppBar("필터 작성") {
                 if (it) {
-                    mainViewModel.updateFilter(
-                        Filter(
-                            name = filterSetName,
-                            repeatFilter = filterSetRepeatFilter,
-                            groupFilter = filterSetGroupFilter
+                    if (filterSetName.isNotBlank()) {
+                        mainViewModel.updateFilter(
+                            Filter(
+                                name = filterSetName,
+                                repeatFilter = filterSetRepeatFilter,
+                                groupFilter = filterSetGroupFilter
+                            )
                         )
-                    )
+                        navController.navigate(Routes.MainScreen.route)
+                    } else {
+                        isFilterNameSet = false
+                    }
+                } else {
+                    navController.navigate(Routes.MainScreen.route)
                 }
-                navController.navigate(Routes.MainScreen.route)
             }
         }
     ) { PaddingValues ->
@@ -83,6 +91,7 @@ fun AddFilterSetScreen(
                 .padding(PaddingValues)
                 .verticalScroll(scrollState)
         ) {
+            Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(
                 value = filterSetName,
                 onValueChange = { filterSetName = it },
@@ -91,6 +100,13 @@ fun AddFilterSetScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp)
             )
+            if (!isFilterNameSet) {
+                Text(
+                    "필터 이름은 필수항목입니다.",
+                    color = Color.Red,
+                    modifier = Modifier.padding(horizontal = 15.dp)
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
             if (filterSetRepeatFilter.any { it }) {
                 Row(
@@ -170,43 +186,25 @@ fun AddFilterSetScreen(
             }
             Spacer(modifier = Modifier.height(50.dp))
             Button(
-                onClick = { isDropDownMenuExpanded = true },
+                onClick = {
+                    mainViewModel.filterSetName = filterSetName
+                    navController.navigate(Routes.RepeatFilterLabel.route)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
             ) {
-                Text(text = "필터 추가")
+                Text(text = "반복 필터 추가")
             }
-            DropdownMenu(
-                expanded = isDropDownMenuExpanded,
-                onDismissRequest = { isDropDownMenuExpanded = false },
+            Button(
+                onClick = {
+                    navController.navigate(Routes.GroupFilterLabel.route)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp)
             ) {
-                DropdownMenuItem(
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "반복 필터"
-                            )
-                        }
-                    },
-                    onClick = {
-                        mainViewModel.filterSetName = filterSetName
-                        navController.navigate(Routes.RepeatFilterLabel.route)
-                    }
-                )
-                Divider()
-                DropdownMenuItem(
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = "그룹 필터"
-                            )
-                        }
-                    },
-                    onClick = {
-                        navController.navigate(Routes.GroupFilterLabel.route)
-                    }
-                )
+                Text(text = "그룹 필터 추가")
             }
         }
     }
