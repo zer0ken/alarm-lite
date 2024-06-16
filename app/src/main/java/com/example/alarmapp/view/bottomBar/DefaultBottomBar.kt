@@ -40,8 +40,7 @@ import java.time.DayOfWeek
 fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel){
     var isFilterSetMenuExpanded by remember { mutableStateOf(false) }
 
-    val definedRepeatFilters = mainViewModel.definedRepeatFilters
-
+    val definedRepeatFilters = mainViewModel.definedRepeatFilters // 월요일마다, ..
     val alarmGroups = remember {
         mainViewModel.alarmGroupStateMap.values.toList()
     }
@@ -146,7 +145,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                     text = filter,
                                     modifier = Modifier.weight(1f)
                                 )
-                                if (filter in mainViewModel.selectedGroupFilters) {
+                                if (filter in mainViewModel.selectedFilterSet) {
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected",
@@ -156,10 +155,10 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                             }
                         },
                         onClick = {
-                            if (filter in mainViewModel.selectedGroupFilters) {
-                                mainViewModel.selectedGroupFilters.remove(filter)
+                            if (filter in mainViewModel.selectedFilterSet) {
+                                mainViewModel.selectedFilterSet.remove(filter)
                             } else {
-                                mainViewModel.selectedGroupFilters.add(filter)
+                                mainViewModel.selectedFilterSet.add(filter)
                             }
                         }
                     )
@@ -186,27 +185,15 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
     }
 }
 
-fun dayOfWeekToString(dayOfWeek: DayOfWeek): String {
-    return when (dayOfWeek) {
-        DayOfWeek.MONDAY -> "월요일마다"
-        DayOfWeek.TUESDAY -> "화요일마다"
-        DayOfWeek.WEDNESDAY -> "수요일마다"
-        DayOfWeek.THURSDAY -> "목요일마다"
-        DayOfWeek.FRIDAY -> "금요일마다"
-        DayOfWeek.SATURDAY -> "토요일마다"
-        DayOfWeek.SUNDAY -> "일요일마다"
-    }
-}
-
 fun dayOfWeekStringToIndex(dayOfWeek: String): Int {
     return when (dayOfWeek) {
-        "월요일마다" -> 0
-        "화요일마다" -> 1
-        "수요일마다" -> 2
-        "목요일마다" -> 3
-        "금요일마다" -> 4
-        "토요일마다" -> 5
-        "일요일마다" -> 6
+        "일요일마다" -> 0
+        "월요일마다" -> 1
+        "화요일마다" -> 2
+        "수요일마다" -> 3
+        "목요일마다" -> 4
+        "금요일마다" -> 5
+        "토요일마다" -> 6
         else -> throw IllegalArgumentException("Invalid day Of Week: $dayOfWeek")
     }
 }

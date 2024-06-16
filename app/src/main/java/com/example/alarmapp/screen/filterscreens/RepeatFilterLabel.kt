@@ -30,7 +30,6 @@ import androidx.navigation.NavController
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.FilterTopAppBar
-import com.example.alarmapp.view.bottomBar.dayOfWeekToString
 
 @Composable
 fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel) {
@@ -41,16 +40,15 @@ fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel
 //    val checkedStates = remember { mutableStateListOf<Boolean>().apply {
 //        addAll(definedRepeatFilters.map { it.toString() in selectedRepeatFilters })
 //    }}
-    val checkedStates = remember { mutableStateListOf<Boolean>().apply { addAll(List(definedRepeatFilters.size) { false }) } }
+//    val checkedStates = remember { mutableStateListOf<Boolean>().apply { addAll(List(definedRepeatFilters.size) { false }) } }
+
+    val checkedStates =  mainViewModel.filterSetRepeatFilter
 
     Scaffold(
         topBar = {
             FilterTopAppBar("반복 필터") {
                 if (it) {
-                    val selectedDays =
-                        definedRepeatFilters.filterIndexed { index, _ -> checkedStates[index] }
-//                    val repeatFilter = RepeatFilter(week = selectedDays)
-//                    mainViewModel.filterSetRepeatFilter.value = repeatFilter
+                    mainViewModel.filterSetRepeatFilter = checkedStates
                 }
                 navController.navigate(Routes.AddFilterSetScreen.route)
             }

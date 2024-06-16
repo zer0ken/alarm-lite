@@ -10,6 +10,5 @@ sealed class Routes (val route: String, val slottedRoute: String? = null) {
     object AddFilterSetScreen: Routes("AddFilterSetScreen")
     object RepeatFilterLabel: Routes("RepeatFilterLabel")
     object GroupFilterLabel: Routes("GroupFilterLabel")
-
-    object CreateFilterSet: Routes("CreateFilterSet")
+    object UpdateFilterSetScreen: Routes("UpdateFilterSetScreen/{filterName}")
 }

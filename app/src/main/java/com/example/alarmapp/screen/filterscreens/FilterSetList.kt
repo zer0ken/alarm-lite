@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.MainViewModel
@@ -56,7 +57,6 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                             text = "필터 셋 목록",
                             fontWeight = FontWeight(800)
                         )
-
                     }
                 },
                 navigationIcon = {
@@ -84,13 +84,14 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                             .padding(horizontal = 20.dp)
                             .height(66.dp)
                             .clickable {
-
+                                navController.navigate("UpdateFilterSetScreen/${it.name}")
                             }
                     ) {
                         Row(
                             modifier = Modifier.fillMaxHeight(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
+                            Spacer(modifier = Modifier.width(20.dp))
                             Text(
                                 text = it.name,
                                 fontSize = 20.sp,
@@ -110,14 +111,6 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
-//            Button(
-//                onClick = { navController.navigate(Routes.AddFilterSetScreen.route) },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 10.dp)
-//            ) {
-//                Text(text = "필터 셋 추가")
-//            }
         }
     }
 }

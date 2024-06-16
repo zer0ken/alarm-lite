@@ -2,9 +2,11 @@ package com.example.alarmapp.model
 
 import android.content.Context
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -127,30 +129,50 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
 
     val selectedGroupFilters = mutableStateListOf<String>()
     val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
+    val selectedFilterSet = mutableStateListOf<String>()
 
-    var filterSetName: MutableState<String> = mutableStateOf("")
-    var filterSetRepeatFilter = mutableStateListOf<Boolean>(
-        false,  // 일
-        false,  // 월
-        false,  // 화
-        false,  // 수
-        false,  // 목
-        false,  // 금
-        false   // 토
+    var filterSetName by mutableStateOf("")
+    var filterSetRepeatFilter by mutableStateOf(
+        mutableListOf(
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+        )
     )
-    var filterSetGroupFilter = mutableStateListOf<String>()
+    var filterSetGroupFilter by mutableStateOf(mutableListOf<String>())
+
+    fun updateFilter(filter: Filter) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _updateFilter(filter)
+        }
+    }
+    private suspend fun _updateFilter(filter: Filter) {
+        if (filter.name.isNotBlank() && filterMap[filter.name] == null) {
+            _addGroup(filter.name)
+        }
+        repository.insert(filter)
+        fetchFilter()
+    }
 
     fun deleteFilter(filter: Filter){
         viewModelScope.launch {
             repository.delete(filter)
-//            getFilters()
+            fetchFilter()
         }
     }
 
     fun insertFilter(filter: Filter){
         viewModelScope.launch {
             repository.insert(filter)
-//            getFilters()
+            fetchFilter()
         }
+    }
+
+    fun getFilterByName(name: String?): Filter? {
+        return filterMap[name]
     }
 }

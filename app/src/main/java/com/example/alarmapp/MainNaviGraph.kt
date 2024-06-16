@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.alarmapp.model.Filter
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
@@ -30,7 +31,8 @@ fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
 @Composable
 fun MainNaviGraph(navController: NavHostController) {
     val navStoreOwner = rememberViewModelStoreOwner()
-    val mainViewModel: MainViewModel = viewModel(factory = MainViewModel.Factory(LocalContext.current))
+    val mainViewModel: MainViewModel =
+        viewModel(factory = MainViewModel.Factory(LocalContext.current))
 
     NavHost(navController = navController, startDestination = Routes.MainScreen.route) {
         composable(route = Routes.MainScreen.route) {
@@ -68,6 +70,16 @@ fun MainNaviGraph(navController: NavHostController) {
         composable(Routes.FilterSetListScreen.route) {
             FilterSetListScreen(navController, mainViewModel)
         }
+
+        composable(
+            route = Routes.UpdateFilterSetScreen.route,
+            arguments = listOf(navArgument("filterName") { type = NavType.StringType })
+        ) {
+            val filterName = it.arguments?.getString("filterName")
+            val filter = mainViewModel.getFilterByName(filterName)!!
+            AddFilterSetScreen(navController, mainViewModel, filter)
+        }
+
         composable(Routes.AddFilterSetScreen.route) {
             AddFilterSetScreen(navController, mainViewModel)
         }

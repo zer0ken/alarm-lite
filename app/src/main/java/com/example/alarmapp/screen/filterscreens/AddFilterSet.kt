@@ -37,30 +37,40 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
+import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.Filter
 import com.example.alarmapp.model.MainViewModel
+import com.example.alarmapp.model.rememberAlarmState
+import com.example.alarmapp.model.rememberFilter
 import com.example.alarmapp.view.FilterTopAppBar
 import java.time.DayOfWeek
 
 @Composable
-fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewModel) {
-
+fun AddFilterSetScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel,
+    filter: Filter = rememberFilter()
+) {
     val scrollState = rememberScrollState()
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
-    var definedRepeatFilters = mainViewModel.definedRepeatFilters
+    val definedRepeatFilters = mainViewModel.definedRepeatFilters
 
-    var filterSetName = mainViewModel.filterSetName
-    var filterSetRepeatFilter = mainViewModel.filterSetRepeatFilter
-    var filterSetGroupFilter = mainViewModel.filterSetGroupFilter
+//    var filterSetName = mainViewModel.filterSetName
+//    var filterSetRepeatFilter = mainViewModel.filterSetRepeatFilter
+//    var filterSetGroupFilter = mainViewModel.filterSetGroupFilter
+    var filterSetName = filter.name
+    val filterSetRepeatFilter = filter.repeatFilter
+    val filterSetGroupFilter = filter.groupFilter
 
-    fun clearFilterSet() {
-        filterSetName.value = ""
-        filterSetRepeatFilter.clear()
-        filterSetGroupFilter.clear()
-    }
+//    // 필터 설정 초기화 함수
+//    fun clearFilterSet() {
+//        filterSetName = ""
+//        filterSetRepeatFilter = mutableListOf(false, false, false, false, false, false, false)
+//        filterSetGroupFilter = mutableListOf()
+//    }
 
-    Log.d("test1", filterSetName.value)
+    Log.d("test1", filterSetName)
     Log.d("test2", filterSetRepeatFilter.toString())
     Log.d("test3", filterSetGroupFilter.toString())
 
@@ -68,15 +78,15 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
         topBar = {
             FilterTopAppBar("필터 셋 작성") {
                 if (it) {
-                    mainViewModel.insertFilter(
+                    mainViewModel.updateFilter(
                         Filter(
-                            name = filterSetName.value,
+                            name = filterSetName,
                             repeatFilter = filterSetRepeatFilter,
                             groupFilter = filterSetGroupFilter
                         )
                     )
                 }
-                clearFilterSet()
+//                clearFilterSet()
                 navController.navigate(Routes.MainScreen.route)
             }
         }
@@ -88,20 +98,20 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                 .verticalScroll(scrollState)
         ) {
             OutlinedTextField(
-                value = filterSetName.value,
-                onValueChange = { filterSetName.value = it },
+                value = filterSetName,
+                onValueChange = { filterSetName = it },
                 label = { Text("필터 이름") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp)
             )
-
             /* 추가한 필터 불러오기 */
-            if (filterSetRepeatFilter.isNotEmpty()) {
+            if (filterSetRepeatFilter.any { it }) {
                 Row(
                     modifier = Modifier.fillMaxHeight(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Spacer(modifier = Modifier.width(20.dp))
                     Column {
                         Text(
                             text = "반복 필터",
@@ -109,16 +119,17 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                             fontSize = 20.sp,
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
-                        filterSetRepeatFilter.forEachIndexed { index, filter ->
-                            Text(
-                                text = if (filter) {
-                                    stringToDayOfWeek(definedRepeatFilters[index].toString()).toString()
-                                } else {
-                                    ""
-                                },
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
+                        val selectedDays = mutableListOf<String>()
+
+                        filterSetRepeatFilter.forEachIndexed { index, isSelected ->
+                            if (isSelected) {
+                                selectedDays.add(definedRepeatFilters[index][0].toString())
+                            }
                         }
+                        Text(
+                            text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.weight(1f))
                     IconButton(onClick = { filterSetRepeatFilter.clear() }) {
@@ -131,6 +142,42 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                     Spacer(modifier = Modifier.width(10.dp))
                 }
             }
+//            if (filterSetRepeatFilter.isNotEmpty()) {
+//                Row(
+//                    modifier = Modifier.fillMaxHeight(),
+//                    verticalAlignment = Alignment.CenterVertically
+//                ) {
+//                    Column {
+//                        Text(
+//                            text = "반복 필터",
+//                            fontWeight = FontWeight.Bold,
+//                            fontSize = 20.sp,
+//                            modifier = Modifier.padding(vertical = 8.dp)
+//                        )
+//                        val selectedDays = mutableListOf<String>()
+//
+//                        filterSetRepeatFilter.forEachIndexed { index, isSelected ->
+//                            if (isSelected) {
+//                                selectedDays.add(definedRepeatFilters[index])
+//                            }
+//                        }
+//                        Text(
+//                            text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
+//                            modifier = Modifier.padding(bottom = 8.dp)
+//                        )
+//
+//                    }
+//                    Spacer(modifier = Modifier.weight(1f))
+//                    IconButton(onClick = { filterSetRepeatFilter.clear() }) {
+//                        Icon(
+//                            imageVector = Icons.Default.Close,
+//                            contentDescription = "delete",
+//                            modifier = Modifier.size(32.dp)
+//                        )
+//                    }
+//                    Spacer(modifier = Modifier.width(10.dp))
+//                }
+//            }
 
             Spacer(modifier = Modifier.height(50.dp))
             Button(
@@ -178,19 +225,5 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                 )
             }
         }
-    }
-}
-
-
-fun stringToDayOfWeek(dayString: String): DayOfWeek {
-    return when (dayString) {
-        "월요일마다" -> DayOfWeek.MONDAY
-        "화요일마다" -> DayOfWeek.TUESDAY
-        "수요일마다" -> DayOfWeek.WEDNESDAY
-        "목요일마다" -> DayOfWeek.THURSDAY
-        "금요일마다" -> DayOfWeek.FRIDAY
-        "토요일마다" -> DayOfWeek.SATURDAY
-        "일요일마다" -> DayOfWeek.SUNDAY
-        else -> throw IllegalArgumentException("Invalid day string: $dayString")
     }
 }
