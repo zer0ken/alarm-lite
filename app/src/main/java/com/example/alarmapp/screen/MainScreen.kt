@@ -90,12 +90,12 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     var firstText by remember { mutableStateOf("") }
     var secondText by remember { mutableStateOf("") }
     if (alarms.isEmpty()) {
-        firstText = "알람"
+        firstText = "알람이 없습니다"
         secondText = "알람을 추가해 주세요"
     } else {
         val allAlarmsOff = alarms.all { !it.isOn }
         if (allAlarmsOff) {
-            firstText = "모든 알람이 꺼진 상태입니다"
+            firstText = "모든 알람이\n꺼진 상태입니다"
             secondText = "알람을 켜주세요"
         } else {
             val currentTime = remember { LocalDateTime.now() }
@@ -108,12 +108,12 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 if (temp == 0) {
                     temp += 7
                 }
-                firstText = "${temp}일 후에 알람이 울립니다"
+                firstText = "${temp}일 후에\n알람이 울립니다"
             } else {
                 firstText = if (minutesDifference % 60 == 59L) {
-                    "${hoursDifference + 1}시간 0분 후에 알람이 울립니다"
+                    "${hoursDifference + 1}시간 0분 후에\n알람이 울립니다"
                 } else {
-                    "${hoursDifference}시간 ${(minutesDifference + 1) % 60}분 후에 알람이 울립니다"
+                    "${hoursDifference}시간 ${(minutesDifference + 1) % 60}분 후에\n알람이 울립니다"
                 }
             }
             val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.forLanguageTag("ko"))
