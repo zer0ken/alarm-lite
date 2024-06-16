@@ -89,15 +89,35 @@ class Repository(private val db: AlarmDatabase) {
         value.groupName
     )
 
-    private fun fromFilterEntity(value: FilterEntity) = Filter(
-        value.name,
-        value.repeatFilter,
-        value.groupFilter
-    )
+//    private fun fromFilterEntity(value: FilterEntity) = Filter(
+//        value.name,
+//        value.repeatFilter,
+//        value.groupFilter
+//    )
+//
+//    private fun toFilterEntity(value: Filter) = FilterEntity(
+//        value.name,
+//        value.repeatFilter,
+//        value.groupFilter
+//    )
 
-    private fun toFilterEntity(value: Filter) = FilterEntity(
-        value.title,
-        value.repeatFilter,
-        value.groupFilter
-    )
+    private fun fromFilterEntity(filterEntity: FilterEntity): Filter {
+        return Filter(
+            name = filterEntity.name,
+            repeatFilter = filterEntity.repeatFilter.toMutableList(),
+            groupFilter = filterEntity.groupFilter?.toMutableList() ?: mutableListOf()
+        )
+    }
+
+    // Convert Filter to FilterEntity
+    private fun toFilterEntity(filter: Filter): FilterEntity {
+        return FilterEntity(
+            name = filter.name,
+            repeatFilter = filter.repeatFilter.toMutableList(),
+            groupFilter = filter.groupFilter.toMutableListOrNull()
+        )
+    }
+    private fun List<String>?.toMutableListOrNull(): MutableList<String>? {
+        return this?.toMutableList()
+    }
 }

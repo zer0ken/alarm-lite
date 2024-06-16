@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.MainViewModel
-import com.example.alarmapp.model.RepeatFilter
 import com.example.alarmapp.view.FilterTopAppBar
 import com.example.alarmapp.view.bottomBar.dayOfWeekToString
 
@@ -50,8 +49,8 @@ fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel
                 if (it) {
                     val selectedDays =
                         definedRepeatFilters.filterIndexed { index, _ -> checkedStates[index] }
-                    val repeatFilter = RepeatFilter(week = selectedDays)
-                    mainViewModel.filterSetRepeatFilter.value = repeatFilter
+//                    val repeatFilter = RepeatFilter(week = selectedDays)
+//                    mainViewModel.filterSetRepeatFilter.value = repeatFilter
                 }
                 navController.navigate(Routes.AddFilterSetScreen.route)
             }
@@ -94,7 +93,7 @@ fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = dayOfWeekToString(label),
+                                text = label,
                                 modifier = Modifier.weight(1f)
                             )
                             if (checkedStates[index]) {

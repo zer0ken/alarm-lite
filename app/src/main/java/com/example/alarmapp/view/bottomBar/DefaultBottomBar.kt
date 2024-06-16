@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,7 +74,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                     .fillMaxWidth(0.5f)
                     .height(300.dp)
             ) {
-                definedRepeatFilters.map { dayOfWeekToString(it) }.forEach { filter ->
+                definedRepeatFilters.map { it }.forEach { filter ->
                     val filterIndex = dayOfWeekStringToIndex(filter)
                     DropdownMenuItem(
                         text = {
@@ -83,15 +84,12 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                             ) {
                                 Text(
                                     text = filter,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight(500),
                                     modifier = Modifier.weight(1f)
                                 )
                                 if (filterIndex in mainViewModel.selectedRepeatFiltersIndex) {
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected",
-//                                            tint = Color.Green,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -116,15 +114,12 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                             ) {
                                 Text(
                                     text = filter,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight(500),
                                     modifier = Modifier.weight(1f)
                                 )
                                 if (filter in mainViewModel.selectedGroupFilters) {
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected",
-//                                            tint = Color.Green,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -140,7 +135,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                     )
                     Divider()
                 }
-                filterMap.map { it.title }.forEach { filter ->
+                filterMap.map { it.name }.forEach { filter ->
                     DropdownMenuItem(
                         text = {
                             Row(
@@ -149,15 +144,12 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                             ) {
                                 Text(
                                     text = filter,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight(500),
                                     modifier = Modifier.weight(1f)
                                 )
                                 if (filter in mainViewModel.selectedGroupFilters) {
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected",
-//                                            tint = Color.Green,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -176,9 +168,8 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                 DropdownMenuItem(
                     text = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                "필터 관리"
-                            )
+                            Text("필터 관리",
+                                color = Color.Red)
                         }
                     },
                     onClick = { navController.navigate(Routes.FilterSetListScreen.route) }

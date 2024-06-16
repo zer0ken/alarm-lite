@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -47,17 +48,19 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
     val scrollState = rememberScrollState()
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
-    var filterSetName by mainViewModel.filterSetName
-    var filterSetRepeatFilter by mainViewModel.filterSetRepeatFilter
-    var filterSetGroupFilter by mainViewModel.filterSetGroupFilter
+    var definedRepeatFilters = mainViewModel.definedRepeatFilters
 
-    fun clearFilterSet(){
-        filterSetName = ""
-        filterSetRepeatFilter = null
-        filterSetGroupFilter = null
+    var filterSetName = mainViewModel.filterSetName
+    var filterSetRepeatFilter = mainViewModel.filterSetRepeatFilter
+    var filterSetGroupFilter = mainViewModel.filterSetGroupFilter
+
+    fun clearFilterSet() {
+        filterSetName.value = ""
+        filterSetRepeatFilter.clear()
+        filterSetGroupFilter.clear()
     }
 
-    Log.d("test1", filterSetName)
+    Log.d("test1", filterSetName.value)
     Log.d("test2", filterSetRepeatFilter.toString())
     Log.d("test3", filterSetGroupFilter.toString())
 
@@ -67,7 +70,7 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                 if (it) {
                     mainViewModel.insertFilter(
                         Filter(
-                            title = filterSetName,
+                            name = filterSetName.value,
                             repeatFilter = filterSetRepeatFilter,
                             groupFilter = filterSetGroupFilter
                         )
@@ -85,8 +88,8 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                 .verticalScroll(scrollState)
         ) {
             OutlinedTextField(
-                value = filterSetName,
-                onValueChange = { filterSetName = it },
+                value = filterSetName.value,
+                onValueChange = { filterSetName.value = it },
                 label = { Text("필터 이름") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,10 +97,10 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
             )
 
             /* 추가한 필터 불러오기 */
-            if (filterSetRepeatFilter != null) {
+            if (filterSetRepeatFilter.isNotEmpty()) {
                 Row(
                     modifier = Modifier.fillMaxHeight(),
-//                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
                         Text(
@@ -106,13 +109,19 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
                             fontSize = 20.sp,
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
-                        Text(
-                            text = filterSetRepeatFilter!!.week.toString(),
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        )
+                        filterSetRepeatFilter.forEachIndexed { index, filter ->
+                            Text(
+                                text = if (filter) {
+                                    stringToDayOfWeek(definedRepeatFilters[index].toString()).toString()
+                                } else {
+                                    ""
+                                },
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
                     }
                     Spacer(modifier = Modifier.weight(1f))
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { filterSetRepeatFilter.clear() }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "delete",
@@ -171,6 +180,7 @@ fun AddFilterSetScreen(navController: NavController, mainViewModel: MainViewMode
         }
     }
 }
+
 
 fun stringToDayOfWeek(dayString: String): DayOfWeek {
     return when (dayString) {

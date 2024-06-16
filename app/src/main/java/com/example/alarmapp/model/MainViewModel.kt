@@ -115,33 +115,30 @@ class MainViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    val definedRepeatFilters: List<DayOfWeek> = listOf(
-        DayOfWeek.MONDAY,
-        DayOfWeek.TUESDAY,
-        DayOfWeek.WEDNESDAY,
-        DayOfWeek.THURSDAY,
-        DayOfWeek.FRIDAY,
-        DayOfWeek.SATURDAY,
-        DayOfWeek.SUNDAY
+    val definedRepeatFilters: List<String> = listOf(
+        "일요일마다",
+        "월요일마다",
+        "화요일마다",
+        "수요일마다",
+        "목요일마다",
+        "금요일마다",
+        "토요일마다",
     )
 
-//    private val _selectedRepeatFilters = mutableStateOf<List<String>>(emptyList())
-//    val selectedRepeatFilters: List<String> get() = _selectedRepeatFilters.value
-//
-//    fun setSelectedRepeatFilters(filters: List<String>) {
-//        _selectedRepeatFilters.value = filters
-//    }
-//
-//    fun getSelectedRepeatFilters(): List<String> {
-//        return _selectedRepeatFilters.value
-//    }
+    val selectedGroupFilters = mutableStateListOf<String>()
+    val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
 
-//    val selectedGroupFilters = mutableStateListOf<String>()
-//    val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
-//
-//    var filterSetName = mutableStateOf("")
-//    val filterSetRepeatFilter = mutableStateOf<RepeatFilter?>(null)
-//    var filterSetGroupFilter = mutableStateOf<GroupFilter?>(null)
+    var filterSetName: MutableState<String> = mutableStateOf("")
+    var filterSetRepeatFilter = mutableStateListOf<Boolean>(
+        false,  // 일
+        false,  // 월
+        false,  // 화
+        false,  // 수
+        false,  // 목
+        false,  // 금
+        false   // 토
+    )
+    var filterSetGroupFilter = mutableStateListOf<String>()
 
     fun deleteFilter(filter: Filter){
         viewModelScope.launch {

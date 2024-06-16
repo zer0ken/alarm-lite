@@ -92,7 +92,7 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = it.title,
+                                text = it.name,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight(700)
                             )
