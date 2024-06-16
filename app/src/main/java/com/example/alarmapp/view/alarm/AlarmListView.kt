@@ -28,9 +28,6 @@ fun AlarmListView(
 ) {
     val lazyListState = rememberLazyListState()
 
-    val alarms = remember {
-        mainViewModel.alarmStateMap
-    }
     val alarmGroups = remember {
         mainViewModel.alarmGroupStateMap
     }
@@ -70,8 +67,7 @@ fun AlarmListView(
     ) {
         val insertedGroup = LinkedHashSet<String>()
 
-        for (alarm in sortedAlarms) {
-
+        for (alarm in alarmList) {
             if (
                 alarm.groupName != "" &&
                 alarmGroups[alarm.groupName] != null &&
@@ -79,7 +75,7 @@ fun AlarmListView(
             ) {
                 insertedGroup.add(alarm.groupName)
                 groupedAlarmItems(
-                    alarms = sortedAlarms.filter { it.groupName == alarm.groupName },
+                    alarms = alarmList.filter { it.groupName == alarm.groupName },
                     alarmGroup = alarmGroups[alarm.groupName]!!,
                     mainViewModel = mainViewModel,
                     navController = navController,

@@ -178,12 +178,6 @@ class MainViewModel(context: Context) : ViewModel() {
             return MainViewModel(context) as T
         }
     }
-    
-@Composable
-fun rememberMainViewModel(context: Context) = remember {
-    MainViewModel(context)
-}
-
 
     val definedRepeatFilters: List<String> = listOf(
         "일요일마다",
@@ -218,6 +212,7 @@ fun rememberMainViewModel(context: Context) = remember {
             _updateFilter(filter)
         }
     }
+
     private suspend fun _updateFilter(filter: Filter) {
         if (filter.name.isNotBlank() && filterMap[filter.name] == null) {
             _addGroup(filter.name)
@@ -226,7 +221,7 @@ fun rememberMainViewModel(context: Context) = remember {
         fetchFilter()
     }
 
-    fun deleteFilter(filter: Filter){
+    fun deleteFilter(filter: Filter) {
         viewModelScope.launch {
             repository.delete(filter)
             filterMap.remove(filter.name)
@@ -234,7 +229,7 @@ fun rememberMainViewModel(context: Context) = remember {
         }
     }
 
-    fun insertFilter(filter: Filter){
+    fun insertFilter(filter: Filter) {
         viewModelScope.launch {
             repository.insert(filter)
             fetchFilter()
