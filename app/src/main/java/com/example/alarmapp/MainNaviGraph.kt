@@ -1,6 +1,6 @@
 package com.example.alarmapp
 
-import SettingScreen
+import com.example.alarmapp.screen.SettingScreen
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi

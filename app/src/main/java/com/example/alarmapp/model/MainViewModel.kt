@@ -1,9 +1,13 @@
 package com.example.alarmapp.model
 
 import android.content.Context
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,18 +16,33 @@ import com.example.alarmapp.database.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@Stable
 class MainViewModel(context: Context) : ViewModel() {
-    private val repository = Repository(AlarmDatabase.getInstance(context = context))
+    private val repository = Repository(AlarmDatabase.getInstance(context))
 
     val alarmStateMap = mutableStateMapOf<Int, AlarmState>()
     val alarmGroupStateMap = mutableStateMapOf<String, AlarmGroupState>()
     val filterMap = mutableStateMapOf<String, Filter>()
 
-    private val _isSelectMode: MutableState<Boolean> = mutableStateOf(false)
+    private val _isSelectMode = mutableStateOf(false)
     var isSelectMode: Boolean
         get() = _isSelectMode.value
         set(value) {
             _isSelectMode.value = value
+        }
+
+    private val _is24HourView = mutableStateOf(false)
+    var is24HourView: Boolean
+        get() = _is24HourView.value
+        set(value) {
+            _is24HourView.value = value
+        }
+
+    private val _isCleanupEnabled = mutableStateOf(false)
+    var isCleanupEnabled: Boolean
+        get() = _isCleanupEnabled.value
+        set(value) {
+            _isCleanupEnabled.value = value
         }
 
     private val scheduler = MainAlarmScheduler(context)
@@ -90,6 +109,10 @@ class MainViewModel(context: Context) : ViewModel() {
     fun getSelectedAlarms() =
         alarmStateMap.filter { it.value.isSelected }
 
+    fun clearAllSelections() {
+        alarmStateMap.values.forEach { it.isSelected = false }
+    }
+
     fun fetchAll() {
         viewModelScope.launch(Dispatchers.IO) {
             fetchAlarmGroups()
@@ -126,19 +149,9 @@ class MainViewModel(context: Context) : ViewModel() {
             return MainViewModel(context) as T
         }
     }
+}
 
-    private val _is24HourView: MutableState<Boolean> = mutableStateOf(false)
-    var is24HourView: Boolean
-        get() = _is24HourView.value
-        set(value) {
-            _is24HourView.value = value
-        }
-
-    fun toggleSelectMode() {
-        _isSelectMode.value = !_isSelectMode.value
-    }
-
-    fun clearAllSelections() {
-        alarmStateMap.values.forEach { it.isSelected = false }
-    }
+@Composable
+fun rememberMainViewModel(context: Context) = remember {
+    MainViewModel(context)
 }

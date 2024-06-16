@@ -1,12 +1,14 @@
+package com.example.alarmapp.screen
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -32,8 +34,8 @@ fun SettingScreen(navController: NavController, mainViewModel: MainViewModel) {
                 }
             )
         }
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
+    ) { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
@@ -44,6 +46,18 @@ fun SettingScreen(navController: NavController, mainViewModel: MainViewModel) {
                 Switch(
                     checked = mainViewModel.is24HourView,
                     onCheckedChange = { mainViewModel.is24HourView = it }
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                Text("알람 정리", modifier = Modifier.weight(1f))
+                Switch(
+                    checked = mainViewModel.isCleanupEnabled,
+                    onCheckedChange = { mainViewModel.isCleanupEnabled = it }
                 )
             }
         }
