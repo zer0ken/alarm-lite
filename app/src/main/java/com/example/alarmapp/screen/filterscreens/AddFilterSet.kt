@@ -1,6 +1,5 @@
 package com.example.alarmapplication
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
@@ -38,13 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
-import com.example.alarmapp.model.AlarmState
 import com.example.alarmapp.model.Filter
 import com.example.alarmapp.model.MainViewModel
-import com.example.alarmapp.model.rememberAlarmState
-import com.example.alarmapp.model.rememberFilter
 import com.example.alarmapp.view.FilterTopAppBar
-import java.time.DayOfWeek
 
 @Composable
 fun AddFilterSetScreen(
@@ -57,10 +51,6 @@ fun AddFilterSetScreen(
 
     val definedRepeatFilters = mainViewModel.definedRepeatFilters
 
-//    var filterSetName = mainViewModel.filterSetName
-//    var filterSetRepeatFilter = mainViewModel.filterSetRepeatFilter
-//    var filterSetGroupFilter = mainViewModel.filterSetGroupFilter
-
     var filterSetName by remember {
         mutableStateOf(filter?.name ?: mainViewModel.filterSetName)
     }
@@ -70,17 +60,6 @@ fun AddFilterSetScreen(
     val filterSetGroupFilter by remember {
         mutableStateOf(filter?.groupFilter ?: mainViewModel.filterSetGroupFilter)
     }
-
-//    // 필터 설정 초기화 함수
-//    fun clearFilterSet() {
-//        filterSetName = ""
-//        filterSetRepeatFilter = mutableListOf(false, false, false, false, false, false, false)
-//        filterSetGroupFilter = mutableListOf()
-//    }
-
-    Log.d("test1", filterSetName)
-    Log.d("test2", filterSetRepeatFilter.toString())
-    Log.d("test3", filterSetGroupFilter.toString())
 
     Scaffold(
         topBar = {
@@ -94,7 +73,6 @@ fun AddFilterSetScreen(
                         )
                     )
                 }
-//                clearFilterSet()
                 navController.navigate(Routes.MainScreen.route)
             }
         }

@@ -32,9 +32,9 @@ fun AlarmListView(
         mainViewModel.alarmGroupStateMap
     }
 
-    val selectedRepeatFilters = mainViewModel.selectedRepeatFiltersIndex // [월요일마다..
-    val selectedGroupFilters = mainViewModel.selectedGroupFilters // [group1, group2, ...]
-    val selectedFilterSetNames = mainViewModel.selectedFilterSet // [filterSet1, ...]
+    val selectedRepeatFilters = mainViewModel.selectedRepeatFiltersIndex
+    val selectedGroupFilters = mainViewModel.selectedGroupFilters
+    val selectedFilterSetNames = mainViewModel.selectedFilterSet
 
     val alarmList =
         if (selectedGroupFilters.isEmpty() && selectedRepeatFilters.isEmpty() && selectedFilterSetNames.isEmpty()) {
@@ -50,8 +50,12 @@ fun AlarmListView(
                     val selectedFilterSets =
                         selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
                     selectedFilterSets.any { selectedFilterSet ->
-                        (selectedFilterSet.groupFilter.isNotEmpty() && selectedFilterSet.groupFilter.contains(alarm.groupName)) ||
-                                (selectedFilterSet.repeatFilter.isNotEmpty() && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList())
+                        val isEmpty = selectedFilterSet.repeatFilter.size == 7 && selectedFilterSet.repeatFilter.all { !it }
+                        (selectedFilterSet.groupFilter.isEmpty() && isEmpty) ||
+                        (selectedFilterSet.groupFilter.isNotEmpty() && isEmpty && selectedFilterSet.groupFilter.contains(alarm.groupName)) ||
+                                (selectedFilterSet.groupFilter.isEmpty() && !isEmpty && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList()) ||
+                                (selectedFilterSet.groupFilter.isNotEmpty() && !isEmpty &&
+                                        selectedFilterSet.groupFilter.contains(alarm.groupName) && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList())
                     }
                 } else {
                     false
