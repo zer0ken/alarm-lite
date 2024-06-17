@@ -213,29 +213,21 @@ class MainViewModel(context: Context) : ViewModel() {
     val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
     val selectedFilterSet = mutableStateListOf<String>()
 
-    fun selected1(filter: String) {
-        if (filter in selectedGroupFilters) {
-            selectedGroupFilters.remove(filter)
-        } else {
-            selectedGroupFilters.add(filter)
-        }
-    }
-    fun selected2(filter: String) {
-        val filterIndex = dayOfWeekStringToIndex(filter)
-        if (filterIndex in selectedRepeatFiltersIndex) {
-            selectedRepeatFiltersIndex.remove(filterIndex)
-        } else {
-            selectedRepeatFiltersIndex.add(filterIndex)
-        }
-    }
-    fun selected3(filter: String) {
-        if (filter in selectedFilterSet) {
-            selectedFilterSet.remove(filter)
-        } else {
-            selectedFilterSet.add(filter)
-        }
+    private val _combinedFilters = mutableStateListOf<String>()
+    val combinedFilters: List<String>
+        get() = _combinedFilters
+
+    fun clearCombinedFilters() {
+        _combinedFilters.clear()
     }
 
+    fun addCombinedFilter(filter: String) {
+        _combinedFilters.add(filter)
+    }
+
+    fun removeCombinedFilter(filter: String) {
+        _combinedFilters.remove(filter)
+    }
 
     fun resetSelect() {
         selectedGroupFilters.clear()

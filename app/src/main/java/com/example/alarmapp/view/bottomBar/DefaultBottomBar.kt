@@ -59,23 +59,23 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
     val selectedRepeatFiltersIndex = mainViewModel.selectedRepeatFiltersIndex
     val selectedGroupFilters = mainViewModel.selectedGroupFilters
 
-    Log.d("test11", selectedFilterSet.toString())
-    Log.d("test11", selectedRepeatFiltersIndex.toString())
-    Log.d("test11", selectedGroupFilters.toString())
+    val combinedFilters = mainViewModel.combinedFilters
 
-    val combinedFilters = remember {
-        mutableListOf<String>().apply {
-            addAll(selectedFilterSet)
-            addAll(selectedRepeatFiltersIndex.map { indexToDayOfWeekString(it)})
-            addAll(selectedGroupFilters)
-        }
-    }
-    Log.d("test", combinedFilters.toString())
+//    val combinedFilters = remember {
+//        mutableListOf<String>().apply {
+//            addAll(selectedFilterSet)
+//            addAll(selectedRepeatFiltersIndex.map { indexToDayOfWeekString(it)})
+//            addAll(selectedGroupFilters)
+//        }
+//    }
 
     val dropdownText = if (combinedFilters.isEmpty()) {
         "필터"
     } else {
-        combinedFilters.joinToString(separator = ", ")
+        if (combinedFilters.size > 1)
+            "${combinedFilters[0]} 등 ${combinedFilters.size}개"
+        else
+            combinedFilters[0]
     }
 
     val icon = if (combinedFilters.isEmpty()) {
@@ -105,7 +105,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                     text = dropdownText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(90.dp)
+                    modifier = Modifier.width(225.dp)
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 DropdownMenu(
@@ -136,12 +136,16 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 }
                             },
                             onClick = {
-//                                if (filter in selectedFilterSet) {
-//                                    selectedFilterSet.remove(filter)
-//                                } else {
-//                                    selectedFilterSet.add(filter)
-//                                }
-                                mainViewModel.selected3(filter)
+                                if (filter in selectedFilterSet) {
+                                    selectedFilterSet.remove(filter)
+                                } else {
+                                    selectedFilterSet.add(filter)
+                                }
+                                if (filter in combinedFilters) {
+                                    mainViewModel.removeCombinedFilter(filter)
+                                } else {
+                                    mainViewModel.addCombinedFilter(filter)
+                                }
                             }
                         )
                     }
@@ -168,12 +172,16 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 }
                             },
                             onClick = {
-//                                if (filterIndex in selectedRepeatFiltersIndex) {
-//                                    selectedRepeatFiltersIndex.remove(filterIndex)
-//                                } else {
-//                                    selectedRepeatFiltersIndex.add(filterIndex)
-//                                }
-                                mainViewModel.selected2(filter)
+                                if (filterIndex in selectedRepeatFiltersIndex) {
+                                    selectedRepeatFiltersIndex.remove(filterIndex)
+                                } else {
+                                    selectedRepeatFiltersIndex.add(filterIndex)
+                                }
+                                if (filter in combinedFilters) {
+                                    mainViewModel.removeCombinedFilter(filter)
+                                } else {
+                                    mainViewModel.addCombinedFilter(filter)
+                                }
                             }
                         )
                     }
@@ -199,12 +207,16 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 }
                             },
                             onClick = {
-//                                if (filter in selectedGroupFilters) {
-//                                    selectedGroupFilters.remove(filter)
-//                                } else {
-//                                    selectedGroupFilters.add(filter)
-//                                }
-                                mainViewModel.selected1(filter)
+                                if (filter in selectedGroupFilters) {
+                                    selectedGroupFilters.remove(filter)
+                                } else {
+                                    selectedGroupFilters.add(filter)
+                                }
+                                if (filter in combinedFilters) {
+                                    mainViewModel.removeCombinedFilter(filter)
+                                } else {
+                                    mainViewModel.addCombinedFilter(filter)
+                                }
                             }
                         )
                     }
@@ -225,6 +237,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = {
                 mainViewModel.resetSelect()
+                mainViewModel.clearCombinedFilters()
             }) {
                 Icon(
                     imageVector = Icons.Default.Close,
