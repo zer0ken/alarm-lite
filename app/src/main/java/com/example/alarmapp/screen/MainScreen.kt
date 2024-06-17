@@ -135,7 +135,11 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 title = {
                     Column(
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                        horizontalAlignment = if (scrollBehavior.state.collapsedFraction == 1f) {
+                            Alignment.Start
+                        } else {
+                            Alignment.CenterHorizontally
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 8.dp, end = 24.dp)
@@ -186,7 +190,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                                     ) {
                                         Text(
                                             text = sortItem,
-                                            color = if (sortItem == mainViewModel.selectedSort) Color(0xFF734D4D) else Color.Black
+                                            color = if (sortItem == mainViewModel.selectedSort) Color(
+                                                0xFF734D4D
+                                            ) else Color.Black
                                         )
                                         if (sortItem == mainViewModel.selectedSort) {
                                             Icon(
@@ -245,6 +251,12 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
             }
         }
     ) { innerPadding ->
-        AlarmListView(navController, mainViewModel, innerPadding, mainViewModel.is24HourView, sortedAlarms)
+        AlarmListView(
+            navController,
+            mainViewModel,
+            innerPadding,
+            mainViewModel.is24HourView,
+            sortedAlarms
+        )
     }
 }
