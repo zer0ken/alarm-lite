@@ -205,6 +205,7 @@ fun UpdateAlarmScreen(
                     .padding(it)
                     .fillMaxWidth()
             ) {
+                Spacer(modifier = Modifier.height(34.dp))
                 Box(
                     modifier = Modifier
                         .animateContentSize()
