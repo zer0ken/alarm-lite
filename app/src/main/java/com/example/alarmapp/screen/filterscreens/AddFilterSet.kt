@@ -80,7 +80,7 @@ fun AddFilterSetScreen(
                         isFilterNameSet = false
                     }
                 } else {
-                    navController.navigate(Routes.MainScreen.route)
+                    navController.navigate(Routes.FilterSetListScreen.route)
                 }
             }
         }
@@ -198,6 +198,7 @@ fun AddFilterSetScreen(
             }
             Button(
                 onClick = {
+                    mainViewModel.filterSetName = filterSetName
                     navController.navigate(Routes.GroupFilterLabel.route)
                 },
                 modifier = Modifier

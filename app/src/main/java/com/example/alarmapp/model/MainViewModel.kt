@@ -10,11 +10,13 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
+import com.example.alarmapp.view.bottomBar.dayOfWeekStringToIndex
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -210,6 +212,30 @@ class MainViewModel(context: Context) : ViewModel() {
     var selectedGroupFilters = mutableStateListOf<String>()
     val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
     val selectedFilterSet = mutableStateListOf<String>()
+
+    fun selected1(filter: String) {
+        if (filter in selectedGroupFilters) {
+            selectedGroupFilters.remove(filter)
+        } else {
+            selectedGroupFilters.add(filter)
+        }
+    }
+    fun selected2(filter: String) {
+        val filterIndex = dayOfWeekStringToIndex(filter)
+        if (filterIndex in selectedRepeatFiltersIndex) {
+            selectedRepeatFiltersIndex.remove(filterIndex)
+        } else {
+            selectedRepeatFiltersIndex.add(filterIndex)
+        }
+    }
+    fun selected3(filter: String) {
+        if (filter in selectedFilterSet) {
+            selectedFilterSet.remove(filter)
+        } else {
+            selectedFilterSet.add(filter)
+        }
+    }
+
 
     fun resetSelect() {
         selectedGroupFilters.clear()

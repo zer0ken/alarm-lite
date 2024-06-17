@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomAppBar
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,9 +59,9 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
     val selectedRepeatFiltersIndex = mainViewModel.selectedRepeatFiltersIndex
     val selectedGroupFilters = mainViewModel.selectedGroupFilters
 
-    Log.d("test", selectedFilterSet.toString())
-    Log.d("test", selectedRepeatFiltersIndex.toString())
-    Log.d("test", selectedGroupFilters.toString())
+    Log.d("test11", selectedFilterSet.toString())
+    Log.d("test11", selectedRepeatFiltersIndex.toString())
+    Log.d("test11", selectedGroupFilters.toString())
 
     val combinedFilters = remember {
         mutableListOf<String>().apply {
@@ -76,6 +78,12 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
         combinedFilters.joinToString(separator = ", ")
     }
 
+    val icon = if (combinedFilters.isEmpty()) {
+        R.drawable.outline_filter_alt_24
+    } else {
+        R.drawable.baseline_filter_alt_24
+    }
+
     BottomAppBar(
         modifier = Modifier.height(60.dp)
     ) {
@@ -85,22 +93,21 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
         ) {
             Row(modifier = Modifier
                 .clickable { isFilterSetMenuExpanded = !isFilterSetMenuExpanded }
-                .padding(16.dp)
+                .padding(10.dp)
             ) {
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(10.dp))
+                Icon(
+                    painter = painterResource(id = icon),
+                    contentDescription = "Filter icon"
+                )
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = dropdownText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(100.dp)
+                    modifier = Modifier.width(90.dp)
                 )
                 Spacer(modifier = Modifier.width(5.dp))
-                IconButton(onClick = { isFilterSetMenuExpanded = true }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_drop_down_24),
-                        contentDescription = "Dropdown"
-                    )
-                }
                 DropdownMenu(
                     expanded = isFilterSetMenuExpanded,
                     onDismissRequest = { isFilterSetMenuExpanded = false },
@@ -129,11 +136,12 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 }
                             },
                             onClick = {
-                                if (filter in selectedFilterSet) {
-                                    selectedFilterSet.remove(filter)
-                                } else {
-                                    selectedFilterSet.add(filter)
-                                }
+//                                if (filter in selectedFilterSet) {
+//                                    selectedFilterSet.remove(filter)
+//                                } else {
+//                                    selectedFilterSet.add(filter)
+//                                }
+                                mainViewModel.selected3(filter)
                             }
                         )
                     }
@@ -160,11 +168,12 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 }
                             },
                             onClick = {
-                                if (filterIndex in selectedRepeatFiltersIndex) {
-                                    selectedRepeatFiltersIndex.remove(filterIndex)
-                                } else {
-                                    selectedRepeatFiltersIndex.add(filterIndex)
-                                }
+//                                if (filterIndex in selectedRepeatFiltersIndex) {
+//                                    selectedRepeatFiltersIndex.remove(filterIndex)
+//                                } else {
+//                                    selectedRepeatFiltersIndex.add(filterIndex)
+//                                }
+                                mainViewModel.selected2(filter)
                             }
                         )
                     }
@@ -190,11 +199,12 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 }
                             },
                             onClick = {
-                                if (filter in selectedGroupFilters) {
-                                    selectedGroupFilters.remove(filter)
-                                } else {
-                                    selectedGroupFilters.add(filter)
-                                }
+//                                if (filter in selectedGroupFilters) {
+//                                    selectedGroupFilters.remove(filter)
+//                                } else {
+//                                    selectedGroupFilters.add(filter)
+//                                }
+                                mainViewModel.selected1(filter)
                             }
                         )
                     }
@@ -217,21 +227,11 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                 mainViewModel.resetSelect()
             }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.baseline_horizontal_rule_24),
-                    contentDescription = "필터 적용 해제"
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "remove"
                 )
             }
-            Spacer(modifier = Modifier.width(20.dp))
-            IconButton(onClick = {
-                mainViewModel.resetFilter()
-                navController.navigate(Routes.AddFilterSetScreen.route)
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add"
-                )
-            }
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(15.dp))
         }
     }
 }
