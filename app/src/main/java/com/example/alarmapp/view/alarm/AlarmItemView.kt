@@ -14,9 +14,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -95,7 +99,15 @@ fun AlarmItemView(
         cardShape = CardDefaults.outlinedShape
     }
 
-    if (alarmGroup?.isFolded == true) {
+    if (alarmGroup == null) {
+        cardModifier = cardModifier.fillMaxWidth()
+        rowModifier = rowModifier
+            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
+        switchModifier = switchModifier
+            .scale(0.8f)
+        contentFontSize = 14.sp
+        timeFontSize = 34.sp
+    }else if (alarmGroup.isFolded) {
         rowModifier = rowModifier
             .padding(end = 14.dp, top = 4.dp, bottom = 4.dp)
         switchModifier = switchModifier
@@ -105,7 +117,6 @@ fun AlarmItemView(
         contentFontSize = 14.sp
         timeFontSize = 30.sp
     } else {
-        cardModifier = cardModifier.fillMaxWidth()
         rowModifier = rowModifier
             .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
         switchModifier = switchModifier
@@ -147,10 +158,17 @@ fun AlarmItemView(
                 if (alarm.name != "") {
                     Text(text = alarm.name, fontSize = contentFontSize)
                 }
-                Text(
-                    text = if (is24HourView) "${alarm.hour} : ${alarm.minute}" else "${alarm.hour % 12} : ${alarm.minute} ${if (alarm.hour < 12) "AM" else "PM"}",
-                    fontSize = timeFontSize
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (is24HourView) "${alarm.hour} : ${alarm.minute}" else "${alarm.hour % 12} : ${alarm.minute} ${if (alarm.hour < 12) "AM" else "PM"}",
+                        fontSize = timeFontSize
+                    )
+                    if (alarm.isBookmarked) {
+                        Icon(Icons.Filled.Star, "즐겨찾기")
+                    }
+                }
                 if (alarm.repeatOnWeekdays.any { it }) {
                     val weekdays = arrayOf("일", "월", "화", "수", "목", "금", "토")
                     var repeatOn = "반복:"

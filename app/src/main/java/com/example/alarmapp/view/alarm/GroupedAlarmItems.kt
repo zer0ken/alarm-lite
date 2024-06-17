@@ -2,6 +2,7 @@ package com.example.alarmapp.view.alarm
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -95,7 +96,9 @@ fun LazyListScope.alarmGroupStickyHeader(
             }
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
+            modifier = Modifier
+                .animateItem(fadeInSpec = null, fadeOutSpec = null)
+                .clickable { alarmGroup.isFolded = !alarmGroup.isFolded }
         ) {
             FoldButton(
                 isFolded = alarmGroup.isFolded,
@@ -158,7 +161,6 @@ fun LazyListScope.alarmGroupStickyHeader(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.foldedAlarmGroupItems(
     alarms: List<AlarmState>,
     groupState: AlarmGroupState,
@@ -192,7 +194,6 @@ fun LazyListScope.foldedAlarmGroupItems(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 fun LazyListScope.expandedAlarmGroupItems(
     alarms: List<AlarmState>,
     alarmGroup: AlarmGroupState,
@@ -201,10 +202,15 @@ fun LazyListScope.expandedAlarmGroupItems(
     is24HourView: Boolean
 ) {
     items(alarms, key = { it.id }) { alarm ->
-        Modifier
-            .padding(horizontal = 32.dp, vertical = 8.dp)
+        Spacer(
+            modifier = Modifier
+                .width(14.dp)
+                .height(8.dp)
+        )
         Box(
-            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
+            modifier = Modifier
+                .animateItem(fadeInSpec = null, fadeOutSpec = null)
+                .padding(horizontal = 14.dp)
         ) {
             AlarmItemView(
                 alarm = alarm,
@@ -215,12 +221,10 @@ fun LazyListScope.expandedAlarmGroupItems(
                 is24HourView = is24HourView
             )
         }
-    }
-    item {
         Spacer(
             modifier = Modifier
                 .width(14.dp)
-                .height(14.dp)
+                .height(8.dp)
         )
     }
 }

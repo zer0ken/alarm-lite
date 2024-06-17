@@ -136,7 +136,7 @@ fun UpdateAlarmScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "알람 추가")
+                    Text(text = title)
                 },
                 actions = {
                     IconButton(
