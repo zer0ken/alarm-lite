@@ -75,79 +75,68 @@ fun LazyListScope.alarmGroupStickyHeader(
 
         val alarmInGroup = mainViewModel.getAlarmInGroup(alarmGroup.groupName).values
         val containsOnAlarm = alarmInGroup.any { it.isOn }
-
-        Modifier
+        Box(modifier =Modifier
             .fillMaxWidth()
-            .background(
-                brush = Brush.verticalGradient(
-                    0.7f to MaterialTheme.colorScheme.background,
-                    1.0f to Color.Transparent,
-                    startY = 0.8f,
-                )
-            )
-            .padding(start = 20.dp, end = 14.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = {
-                        alarmGroup.isFolded = !alarmGroup.isFolded
-                    }
-                )
-            }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .animateItem(fadeInSpec = null, fadeOutSpec = null)
-                .clickable { alarmGroup.isFolded = !alarmGroup.isFolded }
+            .background(MaterialTheme.colorScheme.background)
+            .animateItem(fadeInSpec = null, fadeOutSpec = null)
+            .clickable { alarmGroup.isFolded = !alarmGroup.isFolded }
         ) {
-            FoldButton(
-                isFolded = alarmGroup.isFolded,
-                onFoldedChange = { alarmGroup.isFolded = it })
-            Text(
-                text = alarmGroup.groupName,
-                modifier = Modifier.padding(horizontal = 8.dp),
-                fontSize = 16.sp
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 14.dp)
+            ) {
+                FoldButton(
+                    isFolded = alarmGroup.isFolded,
+                    onFoldedChange = { alarmGroup.isFolded = it })
+                Text(
+                    text = alarmGroup.groupName,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    fontSize = 16.sp
+                )
 
-            Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.weight(1f))
 
-            IconButton(onClick = {
-                navController.navigate(
-                    Routes.CreateAlarmInGroup.slottedRoute!!.format(
-                        alarmGroup.groupName
+                IconButton(onClick = {
+                    navController.navigate(
+                        Routes.CreateAlarmInGroup.slottedRoute!!.format(
+                            alarmGroup.groupName
+                        )
                     )
-                )
-            }) {
-                Icon(
-                    Icons.Outlined.Add,
-                    contentDescription = "그룹에 알람 추가",
-                )
-            }
-            Box {
-                IconButton(onClick = { menuExpanded = true }) {
+                }) {
                     Icon(
-                        Icons.Outlined.MoreVert,
-                        contentDescription = "그룹 메뉴",
+                        Icons.Outlined.Add,
+                        contentDescription = "그룹에 알람 추가",
                     )
                 }
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false },
+                Box {
+                    IconButton(onClick = { menuExpanded = true }) {
+                        Icon(
+                            Icons.Outlined.MoreVert,
+                            contentDescription = "그룹 메뉴",
+                        )
+                    }
+                    DropdownMenu(
+                        expanded = menuExpanded,
+                        onDismissRequest = { menuExpanded = false },
 
-                    ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = if (containsOnAlarm) "알람 모두 끄기" else "알람 모두 켜기")
-                        },
-                        onClick = {
-                            alarmInGroup.map { it.isOn = !containsOnAlarm }
-                        })
+                        ) {
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = if (containsOnAlarm) "알람 모두 끄기" else "알람 모두 켜기")
+                            },
+                            onClick = {
+                                alarmInGroup.map { it.isOn = !containsOnAlarm }
+                            })
 
-                    HorizontalDivider()
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = "그룹 삭제")
-                        },
-                        onClick = { mainViewModel.deleteAlarmGroup(alarmGroup) })
+                        HorizontalDivider()
+                        DropdownMenuItem(
+                            text = {
+                                Text(text = "그룹 삭제")
+                            },
+                            onClick = { mainViewModel.deleteAlarmGroup(alarmGroup) })
+                    }
                 }
             }
         }
@@ -193,7 +182,7 @@ fun LazyListScope.expandedAlarmGroupItems(
         Box(
             modifier = Modifier
                 .animateItem(fadeInSpec = null, fadeOutSpec = null)
-                .padding(horizontal = 14.dp)
+                .padding(horizontal = 32.dp)
                 .padding(top = 8.dp)
                 .padding(bottom = if (i == alarms.lastIndex) 16.dp else 0.dp)
         ) {
