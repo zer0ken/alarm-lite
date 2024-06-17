@@ -64,6 +64,7 @@ fun AlarmItemView(
     )
 
     var cardModifier: Modifier = modifier
+        .clip(cardShape)
         .combinedClickable(
             onClick = {
                 if (mainViewModel.isSelectMode) {
