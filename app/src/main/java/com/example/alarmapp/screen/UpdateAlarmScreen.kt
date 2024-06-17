@@ -85,7 +85,6 @@ fun UpdateAlarmScreen(
     navController: NavController,
     mainViewModel: MainViewModel,
     alarmState: AlarmState = rememberAlarmState(),
-    is24HourView: Boolean = false,
     title: String = "새 알람 추가"
 ) {
     val timePickerState: TimePickerState = rememberTimePickerState()
