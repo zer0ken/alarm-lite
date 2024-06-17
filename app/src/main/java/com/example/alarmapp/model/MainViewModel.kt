@@ -39,11 +39,13 @@ class MainViewModel(context: Context) : ViewModel() {
             _isSelectMode.value = value
         }
 
-    private val _is24HourView = mutableStateOf(false)
+    // "24시간제 표기" 스위치의 켜짐/꺼짐 정보가 앱이 종료되어도 유지되야 함
+    private val _is24HourView = mutableStateOf(load24HourViewPreference())
     var is24HourView: Boolean
         get() = _is24HourView.value
         set(value) {
             _is24HourView.value = value
+            save24HourViewPreference(value)
         }
 
     private val _selectedSort = mutableStateOf(loadSortPreference())
@@ -157,6 +159,14 @@ class MainViewModel(context: Context) : ViewModel() {
         repository.getFilters().forEach {
             filterMap[it.name] = it
         }
+    }
+
+    private fun load24HourViewPreference(): Boolean {
+        return sharedPreferences.getBoolean("is24HourView", false)
+    }
+
+    private fun save24HourViewPreference(value: Boolean) {
+        sharedPreferences.edit().putBoolean("is24HourView", value).apply()
     }
 
     private fun loadSortPreference(): String {

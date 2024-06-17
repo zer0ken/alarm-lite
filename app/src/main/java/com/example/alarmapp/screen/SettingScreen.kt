@@ -1,32 +1,27 @@
 package com.example.alarmapp.screen
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.alarmapp.model.MainViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(navController: NavController, mainViewModel: MainViewModel) {
+    val scope = rememberCoroutineScope()
+    var is24HourView by remember { mutableStateOf(mainViewModel.is24HourView) }
+
+    LaunchedEffect(mainViewModel.is24HourView) {
+        is24HourView = mainViewModel.is24HourView
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -48,13 +43,18 @@ fun SettingScreen(navController: NavController, mainViewModel: MainViewModel) {
             ) {
                 Text("24시간제 표기", modifier = Modifier.weight(1f))
                 Switch(
-                    checked = mainViewModel.is24HourView,
-                    onCheckedChange = { mainViewModel.is24HourView = it }
+                    checked = is24HourView,
+                    onCheckedChange = {
+                        is24HourView = it
+                        scope.launch {
+                            mainViewModel.is24HourView = it
+                        }
+                    }
                 )
             }
             Button(
                 onClick = {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    scope.launch {
                         mainViewModel.cleanupAlarms()
                     }
                 },
