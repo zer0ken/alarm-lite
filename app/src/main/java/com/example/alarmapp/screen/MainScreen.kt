@@ -76,7 +76,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
         }
     }
 
-    val alarms = mainViewModel.alarmStateMap.values.toList()
+    val alarms = mainViewModel.alarmStateMap.values.toList().sortedWith(AlarmComparator.relative)
     LaunchedEffect(Unit) { mainViewModel.fetchAll() }
     var sortedAlarms by remember { mutableStateOf(alarms) }
 
