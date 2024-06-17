@@ -382,6 +382,16 @@ class MainViewModel(context: Context) : ViewModel() {
         sharedPreferences.edit().putBoolean("is24HourView", value).apply()
     }
 
+    fun formatTime(hour: Int, minute: Int, is24HourView: Boolean): String {
+        return if (is24HourView) {
+            "${String.format("%02d", hour)}:${String.format("%02d", minute)}"
+        } else {
+            val period = if (hour >= 12) "PM" else "AM"
+            val adjustedHour = if (hour % 12 == 0) 12 else hour % 12
+            val formattedMinute = String.format("%02d", minute)
+            "$adjustedHour:$formattedMinute $period"
+        }
+    }
 }
 
 @Composable

@@ -83,6 +83,7 @@ fun AlarmListView(
                         is24HourView = is24HourView
                     )
                 }
+
             }
         }
     }

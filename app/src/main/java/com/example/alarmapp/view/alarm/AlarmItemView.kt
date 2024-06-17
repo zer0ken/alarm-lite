@@ -160,8 +160,9 @@ fun AlarmItemView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val formattedTime = mainViewModel.formatTime(alarm.hour, alarm.minute, is24HourView)
                     Text(
-                        text = if (is24HourView) "${alarm.hour} : ${alarm.minute}" else "${alarm.hour % 12} : ${alarm.minute} ${if (alarm.hour < 12) "AM" else "PM"}",
+                        text = formattedTime,
                         fontSize = timeFontSize
                     )
                     if (alarm.isBookmarked) {

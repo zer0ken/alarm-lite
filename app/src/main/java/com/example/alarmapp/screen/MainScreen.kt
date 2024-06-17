@@ -117,7 +117,8 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 }
             }
             val formatter = DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.forLanguageTag("ko"))
-            secondText = "${alarmTime.format(formatter)} ${alarmTime.hour}:${alarmTime.minute}"
+            val formattedTime = mainViewModel.formatTime(alarmTime.hour, alarmTime.minute, mainViewModel.is24HourView)
+            secondText = "${alarmTime.format(formatter)} $formattedTime"
         }
     }
 
