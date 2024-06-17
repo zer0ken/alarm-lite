@@ -34,7 +34,7 @@ class AlarmState(
     isBookmarked: Boolean = false,
     isOn: Boolean = true,
     isSelected: Boolean = false,
-    isRingtoneOn: Boolean = false,
+    isRingtoneOn: Boolean = true,
     selectedRingtoneUri: Uri? = null,
     startDate: Long? = null,
     expireDate: Long? = null
