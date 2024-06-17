@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -100,7 +101,7 @@ fun AddFilterSetScreen(
             if (!isFilterNameSet) {
                 Text(
                     "필터 이름은 필수항목입니다.",
-                    color = Color.Red,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(horizontal = 15.dp)
                 )
             }
@@ -131,7 +132,8 @@ fun AddFilterSetScreen(
                         }
                         Text(
                             text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier
+                                .padding(bottom = 8.dp)
                                 .width(300.dp)
                         )
                     }
@@ -164,7 +166,8 @@ fun AddFilterSetScreen(
                         )
                         Text(
                             text = "${filterSetGroupFilter.joinToString(", ")} 에 포함되는 알람",
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier
+                                .padding(bottom = 8.dp)
                                 .width(300.dp)
                         )
 
