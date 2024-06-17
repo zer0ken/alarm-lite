@@ -144,17 +144,11 @@ fun LazyListScope.alarmGroupStickyHeader(
                         })
 
                     HorizontalDivider()
-
                     DropdownMenuItem(
                         text = {
-                            Text(text = "그룹 이름 변경")
+                            Text(text = "그룹 삭제")
                         },
-                        onClick = { /*TODO*/ })
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = "그룹 해체")
-                        },
-                        onClick = { /*TODO*/ })
+                        onClick = { mainViewModel.deleteAlarmGroup(alarmGroup) })
                 }
             }
         }

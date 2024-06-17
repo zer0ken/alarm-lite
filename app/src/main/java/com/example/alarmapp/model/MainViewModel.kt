@@ -110,6 +110,14 @@ class MainViewModel(context: Context) : ViewModel() {
         repository.insert(alarmGroupState)
     }
 
+    fun deleteAlarmGroup(group: AlarmGroupState) {
+        alarmGroupStateMap.remove(group.groupName)
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.delete(group)
+            fetchAlarms()
+        }
+    }
+
     fun getAlarmInGroup(groupName: String) =
         alarmStateMap.filter { it.value.groupName == groupName }
 
