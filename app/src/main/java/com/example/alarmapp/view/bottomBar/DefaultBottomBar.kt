@@ -194,7 +194,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = "반복: $filter",
+                                        text =  "반복: ${filter.take(3)}",
                                         modifier = Modifier.weight(1f)
                                     )
                                     if (filterIndex in selectedRepeatFiltersIndex) {

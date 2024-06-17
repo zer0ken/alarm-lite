@@ -91,7 +91,8 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                             Text(
                                 text = it.name,
                                 fontSize = 20.sp,
-                                fontWeight = FontWeight(700)
+                                fontWeight = FontWeight(700),
+                                modifier = Modifier.width(300.dp)
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             IconButton(onClick = { mainViewModel.deleteFilter(it) }) {
