@@ -39,11 +39,12 @@ class MainViewModel(context: Context) : ViewModel() {
             _isSelectMode.value = value
         }
 
-    private val _is24HourView = mutableStateOf(false)
+    private val _is24HourView = mutableStateOf(loadIs24HourViewPreference())
     var is24HourView: Boolean
         get() = _is24HourView.value
         set(value) {
             _is24HourView.value = value
+            saveIs24HourViewPreference(value)
         }
 
     private val _selectedSort = mutableStateOf(loadSortPreference())
@@ -371,6 +372,14 @@ class MainViewModel(context: Context) : ViewModel() {
         } else {
             alarmStateMap.values.sortedWith(AlarmComparator.relative)
         }
+    }
+
+    private fun loadIs24HourViewPreference(): Boolean {
+        return sharedPreferences.getBoolean("is24HourView", false)
+    }
+
+    private fun saveIs24HourViewPreference(value: Boolean) {
+        sharedPreferences.edit().putBoolean("is24HourView", value).apply()
     }
 
 }
