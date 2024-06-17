@@ -149,11 +149,7 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                     title = {
                         Column(
                             verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = if (scrollBehavior.state.collapsedFraction < 0.5f) {
-                                BiasAlignment.Horizontal(-scrollBehavior.state.collapsedFraction)
-                            } else {
-                                Alignment.Start
-                            },
+                            horizontalAlignment = BiasAlignment.Horizontal(-scrollBehavior.state.collapsedFraction),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 8.dp, end = 24.dp)
