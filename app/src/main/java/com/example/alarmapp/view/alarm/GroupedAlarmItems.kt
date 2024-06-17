@@ -9,12 +9,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.MoreVert
@@ -166,7 +165,7 @@ fun LazyListScope.foldedAlarmGroupItems(
         Modifier
             .fillMaxWidth()
         LazyRow(
-            contentPadding = PaddingValues(start = 32.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+            contentPadding = PaddingValues(start = 32.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
             modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
         ) {
             items(alarms, key = { it.id }) { alarm ->
@@ -180,11 +179,6 @@ fun LazyListScope.foldedAlarmGroupItems(
                 )
             }
         }
-        Spacer(
-            modifier = Modifier
-                .width(12.dp)
-                .height(12.dp)
-        )
     }
 }
 
@@ -195,16 +189,13 @@ fun LazyListScope.expandedAlarmGroupItems(
     navController: NavController,
     is24HourView: Boolean
 ) {
-    items(alarms, key = { it.id }) { alarm ->
-        Spacer(
-            modifier = Modifier
-                .width(14.dp)
-                .height(8.dp)
-        )
+    itemsIndexed(alarms, key = { _, alarm -> alarm.id }) { i, alarm ->
         Box(
             modifier = Modifier
                 .animateItem(fadeInSpec = null, fadeOutSpec = null)
                 .padding(horizontal = 14.dp)
+                .padding(top = 8.dp)
+                .padding(bottom = if (i == alarms.lastIndex) 16.dp else 0.dp)
         ) {
             AlarmItemView(
                 alarm = alarm,
@@ -215,11 +206,6 @@ fun LazyListScope.expandedAlarmGroupItems(
                 is24HourView = is24HourView
             )
         }
-        Spacer(
-            modifier = Modifier
-                .width(14.dp)
-                .height(8.dp)
-        )
     }
 }
 
