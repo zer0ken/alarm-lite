@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -136,23 +137,17 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                 title = {
                     Column(
                         verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = if (scrollBehavior.state.collapsedFraction == 1f) {
-                            Alignment.Start
+                        horizontalAlignment = if (scrollBehavior.state.collapsedFraction < 0.5f) {
+                            BiasAlignment.Horizontal(-scrollBehavior.state.collapsedFraction)
                         } else {
-                            Alignment.CenterHorizontally
+                            Alignment.Start
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 8.dp, end = 24.dp)
                             .height(280.dp)
                     ) {
-                        if (scrollBehavior.state.collapsedFraction == 1f) {
-                            Text(
-                                text = "알람 목록",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                            )
-                        } else {
+                        if (scrollBehavior.state.collapsedFraction < 0.5f) {
                             Text(
                                 text = firstText,
                                 maxLines = 2,
@@ -163,6 +158,12 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                             Text(
                                 text = secondText,
                                 fontSize = 20.sp
+                            )
+                        } else {
+                            Text(
+                                text = "알람 목록",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
                             )
                         }
                     }
