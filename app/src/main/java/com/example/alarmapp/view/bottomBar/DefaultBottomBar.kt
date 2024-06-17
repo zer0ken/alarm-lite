@@ -85,8 +85,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier.padding(10.dp)) {
-                Spacer(modifier = Modifier.width(10.dp))
+            Row(modifier = Modifier.padding(10.dp).weight(1f)) {
                 Icon(
                     painter = painterResource(id = icon),
                     contentDescription = "Filter icon"
@@ -95,8 +94,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                 Text(
                     text = dropdownText,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(225.dp)
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.width(5.dp))
                 DropdownMenu(
@@ -238,7 +236,6 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                     )
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
             AnimatedVisibility(
                 visible = combinedFilters.isNotEmpty(),
                 enter = fadeIn(),
