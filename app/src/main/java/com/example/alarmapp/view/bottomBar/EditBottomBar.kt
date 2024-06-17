@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.MainViewModel
+import com.example.alarmapp.view.alarm.getFilteredAlarms
 
 @Composable
 fun EditBottomBar(mainViewModel: MainViewModel) {
@@ -42,6 +44,18 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
         mainViewModel.alarmGroupStateMap.values.toList()
     }
 
+    LaunchedEffect(mainViewModel.selectedSort, mainViewModel.alarmStateMap) {
+        mainViewModel.updateSortedAlarms()
+    }
+
+    val alarmList = getFilteredAlarms(
+        sortedAlarms = mainViewModel.sortedAlarms,
+        selectedRepeatFilters = mainViewModel.selectedRepeatFiltersIndex,
+        selectedGroupFilters = mainViewModel.selectedGroupFilters,
+        selectedFilterSetNames = mainViewModel.selectedFilterSet,
+        mainViewModel
+    )
+
     BottomAppBar(
         modifier = Modifier.height(60.dp)
     ) {
@@ -53,7 +67,7 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
             TextButton(
                 onClick = {
                     selected = !selected
-                    mainViewModel.toggleSelectAll(selected)
+                    mainViewModel.toggleSelectAll(alarmList, selected)
                 }
             ) {
                 Text(text = selectedText)
@@ -61,7 +75,7 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
             TextButton(
                 onClick = {
                     onOff = !onOff
-                    mainViewModel.OnOffSelectedAlarms(onOff)
+                    mainViewModel.onOffSelectedAlarms(alarmList, onOff)
                 }) {
                 Text(text = onOffText)
             }
@@ -91,7 +105,7 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                             }
                         },
                         onClick = {
-                            mainViewModel.updateSelectedAlarmsGroup(it)
+                            mainViewModel.updateGroupForSelectedAlarms(alarmList, it)
                             isDropdownMenuExpanded = false
                             mainViewModel.isSelectMode = false
                         }
@@ -99,13 +113,13 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                 }
             }
             TextButton(onClick = {
-                mainViewModel.clearGroupForSelectedAlarms()
+                mainViewModel.updateGroupForSelectedAlarms(alarmList, "")
                 mainViewModel.isSelectMode = false
             }) {
                 Text(text = "그룹 해제")
             }
             TextButton(onClick = {
-                mainViewModel.deleteSelectedAlarms()
+                mainViewModel.deleteSelectedAlarms(alarmList)
                 mainViewModel.isSelectMode = false
             }) {
                 Text(text = "삭제")

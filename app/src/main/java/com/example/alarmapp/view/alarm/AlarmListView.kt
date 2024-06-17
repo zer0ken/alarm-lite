@@ -36,38 +36,13 @@ fun AlarmListView(
     val selectedGroupFilters = mainViewModel.selectedGroupFilters
     val selectedFilterSetNames = mainViewModel.selectedFilterSet
 
-    Log.d("test", selectedGroupFilters.toString())
-    Log.d("test", selectedRepeatFilters.toString())
-    Log.d("test", selectedGroupFilters.toString())
-
-    val alarmList =
-        if (selectedGroupFilters.isEmpty() && selectedRepeatFilters.isEmpty() && selectedFilterSetNames.isEmpty()) {
-            sortedAlarms
-        } else {
-            sortedAlarms.filter { alarm ->
-                val groupFilterCondition =
-                    selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.groupName)
-                val repeatFilterCondition =
-                    selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.repeatOnWeekdays[it] }
-
-                val filterSetCondition = if (selectedFilterSetNames.isNotEmpty()) {
-                    val selectedFilterSets =
-                        selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
-                    selectedFilterSets.any { selectedFilterSet ->
-                        val isEmpty = selectedFilterSet.repeatFilter.size == 7 && selectedFilterSet.repeatFilter.all { !it }
-                        (selectedFilterSet.groupFilter.isEmpty() && isEmpty) ||
-                        (selectedFilterSet.groupFilter.isNotEmpty() && isEmpty && selectedFilterSet.groupFilter.contains(alarm.groupName)) ||
-                                (selectedFilterSet.groupFilter.isEmpty() && !isEmpty && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList()) ||
-                                (selectedFilterSet.groupFilter.isNotEmpty() && !isEmpty &&
-                                        selectedFilterSet.groupFilter.contains(alarm.groupName) && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList())
-                    }
-                } else {
-                    false
-                }
-                groupFilterCondition || repeatFilterCondition || filterSetCondition
-            }
-        }
-
+    val alarmList = getFilteredAlarms(
+        sortedAlarms,
+        selectedRepeatFilters,
+        selectedGroupFilters,
+        selectedFilterSetNames,
+        mainViewModel
+    )
 
     LazyColumn(
         state = lazyListState,
@@ -106,3 +81,42 @@ fun AlarmListView(
         }
     }
 }
+
+fun getFilteredAlarms(
+    sortedAlarms: List<AlarmState>,
+    selectedRepeatFilters: List<Int>,
+    selectedGroupFilters: List<String>,
+    selectedFilterSetNames: List<String>,
+    mainViewModel: MainViewModel
+): List<AlarmState> {
+    return if (selectedGroupFilters.isEmpty() && selectedRepeatFilters.isEmpty() && selectedFilterSetNames.isEmpty()) {
+        sortedAlarms
+    } else {
+        sortedAlarms.filter { alarm ->
+            val groupFilterCondition =
+                selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.groupName)
+            val repeatFilterCondition =
+                selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.repeatOnWeekdays[it] }
+
+            val filterSetCondition = if (selectedFilterSetNames.isNotEmpty()) {
+                val selectedFilterSets =
+                    selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
+                selectedFilterSets.any { selectedFilterSet ->
+                    val isEmpty =
+                        selectedFilterSet.repeatFilter.size == 7 && selectedFilterSet.repeatFilter.all { !it }
+                    (selectedFilterSet.groupFilter.isEmpty() && isEmpty) ||
+                            (selectedFilterSet.groupFilter.isNotEmpty() && isEmpty && selectedFilterSet.groupFilter.contains(
+                                alarm.groupName
+                            )) ||
+                            (selectedFilterSet.groupFilter.isEmpty() && !isEmpty && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList()) ||
+                            (selectedFilterSet.groupFilter.isNotEmpty() && !isEmpty &&
+                                    selectedFilterSet.groupFilter.contains(alarm.groupName) && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList())
+                }
+            } else {
+                false
+            }
+            groupFilterCondition || repeatFilterCondition || filterSetCondition
+        }
+    }
+}
+

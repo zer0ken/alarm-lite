@@ -287,18 +287,14 @@ class MainViewModel(context: Context) : ViewModel() {
         return filterMap[name]
     }
 
-    fun toggleSelectAll(select: Boolean) {
-        alarmStateMap.forEach { (_, alarmState) ->
-            alarmState.isSelected = select
-        }
-    }
-
-    fun deleteSelectedAlarms() {
+    fun deleteSelectedAlarms(alarms: List<AlarmState>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val selectedAlarms = alarmStateMap.filter { it.value.isSelected }.values.toList()
+            val selectedAlarms = alarms.filter { it.isSelected }
             selectedAlarms.forEach {
                 _deleteAlarm(it)
+                it.isSelected = false
                 alarmStateMap.remove(it.id)
+                alarmStateMap[it.id]?.isSelected = false
             }
             fetchAlarms()
         }
@@ -308,29 +304,57 @@ class MainViewModel(context: Context) : ViewModel() {
         repository.delete(alarmState)
     }
 
-    fun OnOffSelectedAlarms(select: Boolean) {
-        alarmStateMap.forEach { (_, alarmState) ->
-            if (alarmState.isSelected) {
-                alarmState.isOn = !select
+    fun toggleSelectAll(alarms: List<AlarmState>,select: Boolean) {
+        viewModelScope.launch {
+            alarms.forEach { alarmState ->
+                alarmState.isSelected = select
+                repository.update(alarmState)
+                alarmStateMap[alarmState.id]?.isSelected = select
+                fetchAlarms()
             }
+            fetchAlarms()
         }
     }
 
-    fun clearGroupForSelectedAlarms() {
-        alarmStateMap.forEach { (_, alarmState) ->
-            if (alarmState.isSelected) {
-                alarmState.groupName = ""
+    fun onOffSelectedAlarms(alarms: List<AlarmState>, select: Boolean) {
+        viewModelScope.launch {
+            alarms.forEach { alarmState ->
+                if (alarmState.isSelected) {
+                    alarmState.isOn = !select
+                    repository.update(alarmState)
+                    alarmStateMap[alarmState.id]?.isOn = !select
+                }
             }
+            fetchAlarms()
         }
     }
 
-    fun updateSelectedAlarmsGroup(groupName: String) {
-        alarmStateMap.forEach { (_, alarmState) ->
-            if (alarmState.isSelected) {
-                alarmState.groupName = groupName
+    fun updateGroupForSelectedAlarms(alarms: List<AlarmState>, name: String) {
+        viewModelScope.launch {
+            alarms.forEach { alarmState ->
+                if (alarmState.isSelected) {
+                    alarmState.groupName = name
+                    alarmState.isSelected = false
+                    repository.update(alarmState)
+                    alarmStateMap[alarmState.id]?.groupName = name
+                    alarmStateMap[alarmState.id]?.isSelected = false
+                }
             }
+            fetchAlarms()
         }
     }
+
+    var sortedAlarms by mutableStateOf(listOf<AlarmState>())
+        private set
+
+    fun updateSortedAlarms() {
+        sortedAlarms = if (selectedSort == "시간순") {
+            alarmStateMap.values.sortedWith(AlarmComparator.absolute)
+        } else {
+            alarmStateMap.values.sortedWith(AlarmComparator.relative)
+        }
+    }
+
 }
 
 @Composable
