@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,7 +38,6 @@ fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel)
     val alarmGroups = remember {
         mainViewModel.alarmGroupStateMap.values.toList()
     }
-
     val checkedStates = remember {
         mutableStateListOf<String>()
     }
@@ -91,6 +91,7 @@ fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel)
                             Text(
                                 text = label.groupName,
                                 modifier = Modifier.weight(1f)
+                                    .width(350.dp)
                             )
                             if (checkedStates.contains(label.groupName)) {
                                 Icon(

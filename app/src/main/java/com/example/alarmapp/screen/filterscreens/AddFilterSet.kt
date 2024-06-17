@@ -16,9 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -75,7 +72,7 @@ fun AddFilterSetScreen(
                                 groupFilter = filterSetGroupFilter
                             )
                         )
-                        navController.navigate(Routes.MainScreen.route)
+                        navController.navigate(Routes.FilterSetListScreen.route)
                     } else {
                         isFilterNameSet = false
                     }
@@ -135,6 +132,7 @@ fun AddFilterSetScreen(
                         Text(
                             text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
                             modifier = Modifier.padding(bottom = 8.dp)
+                                .width(300.dp)
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -167,6 +165,7 @@ fun AddFilterSetScreen(
                         Text(
                             text = "${filterSetGroupFilter.joinToString(", ")} 에 포함되는 알람",
                             modifier = Modifier.padding(bottom = 8.dp)
+                                .width(300.dp)
                         )
 
                     }

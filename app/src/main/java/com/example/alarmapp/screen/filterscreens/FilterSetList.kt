@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -27,7 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -41,9 +39,7 @@ import com.example.alarmapp.model.MainViewModel
 @Composable
 fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewModel) {
 
-    val filterMap = remember {
-        mainViewModel.filterMap.values.toList()
-    }
+    val filterMap = mainViewModel.filterMap.values.toList()
 
     Scaffold(
         topBar = {
@@ -54,7 +50,7 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "필터 셋 목록",
+                            text = "필터 목록",
                             fontWeight = FontWeight(800)
                         )
                     }
@@ -111,7 +107,7 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             Button(
                 onClick = {
                     mainViewModel.resetFilter()
@@ -120,7 +116,7 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
             ) {
-                Text(text = "필터 셋 추가")
+                Text(text = "필터 추가")
             }
         }
     }

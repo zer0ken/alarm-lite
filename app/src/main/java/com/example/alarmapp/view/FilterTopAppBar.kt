@@ -16,14 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterTopAppBar(title: String, onClick: (Boolean) -> Unit) {
     TopAppBar(
         modifier = Modifier.fillMaxWidth(),
-//                    .padding(vertical = 10.dp),
         title = {
             Box(
                 modifier = Modifier.fillMaxWidth(),

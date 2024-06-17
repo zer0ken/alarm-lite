@@ -10,13 +10,11 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.alarmapp.database.AlarmDatabase
 import com.example.alarmapp.database.Repository
-import com.example.alarmapp.view.bottomBar.dayOfWeekStringToIndex
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -236,7 +234,6 @@ class MainViewModel(context: Context) : ViewModel() {
         selectedFilterSet.clear()
     }
 
-//    private val defaultFilterSetName = ""
     val defaultFilterSetRepeatFilter = mutableListOf(
         false,
         false,
@@ -288,18 +285,15 @@ class MainViewModel(context: Context) : ViewModel() {
 
 
     fun deleteFilter(filter: Filter) {
-        viewModelScope.launch {
-            repository.delete(filter)
+        viewModelScope.launch(Dispatchers.IO) {
+            _deleteFilter(filter)
             filterMap.remove(filter.name)
             fetchFilter()
         }
     }
 
-    fun insertFilter(filter: Filter) {
-        viewModelScope.launch {
-            repository.insert(filter)
-            fetchFilter()
-        }
+    private suspend fun _deleteFilter(filter: Filter) {
+        repository.delete(filter)
     }
 
     fun getFilterByName(name: String?): Filter? {

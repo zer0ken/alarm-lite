@@ -14,7 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.example.alarmapp.model.Filter
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
