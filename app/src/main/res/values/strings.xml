@@ -1,3 +1,20 @@
 <resources>
-    <string name="app_name">AlarmApp</string>
+    <string name="app_name">Alarm-lite</string>
+    <string name="group">그룹</string>
+    <string name="select_group">그룹 지정</string>
+    <string name="cancel">취소</string>
+    <string name="save">저장</string>
+    <string name="vibration">진동</string>
+    <string name="alarm_sound">알림음</string>
+    <string name="alarm_name">알람 이름</string>
+    <string name="add_group">그룹 추가</string>
+    <string name="ring_again">다시 울림</string>
+    <string name="bookmark">즐겨찾기</string>
+    <string name="using">사용 중</string>
+    <string name="backward">뒤로가기</string>
+    <string name="gap">간격</string>
+    <string name="repeat">반복</string>
+    <string name="not_using">사용 안 함</string>
+    <string name="select_alarm_sound">알람음 선택</string>
+    <string name="nothing_selected">선택 안함</string>
 </resources>
