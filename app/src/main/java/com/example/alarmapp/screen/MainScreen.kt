@@ -92,7 +92,9 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     }
 
     LaunchedEffect(mainViewModel.isSelectMode) {
-        scrollBehavior.state.heightOffset = -1000f
+        if (mainViewModel.isSelectMode) {
+            scrollBehavior.state.heightOffset = -1000f
+        }
     }
 
     var firstText by remember { mutableStateOf("") }
