@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.BiasAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -60,6 +61,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.abs
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
@@ -164,16 +166,25 @@ fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 34.sp,
                                     textAlign = TextAlign.Center,
+                                    modifier = Modifier.alpha(
+                                        abs(scrollBehavior.state.collapsedFraction - 0.5f) * 2
+                                    )
                                 )
                                 Text(
                                     text = secondText,
-                                    fontSize = 20.sp
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.alpha(
+                                        abs(scrollBehavior.state.collapsedFraction - 0.5f) * 2
+                                    )
                                 )
                             } else {
                                 Text(
                                     text = "알람 목록",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 24.sp,
+                                    modifier = Modifier.alpha(
+                                        abs(scrollBehavior.state.collapsedFraction - 0.5f) * 2
+                                    )
                                 )
                             }
                         }
