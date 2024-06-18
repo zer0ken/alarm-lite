@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
@@ -72,6 +73,7 @@ fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel
                             top = if (index == 0) 16.dp else 0.dp,
                             bottom = if (index == definedRepeatFilters.size - 1) 16.dp else 0.dp
                         )
+                        .clip(shape)
                         .clickable {
                             checkedStates = checkedStates.mapIndexed { i, checked ->
                                 if (i == index) !checked else checked
