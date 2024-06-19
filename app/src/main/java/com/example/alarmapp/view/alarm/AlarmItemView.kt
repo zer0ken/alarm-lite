@@ -90,6 +90,7 @@ fun AlarmItemView(
 
     val rowModifier: Modifier = Modifier
         .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
+        .fillMaxWidth()
     val switchModifier: Modifier = Modifier
         .scale(0.6f)
         .size(40.dp)
@@ -99,7 +100,7 @@ fun AlarmItemView(
     if (alarmGroup == null) {
         cardModifier = cardModifier.fillMaxWidth()
     } else if (alarmGroup.isFolded) {
-        cardModifier = cardModifier.width(240.dp)
+//        cardModifier = cardModifier.widthIn(min = 200.dp, max = 300.dp)
         contentFontSize = 10.sp
         timeFontSize = 26.sp
     } else {
@@ -131,7 +132,7 @@ fun AlarmItemView(
 
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.weight(1f).padding(end = 12.dp)
+                modifier = Modifier.padding(end = 12.dp).widthIn(max = 120.dp)
             ) {
                 if (alarm.name != "") {
                     Text(text = alarm.name, fontSize = contentFontSize)
