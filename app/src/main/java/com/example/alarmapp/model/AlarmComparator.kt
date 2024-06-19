@@ -4,27 +4,39 @@ import java.util.Calendar
 
 object AlarmComparator {
 
-    // 상대적인 시간 기준 Comparator
+    // 상대적인 시간 기준 Comparator (알림순)
     val relative: Comparator<AlarmState> = Comparator { a1, a2 ->
         // 다음 울릴 시간 계산
         val nextTriggerA1 = a1.getNextRingTime()
         val nextTriggerA2 = a2.getNextRingTime()
 
-        // isOn 값을 우선적으로 고려
+        // 1. 즐겨찾기를 최우선으로
+        // 2. 켜져있는 것을 우선으로
+        // 3. 현재 시간 기준으로 가까운 시간을 우선으로
         when {
+            a1.isBookmarked && !a2.isBookmarked -> -1
+            !a1.isBookmarked && a2.isBookmarked -> 1
             a1.isOn && !a2.isOn -> -1
             !a1.isOn && a2.isOn -> 1
             else -> nextTriggerA1.compareTo(nextTriggerA2)
         }
     }
 
-    // 절대적인 시간 기준 Comparator
+    // 절대적인 시간 기준 Comparator (시간순)
     val absolute: Comparator<AlarmState> = Comparator { a1, a2 ->
-        val hourCompare = a1.hour.compareTo(a2.hour)
-        if (hourCompare == 0) {
-            a1.minute.compareTo(a2.minute)
-        } else {
-            hourCompare
+        // 1. 즐겨찾기를 최우선으로
+        // 2. 이른 시간을 우선으로
+        when {
+            a1.isBookmarked && !a2.isBookmarked -> -1
+            !a1.isBookmarked && a2.isBookmarked -> 1
+            else -> {
+                val hourCompare = a1.hour.compareTo(a2.hour)
+                if (hourCompare == 0) {
+                    a1.minute.compareTo(a2.minute)
+                } else {
+                    hourCompare
+                }
+            }
         }
     }
 }
@@ -32,9 +44,9 @@ object AlarmComparator {
 // 사용 예시
 //fun main() {
 //    val alarms = mutableListOf(
-//        Alarm(content = "Morning Alarm", hour = 7, minute = 30, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis()),
-//        Alarm(content = "Evening Alarm", hour = 18, minute = 0, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis(), isOn = true),
-//        Alarm(content = "Night Alarm", hour = 22, minute = 45, repeatDays = SnapshotStateList(), updatedTime = System.currentTimeMillis())
+//        AlarmState(hour = 7, minute = 30, isBookmarked = false),
+//        AlarmState(hour = 18, minute = 0, isBookmarked = true),
+//        AlarmState(hour = 22, minute = 45, isBookmarked = false)
 //    )
 //
 //    // 절대 시간 기준
