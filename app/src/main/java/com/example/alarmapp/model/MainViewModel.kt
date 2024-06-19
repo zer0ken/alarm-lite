@@ -323,7 +323,6 @@ class MainViewModel(context: Context) : ViewModel() {
                 alarmState.isSelected = select
                 repository.update(alarmState)
                 alarmStateMap[alarmState.id]?.isSelected = select
-                fetchAlarms()
             }
             fetchAlarms()
         }
