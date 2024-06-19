@@ -1,8 +1,9 @@
 package com.example.alarmapp.view.bottomBar
 
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,44 +12,39 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.alarmapp.R
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.MainViewModel
-import java.time.DayOfWeek
 
 @Composable
 fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel) {
     var isFilterSetMenuExpanded by remember { mutableStateOf(false) }
 
     val definedRepeatFilters = mainViewModel.repeatFilterDropdown
-    val alarmGroups = remember {
-        mainViewModel.alarmGroupStateMap.values.toList()
-    }
+
+    val alarmGroups = mainViewModel.alarmGroupStateMap.values.toList()
+
     val filterMap = remember {
         mainViewModel.filterMap.values.toList()
     }
@@ -57,50 +53,50 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
     val selectedRepeatFiltersIndex = mainViewModel.selectedRepeatFiltersIndex
     val selectedGroupFilters = mainViewModel.selectedGroupFilters
 
-    Log.d("test", selectedFilterSet.toString())
-    Log.d("test", selectedRepeatFiltersIndex.toString())
-    Log.d("test", selectedGroupFilters.toString())
-
-    val combinedFilters = remember {
-        mutableListOf<String>().apply {
-            addAll(selectedFilterSet)
-            addAll(selectedRepeatFiltersIndex.map { indexToDayOfWeekString(it)})
-            addAll(selectedGroupFilters)
-        }
-    }
-    Log.d("test", combinedFilters.toString())
+    val combinedFilters = mainViewModel.combinedFilters
 
     val dropdownText = if (combinedFilters.isEmpty()) {
         "필터"
     } else {
-        combinedFilters.joinToString(separator = ", ")
+        if (combinedFilters.size > 1)
+            "${combinedFilters[0].let { 
+                if (it.length > 7) {
+                    it.take(7) + "..."
+                } else {
+                    it
+                }
+            }} 등 ${combinedFilters.size}개의 필터"
+        else
+            combinedFilters[0]
+    }
+
+    val icon = if (combinedFilters.isEmpty()) {
+        R.drawable.outline_filter_alt_24
+    } else {
+        R.drawable.baseline_filter_alt_24
     }
 
     BottomAppBar(
-        modifier = Modifier.height(60.dp)
+        modifier = Modifier
+            .height(60.dp)
+            .clickable { isFilterSetMenuExpanded = !isFilterSetMenuExpanded }
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier
-                .clickable { isFilterSetMenuExpanded = !isFilterSetMenuExpanded }
-                .padding(16.dp)
-            ) {
-                Spacer(modifier = Modifier.width(20.dp))
+            Row(modifier = Modifier.padding(10.dp).weight(1f)) {
+                Icon(
+                    painter = painterResource(id = icon),
+                    contentDescription = "Filter icon"
+                )
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = dropdownText,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(100.dp)
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.width(5.dp))
-                IconButton(onClick = { isFilterSetMenuExpanded = true }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_arrow_drop_down_24),
-                        contentDescription = "Dropdown"
-                    )
-                }
                 DropdownMenu(
                     expanded = isFilterSetMenuExpanded,
                     onDismissRequest = { isFilterSetMenuExpanded = false },
@@ -108,6 +104,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                         .fillMaxWidth(0.5f)
                         .height(300.dp)
                 ) {
+                    var count = 0
                     filterMap.map { it.name }.forEach { filter ->
                         DropdownMenuItem(
                             text = {
@@ -116,7 +113,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = filter,
+                                        text = "필터: $filter",
                                         modifier = Modifier.weight(1f)
                                     )
                                     if (filter in selectedFilterSet) {
@@ -134,41 +131,19 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 } else {
                                     selectedFilterSet.add(filter)
                                 }
-                            }
-                        )
-                    }
-                    Divider()
-                    definedRepeatFilters.map { it }.forEach { filter ->
-                        val filterIndex = dayOfWeekStringToIndex(filter)
-                        DropdownMenuItem(
-                            text = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.fillMaxWidth()
-                                ) {
-                                    Text(
-                                        text = filter,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    if (filterIndex in selectedRepeatFiltersIndex) {
-                                        Icon(
-                                            imageVector = Icons.Default.Check,
-                                            contentDescription = "Selected",
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                }
-                            },
-                            onClick = {
-                                if (filterIndex in selectedRepeatFiltersIndex) {
-                                    selectedRepeatFiltersIndex.remove(filterIndex)
+                                if (filter in combinedFilters) {
+                                    mainViewModel.removeCombinedFilter(filter)
                                 } else {
-                                    selectedRepeatFiltersIndex.add(filterIndex)
+                                    mainViewModel.addCombinedFilter(filter)
                                 }
                             }
                         )
+                        count++
                     }
-                    Divider()
+                    if (count > 0) {
+                        HorizontalDivider()
+                        count = 0
+                    }
                     alarmGroups.map { it.groupName }.forEach { filter ->
                         DropdownMenuItem(
                             text = {
@@ -177,7 +152,7 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Text(
-                                        text = filter,
+                                        text = "그룹: $filter",
                                         modifier = Modifier.weight(1f)
                                     )
                                     if (filter in selectedGroupFilters) {
@@ -195,16 +170,65 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                                 } else {
                                     selectedGroupFilters.add(filter)
                                 }
+                                if (filter in combinedFilters) {
+                                    mainViewModel.removeCombinedFilter(filter)
+                                } else {
+                                    mainViewModel.addCombinedFilter(filter)
+                                }
                             }
                         )
+                        count++
                     }
-                    Divider()
+                    if (count > 0) {
+                        HorizontalDivider()
+                        count = 0
+                    }
+                    definedRepeatFilters.map { it }.forEach { filter ->
+                        val filterIndex = dayOfWeekStringToIndex(filter)
+                        DropdownMenuItem(
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text =  "반복: ${filter.take(3)}",
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    if (filterIndex in selectedRepeatFiltersIndex) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "Selected",
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                            },
+                            onClick = {
+                                if (filterIndex in selectedRepeatFiltersIndex) {
+                                    selectedRepeatFiltersIndex.remove(filterIndex)
+                                } else {
+                                    selectedRepeatFiltersIndex.add(filterIndex)
+                                }
+                                if (filter in combinedFilters) {
+                                    mainViewModel.removeCombinedFilter(filter)
+                                } else {
+                                    mainViewModel.addCombinedFilter(filter)
+                                }
+                            }
+                        )
+                        count++
+                    }
+                    if (count > 0) {
+                        HorizontalDivider()
+                        count = 0
+                    }
                     DropdownMenuItem(
                         text = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     "필터 관리",
-                                    color = Color.Red
+                                    color = MaterialTheme.colorScheme.error
                                 )
                             }
                         },
@@ -212,26 +236,22 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
                     )
                 }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = {
-                mainViewModel.resetSelect()
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_horizontal_rule_24),
-                    contentDescription = "필터 적용 해제"
-                )
+            AnimatedVisibility(
+                visible = combinedFilters.isNotEmpty(),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                IconButton(onClick = {
+                    mainViewModel.resetSelect()
+                    mainViewModel.clearCombinedFilters()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "remove"
+                    )
+                }
             }
-            Spacer(modifier = Modifier.width(20.dp))
-            IconButton(onClick = {
-                mainViewModel.resetFilter()
-                navController.navigate(Routes.AddFilterSetScreen.route)
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add"
-                )
-            }
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(12.dp))
         }
     }
 }
@@ -246,18 +266,5 @@ fun dayOfWeekStringToIndex(dayOfWeek: String): Int {
         "금요일에 울리는 알람" -> 5
         "토요일에 울리는 알람" -> 6
         else -> throw IllegalArgumentException("Invalid day Of Week: $dayOfWeek")
-    }
-}
-
-fun indexToDayOfWeekString(index: Int): String {
-    return when (index) {
-        0 -> "일요일에 울리는 알람"
-        1 -> "월요일에 울리는 알람"
-        2 -> "화요일에 울리는 알람"
-        3 -> "수요일에 울리는 알람"
-        4 -> "목요일에 울리는 알람"
-        5 -> "금요일에 울리는 알람"
-        6 -> "토요일에 울리는 알람"
-        else -> throw IllegalArgumentException("Invalid index: $index")
     }
 }

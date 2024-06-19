@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -88,41 +88,23 @@ fun AlarmItemView(
         )
         .graphicsLayer(alpha = alpha)
 
-    var rowModifier: Modifier = Modifier
-    var switchModifier: Modifier = Modifier
-
-    val contentFontSize: TextUnit
-    val timeFontSize: TextUnit
-
-    if (mainViewModel.isSelectMode && !alarm.isSelected) {
-        cardShape = CardDefaults.outlinedShape
-    }
+    val rowModifier: Modifier = Modifier
+        .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
+        .fillMaxWidth()
+    val switchModifier: Modifier = Modifier
+        .scale(0.6f)
+        .size(40.dp)
+    var contentFontSize: TextUnit = 14.sp
+    var timeFontSize: TextUnit = 34.sp
 
     if (alarmGroup == null) {
         cardModifier = cardModifier.fillMaxWidth()
-        rowModifier = rowModifier
-            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-        switchModifier = switchModifier
-            .scale(0.8f)
-        contentFontSize = 14.sp
-        timeFontSize = 34.sp
-    }else if (alarmGroup.isFolded) {
-        rowModifier = rowModifier
-            .padding(end = 14.dp, top = 4.dp, bottom = 4.dp)
-        switchModifier = switchModifier
-            .scale(0.6f)
-            .size(40.dp)
-
-        contentFontSize = 14.sp
-        timeFontSize = 30.sp
+    } else if (alarmGroup.isFolded) {
+//        cardModifier = cardModifier.widthIn(min = 200.dp, max = 300.dp)
+        contentFontSize = 10.sp
+        timeFontSize = 26.sp
     } else {
-        rowModifier = rowModifier
-            .padding(end = 16.dp, top = 8.dp, bottom = 8.dp)
-        switchModifier = switchModifier
-            .scale(0.8f)
-
-        contentFontSize = 14.sp
-        timeFontSize = 34.sp
+        cardModifier = cardModifier.fillMaxWidth()
     }
 
     var specifiedDateRange = alarm.getSpecifiedDateRange()
@@ -139,11 +121,8 @@ fun AlarmItemView(
         modifier = cardModifier
     ) {
         Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = rowModifier
-                .fillMaxWidth()
-                .fillMaxHeight()
         ) {
             if (mainViewModel.isSelectMode) {
                 Checkbox(checked = alarm.isSelected, onCheckedChange = { alarm.isSelected = it })
@@ -152,7 +131,10 @@ fun AlarmItemView(
             }
 
             Column(
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .widthIn(max = 150.dp)
             ) {
                 if (alarm.name != "") {
                     Text(text = alarm.name, fontSize = contentFontSize)
@@ -160,8 +142,10 @@ fun AlarmItemView(
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val formattedTime =
+                        mainViewModel.formatTime(alarm.hour, alarm.minute, is24HourView)
                     Text(
-                        text = if (is24HourView) "${alarm.hour} : ${alarm.minute}" else "${alarm.hour % 12} : ${alarm.minute} ${if (alarm.hour < 12) "AM" else "PM"}",
+                        text = formattedTime,
                         fontSize = timeFontSize
                     )
                     if (alarm.isBookmarked) {
@@ -182,14 +166,16 @@ fun AlarmItemView(
                     Text(text = specifiedDateRange, fontSize = contentFontSize)
                 }
             }
-            Spacer(modifier = Modifier.weight(weight = 1.0f))
+            
+            Spacer(modifier = Modifier.weight(1f))
+            
             Switch(
                 checked = alarm.isOn,
-                modifier = switchModifier,
                 onCheckedChange = {
                     alarm.isOn = it
                     mainViewModel.updateAlarm(alarm)
-                }
+                },
+                modifier = switchModifier
             )
         }
     }

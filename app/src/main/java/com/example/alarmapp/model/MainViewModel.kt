@@ -37,11 +37,12 @@ class MainViewModel(context: Context) : ViewModel() {
             _isSelectMode.value = value
         }
 
-    private val _is24HourView = mutableStateOf(false)
+    private val _is24HourView = mutableStateOf(loadIs24HourViewPreference())
     var is24HourView: Boolean
         get() = _is24HourView.value
         set(value) {
             _is24HourView.value = value
+            saveIs24HourViewPreference(value)
         }
 
     private val _selectedSort = mutableStateOf(loadSortPreference())
@@ -211,13 +212,28 @@ class MainViewModel(context: Context) : ViewModel() {
     val selectedRepeatFiltersIndex = mutableStateListOf<Int>()
     val selectedFilterSet = mutableStateListOf<String>()
 
+    private val _combinedFilters = mutableStateListOf<String>()
+    val combinedFilters: List<String>
+        get() = _combinedFilters
+
+    fun clearCombinedFilters() {
+        _combinedFilters.clear()
+    }
+
+    fun addCombinedFilter(filter: String) {
+        _combinedFilters.add(filter)
+    }
+
+    fun removeCombinedFilter(filter: String) {
+        _combinedFilters.remove(filter)
+    }
+
     fun resetSelect() {
         selectedGroupFilters.clear()
         selectedRepeatFiltersIndex.clear()
         selectedFilterSet.clear()
     }
 
-//    private val defaultFilterSetName = ""
     val defaultFilterSetRepeatFilter = mutableListOf(
         false,
         false,
@@ -269,36 +285,29 @@ class MainViewModel(context: Context) : ViewModel() {
 
 
     fun deleteFilter(filter: Filter) {
-        viewModelScope.launch {
-            repository.delete(filter)
+        viewModelScope.launch(Dispatchers.IO) {
+            _deleteFilter(filter)
             filterMap.remove(filter.name)
             fetchFilter()
         }
     }
 
-    fun insertFilter(filter: Filter) {
-        viewModelScope.launch {
-            repository.insert(filter)
-            fetchFilter()
-        }
+    private suspend fun _deleteFilter(filter: Filter) {
+        repository.delete(filter)
     }
 
     fun getFilterByName(name: String?): Filter? {
         return filterMap[name]
     }
 
-    fun toggleSelectAll(select: Boolean) {
-        alarmStateMap.forEach { (_, alarmState) ->
-            alarmState.isSelected = select
-        }
-    }
-
-    fun deleteSelectedAlarms() {
+    fun deleteSelectedAlarms(alarms: List<AlarmState>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val selectedAlarms = alarmStateMap.filter { it.value.isSelected }.values.toList()
+            val selectedAlarms = alarms.filter { it.isSelected }
             selectedAlarms.forEach {
                 _deleteAlarm(it)
+                it.isSelected = false
                 alarmStateMap.remove(it.id)
+                alarmStateMap[it.id]?.isSelected = false
             }
             fetchAlarms()
         }
@@ -308,27 +317,91 @@ class MainViewModel(context: Context) : ViewModel() {
         repository.delete(alarmState)
     }
 
-    fun OnOffSelectedAlarms(select: Boolean) {
-        alarmStateMap.forEach { (_, alarmState) ->
-            if (alarmState.isSelected) {
-                alarmState.isOn = !select
+    fun toggleSelectAll(alarms: List<AlarmState>,select: Boolean) {
+        viewModelScope.launch {
+            alarms.forEach { alarmState ->
+                alarmState.isSelected = select
+                repository.update(alarmState)
+                alarmStateMap[alarmState.id]?.isSelected = select
             }
+            fetchAlarms()
         }
     }
 
-    fun clearGroupForSelectedAlarms() {
-        alarmStateMap.forEach { (_, alarmState) ->
-            if (alarmState.isSelected) {
-                alarmState.groupName = ""
+    fun onOffSelectedAlarms(alarms: List<AlarmState>, select: Boolean) {
+        viewModelScope.launch {
+            alarms.forEach { alarmState ->
+                if (alarmState.isSelected) {
+                    alarmState.isOn = !select
+                    repository.update(alarmState)
+                    alarmStateMap[alarmState.id]?.isOn = !select
+                }
             }
+            fetchAlarms()
         }
     }
 
-    fun updateSelectedAlarmsGroup(groupName: String) {
-        alarmStateMap.forEach { (_, alarmState) ->
-            if (alarmState.isSelected) {
-                alarmState.groupName = groupName
+    fun updateGroupForSelectedAlarms(alarms: List<AlarmState>, name: String) {
+        viewModelScope.launch {
+            alarms.forEach { alarmState ->
+                if (alarmState.isSelected) {
+                    alarmState.groupName = name
+                    alarmState.isSelected = false
+                    repository.update(alarmState)
+                    alarmStateMap[alarmState.id]?.groupName = name
+                    alarmStateMap[alarmState.id]?.isSelected = false
+                }
             }
+            fetchAlarms()
+        }
+    }
+
+    fun createGroupForSelectedAlarms(alarms: List<AlarmState>, name: String) {
+        viewModelScope.launch {
+            repository.insert(AlarmGroupState(name))
+            alarmGroupStateMap[name] = AlarmGroupState(name)
+            fetchAlarmGroups()
+
+            alarms.forEach { alarmState ->
+                if (alarmState.isSelected) {
+                    alarmState.groupName = name
+                    alarmState.isSelected = false
+                    repository.update(alarmState)
+                    alarmStateMap[alarmState.id]?.groupName = name
+                    alarmStateMap[alarmState.id]?.isSelected = false
+                }
+            }
+            fetchAlarms()
+        }
+    }
+
+    var sortedAlarms by mutableStateOf(listOf<AlarmState>())
+        private set
+
+    fun updateSortedAlarms() {
+        sortedAlarms = if (selectedSort == "시간순") {
+            alarmStateMap.values.sortedWith(AlarmComparator.absolute)
+        } else {
+            alarmStateMap.values.sortedWith(AlarmComparator.relative)
+        }
+    }
+
+    private fun loadIs24HourViewPreference(): Boolean {
+        return sharedPreferences.getBoolean("is24HourView", false)
+    }
+
+    private fun saveIs24HourViewPreference(value: Boolean) {
+        sharedPreferences.edit().putBoolean("is24HourView", value).apply()
+    }
+
+    fun formatTime(hour: Int, minute: Int, is24HourView: Boolean): String {
+        return if (is24HourView) {
+            "${String.format("%02d", hour)}:${String.format("%02d", minute)}"
+        } else {
+            val period = if (hour >= 12) "PM" else "AM"
+            val adjustedHour = if (hour % 12 == 0) 12 else hour % 12
+            val formattedMinute = String.format("%02d", minute)
+            "$adjustedHour:$formattedMinute $period"
         }
     }
 }

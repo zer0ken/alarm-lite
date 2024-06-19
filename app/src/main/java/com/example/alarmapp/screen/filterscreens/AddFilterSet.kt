@@ -1,4 +1,4 @@
-package com.example.alarmapplication
+package com.example.alarmapp.screen.filterscreens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,11 +16,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,10 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.Filter
@@ -75,12 +73,18 @@ fun AddFilterSetScreen(
                                 groupFilter = filterSetGroupFilter
                             )
                         )
-                        navController.navigate(Routes.MainScreen.route)
+                        navController.navigate(Routes.FilterSetListScreen.route) {
+                            popUpTo("FilterSetListScreen") { inclusive = false }
+                            launchSingleTop = true
+                        }
                     } else {
                         isFilterNameSet = false
                     }
                 } else {
-                    navController.navigate(Routes.MainScreen.route)
+                    navController.navigate(Routes.FilterSetListScreen.route) {
+                        popUpTo("FilterSetListScreen") { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             }
         }
@@ -103,7 +107,7 @@ fun AddFilterSetScreen(
             if (!isFilterNameSet) {
                 Text(
                     "필터 이름은 필수항목입니다.",
-                    color = Color.Red,
+                    color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.padding(horizontal = 15.dp)
                 )
             }
@@ -114,7 +118,11 @@ fun AddFilterSetScreen(
                         .fillMaxHeight()
                         .clickable {
                             mainViewModel.filterSetName = filterSetName
-                            navController.navigate(Routes.RepeatFilterLabel.route)
+                            mainViewModel.filterSetRepeatFilter = filterSetRepeatFilter
+                            mainViewModel.filterSetGroupFilter = filterSetGroupFilter
+                            navController.navigate(Routes.RepeatFilterLabel.route) {
+                                launchSingleTop = true
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -134,7 +142,9 @@ fun AddFilterSetScreen(
                         }
                         Text(
                             text = "매주 ${selectedDays.joinToString(", ")}에 반복되는 알람",
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier
+                                .padding(bottom = 8.dp)
+                                .width(300.dp)
                         )
                     }
                     Spacer(modifier = Modifier.weight(1f))
@@ -153,7 +163,16 @@ fun AddFilterSetScreen(
             }
             if (filterSetGroupFilter.isNotEmpty()) {
                 Row(
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .clickable {
+                            mainViewModel.filterSetName = filterSetName
+                            mainViewModel.filterSetRepeatFilter = filterSetRepeatFilter
+                            mainViewModel.filterSetGroupFilter = filterSetGroupFilter
+                            navController.navigate(Routes.GroupFilterLabel.route) {
+                                launchSingleTop = true
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.width(20.dp))
@@ -166,7 +185,9 @@ fun AddFilterSetScreen(
                         )
                         Text(
                             text = "${filterSetGroupFilter.joinToString(", ")} 에 포함되는 알람",
-                            modifier = Modifier.padding(bottom = 8.dp)
+                            modifier = Modifier
+                                .padding(bottom = 8.dp)
+                                .width(300.dp)
                         )
 
                     }
@@ -188,7 +209,9 @@ fun AddFilterSetScreen(
             Button(
                 onClick = {
                     mainViewModel.filterSetName = filterSetName
-                    navController.navigate(Routes.RepeatFilterLabel.route)
+                    navController.navigate(Routes.RepeatFilterLabel.route) {
+                        launchSingleTop = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,7 +221,10 @@ fun AddFilterSetScreen(
             }
             Button(
                 onClick = {
-                    navController.navigate(Routes.GroupFilterLabel.route)
+                    mainViewModel.filterSetName = filterSetName
+                    navController.navigate(Routes.GroupFilterLabel.route) {
+                        launchSingleTop = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

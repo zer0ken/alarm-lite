@@ -1,12 +1,8 @@
 package com.example.alarmapp
 
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,27 +10,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.example.alarmapp.model.Filter
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
 import com.example.alarmapp.screen.SettingScreen
 import com.example.alarmapp.screen.UpdateAlarmScreen
+import com.example.alarmapp.screen.filterscreens.AddFilterSetScreen
+import com.example.alarmapp.screen.filterscreens.FilterSetListScreen
 import com.example.alarmapp.screen.filterscreens.GroupFilterLabel
 import com.example.alarmapp.screen.filterscreens.RepeatFilterLabel
-import com.example.alarmapplication.AddFilterSetScreen
-import com.example.alarmapplication.FilterSetListScreen
 
-@Composable
-fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
-    val context = LocalContext.current
-    return remember(context) { context as ViewModelStoreOwner }
-}
-
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainNaviGraph(navController: NavHostController) {
-    val navStoreOwner = rememberViewModelStoreOwner()
     val mainViewModel: MainViewModel =
         viewModel(factory = MainViewModel.Factory(LocalContext.current))
 

@@ -103,18 +103,6 @@ class Repository(private val db: AlarmDatabase) {
         value.groupName
     )
 
-//    private fun fromFilterEntity(value: FilterEntity) = Filter(
-//        value.name,
-//        value.repeatFilter,
-//        value.groupFilter
-//    )
-//
-//    private fun toFilterEntity(value: Filter) = FilterEntity(
-//        value.name,
-//        value.repeatFilter,
-//        value.groupFilter
-//    )
-
     private fun fromFilterEntity(filterEntity: FilterEntity): Filter {
         return Filter(
             name = filterEntity.name,
