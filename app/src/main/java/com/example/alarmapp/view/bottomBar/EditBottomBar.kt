@@ -7,13 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -29,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.alarm.getFilteredAlarms
@@ -66,7 +64,6 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
     )
 
     val dropdownMenuOffset = remember { mutableStateOf(Offset.Zero) }
-    val density = LocalDensity.current
 
     BottomAppBar(
         modifier = Modifier.height(60.dp)
@@ -108,11 +105,12 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                         .fillMaxWidth(0.25f)
                         .heightIn(max = 250.dp)
                 ) {
+                    var count = 0
                     if (alarmGroups.isNotEmpty()) {
                         alarmGroups.map { it.groupName }.forEach {
                             DropdownMenuItem(
                                 text = {
-                                    Row{
+                                    Row {
                                         Text(text = it)
                                     }
                                 },
@@ -122,12 +120,15 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                                     mainViewModel.isSelectMode = false
                                 }
                             )
+                            count++
                         }
                     }
-                    Divider()
+                    if (count > 0) {
+                        HorizontalDivider()
+                    }
                     DropdownMenuItem(
                         text = {
-                            Row{
+                            Row {
                                 Text(
                                     text = "그룹 생성",
                                     color = MaterialTheme.colorScheme.error
