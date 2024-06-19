@@ -92,12 +92,9 @@ fun LazyListScope.alarmGroupStickyHeader(
                     onFoldedChange = { alarmGroup.isFolded = it })
                 Text(
                     text = alarmGroup.groupName,
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp).weight(1f)
                 )
-
-                Spacer(modifier = Modifier.weight(1f))
-
                 IconButton(onClick = {
                     navController.navigate(
                         Routes.CreateAlarmInGroup.slottedRoute!!.format(
