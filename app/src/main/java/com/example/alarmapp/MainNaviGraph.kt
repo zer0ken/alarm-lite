@@ -30,7 +30,6 @@ fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
     return remember(context) { context as ViewModelStoreOwner }
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainNaviGraph(navController: NavHostController) {
     val navStoreOwner = rememberViewModelStoreOwner()

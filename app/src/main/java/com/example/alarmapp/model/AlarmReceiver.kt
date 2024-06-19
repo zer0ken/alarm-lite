@@ -10,6 +10,7 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
+import android.os.Vibrator
 import android.os.VibratorManager
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -112,24 +113,20 @@ class AlarmReceiver : BroadcastReceiver() {
         return pendingIntent
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    suspend fun ring(context: Context, alarm: AlarmState): Ringtone {
+    private suspend fun ring(context: Context, alarm: AlarmState) {
         val ringtoneUri = alarm.selectedRingtoneUri
             ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         val ringtone = RingtoneManager.getRingtone(context, ringtoneUri)
         ringtone.play()
 
-        val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
-        val vibrator = vibratorManager.defaultVibrator;
-        vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 300, 150, 300), -1))
+        val vibrator = context.getSystemService(Vibrator::class.java)
+        vibrator?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 300, 150, 300), -1))
 
         delay(10000)
         if (ringtone.isPlaying) {
             ringtone.stop()
             vibrator.cancel()
         }
-
-        return ringtone
     }
 }
 
