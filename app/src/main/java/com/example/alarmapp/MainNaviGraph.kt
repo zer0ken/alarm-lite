@@ -21,7 +21,7 @@ import com.example.alarmapp.screen.SettingScreen
 import com.example.alarmapp.screen.UpdateAlarmScreen
 import com.example.alarmapp.screen.filterscreens.GroupFilterLabel
 import com.example.alarmapp.screen.filterscreens.RepeatFilterLabel
-import com.example.alarmapplication.AddFilterSetScreen
+import com.example.alarmapp.screen.filterscreens.AddFilterSetScreen
 import com.example.alarmapp.screen.filterscreens.FilterSetListScreen
 
 @Composable

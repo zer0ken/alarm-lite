@@ -1,6 +1,7 @@
 package com.example.alarmapp.view.bottomBar
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,7 +22,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.alarm.getFilteredAlarms
@@ -61,7 +61,7 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceAround
         ) {
             TextButton(
                 onClick = {
@@ -78,46 +78,42 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                 }) {
                 Text(text = onOffText)
             }
-            TextButton(onClick = {
-                isDropdownMenuExpanded = true
-            },
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    dropdownMenuOffset.value = coordinates.positionInWindow()
-                }
-            ) {
-                Text(text = "그룹화")
-            }
-            DropdownMenu(
-                expanded = isDropdownMenuExpanded,
-                onDismissRequest = { isDropdownMenuExpanded = false },
-                modifier = Modifier
-                    .fillMaxWidth(0.25f),
-                offset = with(density) {
-                    DpOffset(
-                        dropdownMenuOffset.value.x.toDp() - 25.dp,
-                        dropdownMenuOffset.value.y.toDp() - 300.dp
-                    )
+            Box{
+                TextButton(onClick = {
+                    isDropdownMenuExpanded = true
                 },
-            ) {
-                alarmGroups.map { it.groupName }.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = it,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-                        },
-                        onClick = {
-                            mainViewModel.updateGroupForSelectedAlarms(alarmList, it)
-                            isDropdownMenuExpanded = false
-                            mainViewModel.isSelectMode = false
+                    modifier = Modifier.onGloballyPositioned { coordinates ->
+                        dropdownMenuOffset.value = coordinates.positionInWindow()
+                    }
+                ) {
+                    Text(text = "그룹화")
+                }
+                if (alarmGroups.isNotEmpty()) {
+                    DropdownMenu(
+                        expanded = isDropdownMenuExpanded,
+                        onDismissRequest = { isDropdownMenuExpanded = false },
+                        modifier = Modifier
+                            .fillMaxWidth(0.25f)
+                            .align(Alignment.TopEnd),
+                    ) {
+                        alarmGroups.map { it.groupName }.forEach {
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(text = it)
+                                    }
+                                },
+                                onClick = {
+                                    mainViewModel.updateGroupForSelectedAlarms(alarmList, it)
+                                    isDropdownMenuExpanded = false
+                                    mainViewModel.isSelectMode = false
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
             TextButton(onClick = {
