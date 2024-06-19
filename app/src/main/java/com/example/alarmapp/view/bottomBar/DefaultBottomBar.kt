@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,9 +42,9 @@ fun DefaultBottomBar(navController: NavController, mainViewModel: MainViewModel)
     var isFilterSetMenuExpanded by remember { mutableStateOf(false) }
 
     val definedRepeatFilters = mainViewModel.repeatFilterDropdown
-    val alarmGroups = remember {
-        mainViewModel.alarmGroupStateMap.values.toList()
-    }
+
+    val alarmGroups = mainViewModel.alarmGroupStateMap.values.toList()
+
     val filterMap = remember {
         mainViewModel.filterMap.values.toList()
     }

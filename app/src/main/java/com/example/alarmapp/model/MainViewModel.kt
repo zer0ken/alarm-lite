@@ -357,6 +357,25 @@ class MainViewModel(context: Context) : ViewModel() {
         }
     }
 
+    fun createGroupForSelectedAlarms(alarms: List<AlarmState>, name: String) {
+        viewModelScope.launch {
+            repository.insert(AlarmGroupState(name))
+            alarmGroupStateMap[name] = AlarmGroupState(name)
+            fetchAlarmGroups()
+
+            alarms.forEach { alarmState ->
+                if (alarmState.isSelected) {
+                    alarmState.groupName = name
+                    alarmState.isSelected = false
+                    repository.update(alarmState)
+                    alarmStateMap[alarmState.id]?.groupName = name
+                    alarmStateMap[alarmState.id]?.isSelected = false
+                }
+            }
+            fetchAlarms()
+        }
+    }
+
     var sortedAlarms by mutableStateOf(listOf<AlarmState>())
         private set
 

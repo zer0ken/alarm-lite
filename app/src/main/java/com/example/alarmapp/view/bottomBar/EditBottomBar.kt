@@ -5,9 +5,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,6 +35,11 @@ import com.example.alarmapp.view.alarm.getFilteredAlarms
 @Composable
 fun EditBottomBar(mainViewModel: MainViewModel) {
     var isDropdownMenuExpanded by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    var setGroupName by remember {
+        mutableStateOf("")
+    }
 
     var selected by remember { mutableStateOf(false) }
     val selectedText = if (!selected) "전체 선택" else "전체 해제"
@@ -78,7 +89,7 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                 }) {
                 Text(text = onOffText)
             }
-            Box{
+            Box {
                 TextButton(onClick = {
                     isDropdownMenuExpanded = true
                 },
@@ -88,14 +99,14 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                 ) {
                     Text(text = "그룹화")
                 }
-                if (alarmGroups.isNotEmpty()) {
-                    DropdownMenu(
-                        expanded = isDropdownMenuExpanded,
-                        onDismissRequest = { isDropdownMenuExpanded = false },
-                        modifier = Modifier
-                            .fillMaxWidth(0.25f)
-                            .align(Alignment.TopEnd),
-                    ) {
+                DropdownMenu(
+                    expanded = isDropdownMenuExpanded,
+                    onDismissRequest = { isDropdownMenuExpanded = false },
+                    modifier = Modifier
+                        .fillMaxWidth(0.25f)
+                        .align(Alignment.TopEnd),
+                ) {
+                    if (alarmGroups.isNotEmpty()) {
                         alarmGroups.map { it.groupName }.forEach {
                             DropdownMenuItem(
                                 text = {
@@ -114,7 +125,65 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                             )
                         }
                     }
+                    Divider()
+                    DropdownMenuItem(
+                        text = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = "그룹 생성",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        onClick = {
+                            showDialog = true
+                        }
+                    )
                 }
+            }
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showDialog = false
+                    },
+                    title = {
+                        Text(text = "그룹 생성")
+                    },
+                    text = {
+                        OutlinedTextField(
+                            value = setGroupName,
+                            onValueChange = { setGroupName = it },
+                            label = { Text("그룹 이름") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 15.dp)
+                        )
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                showDialog = false
+                                mainViewModel.createGroupForSelectedAlarms(alarmList, setGroupName)
+//                        isDropdownMenuExpanded = false
+                                mainViewModel.isSelectMode = false
+                            }
+                        ) {
+                            Text("생성")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                showDialog = false
+                            }
+                        ) {
+                            Text("취소")
+                        }
+                    }
+                )
             }
             TextButton(onClick = {
                 mainViewModel.updateGroupForSelectedAlarms(alarmList, "")
