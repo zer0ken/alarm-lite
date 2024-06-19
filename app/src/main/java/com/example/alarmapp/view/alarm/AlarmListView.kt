@@ -92,6 +92,7 @@ fun getFilteredAlarms(
     selectedFilterSetNames: List<String>,
     mainViewModel: MainViewModel
 ): List<AlarmState> {
+    Log.d("test", sortedAlarms.toString())
     return if (selectedGroupFilters.isEmpty() && selectedRepeatFilters.isEmpty() && selectedFilterSetNames.isEmpty()) {
         sortedAlarms
     } else {
@@ -100,20 +101,24 @@ fun getFilteredAlarms(
                 selectedGroupFilters.isNotEmpty() && selectedGroupFilters.contains(alarm.groupName)
             val repeatFilterCondition =
                 selectedRepeatFilters.isNotEmpty() && selectedRepeatFilters.any { alarm.repeatOnWeekdays[it] }
-
             val filterSetCondition = if (selectedFilterSetNames.isNotEmpty()) {
-                val selectedFilterSets =
-                    selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
+                val selectedFilterSets = selectedFilterSetNames.mapNotNull { mainViewModel.getFilterByName(it) }
                 selectedFilterSets.any { selectedFilterSet ->
-                    val isEmpty =
-                        selectedFilterSet.repeatFilter.size == 7 && selectedFilterSet.repeatFilter.all { !it }
+//                    Log.d("test1",  selectedFilterSet.name)
+//                    Log.d("test1",  alarm.name)
+//                    Log.d("test1",  selectedFilterSet.repeatFilter.toString())
+//                    Log.d("test1", alarm.repeatOnWeekdays.toString())
+//                    Log.d("test1",
+//                        (alarm.repeatOnWeekdays.toList() == selectedFilterSet.repeatFilter.toList()).toString())
+
+                    val isEmpty = selectedFilterSet.repeatFilter.size == 7 && selectedFilterSet.repeatFilter.all { !it }
                     (selectedFilterSet.groupFilter.isEmpty() && isEmpty) ||
                             (selectedFilterSet.groupFilter.isNotEmpty() && isEmpty && selectedFilterSet.groupFilter.contains(
                                 alarm.groupName
                             )) ||
-                            (selectedFilterSet.groupFilter.isEmpty() && !isEmpty && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList()) ||
+                            (selectedFilterSet.groupFilter.isEmpty() && !isEmpty && alarm.repeatOnWeekdays.toList() == selectedFilterSet.repeatFilter.toList()) ||
                             (selectedFilterSet.groupFilter.isNotEmpty() && !isEmpty &&
-                                    selectedFilterSet.groupFilter.contains(alarm.groupName) && selectedFilterSet.repeatFilter == alarm.repeatOnWeekdays.toList())
+                                    selectedFilterSet.groupFilter.contains(alarm.groupName) && alarm.repeatOnWeekdays.toList() == selectedFilterSet.repeatFilter.toList())
                 }
             } else {
                 false
