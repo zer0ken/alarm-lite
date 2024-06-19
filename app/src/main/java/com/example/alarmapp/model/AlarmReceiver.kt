@@ -10,7 +10,7 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.VibrationEffect
-import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -119,12 +119,14 @@ class AlarmReceiver : BroadcastReceiver() {
         val ringtone = RingtoneManager.getRingtone(context, ringtoneUri)
         ringtone.play()
 
-        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        val vibrator = vibratorManager.defaultVibrator;
         vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 300, 150, 300), -1))
 
         delay(10000)
         if (ringtone.isPlaying) {
             ringtone.stop()
+            vibrator.cancel()
         }
 
         return ringtone
