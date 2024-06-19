@@ -1,7 +1,6 @@
 package com.example.alarmapp.screen.filterscreens
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,24 +47,20 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
             TopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
-                    Box(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "필터 목록",
-                            fontWeight = FontWeight(800)
-                        )
-                    }
+                    Text(text = "필터 목록")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate(Routes.MainScreen.route){
-                        popUpTo("MainScreen")
-                        launchSingleTop = true
-                    } }) {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Routes.MainScreen.route) {
+                                popUpTo("MainScreen")
+                                launchSingleTop = true
+                            }
+                        }
+                    ) {
                         Icon(
-                            imageVector = Icons.Default.KeyboardArrowLeft,
-                            contentDescription = "",
-                            modifier = Modifier.size(36.dp)
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "뒤로가기"
                         )
                     }
                 }
@@ -86,7 +81,7 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                             .height(66.dp)
                             .clip(shape = RoundedCornerShape(8.dp))
                             .clickable {
-                                navController.navigate("UpdateFilterSetScreen/${it.name}"){
+                                navController.navigate("UpdateFilterSetScreen/${it.name}") {
                                     launchSingleTop = true
                                 }
                             }
@@ -120,9 +115,10 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
             Button(
                 onClick = {
                     mainViewModel.resetFilter()
-                    navController.navigate(Routes.AddFilterSetScreen.route){
+                    navController.navigate(Routes.AddFilterSetScreen.route) {
                         launchSingleTop = true
-                    } },
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)
