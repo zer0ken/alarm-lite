@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.example.alarmapp.Routes
 import com.example.alarmapp.model.Filter
@@ -72,12 +73,18 @@ fun AddFilterSetScreen(
                                 groupFilter = filterSetGroupFilter
                             )
                         )
-                        navController.navigate(Routes.FilterSetListScreen.route)
+                        navController.navigate(Routes.FilterSetListScreen.route) {
+                            popUpTo("FilterSetListScreen") { inclusive = false }
+                            launchSingleTop = true
+                        }
                     } else {
                         isFilterNameSet = false
                     }
                 } else {
-                    navController.navigate(Routes.FilterSetListScreen.route)
+                    navController.navigate(Routes.FilterSetListScreen.route) {
+                        popUpTo("FilterSetListScreen") { inclusive = false }
+                        launchSingleTop = true
+                    }
                 }
             }
         }
@@ -111,7 +118,11 @@ fun AddFilterSetScreen(
                         .fillMaxHeight()
                         .clickable {
                             mainViewModel.filterSetName = filterSetName
-                            navController.navigate(Routes.RepeatFilterLabel.route)
+                            mainViewModel.filterSetRepeatFilter = filterSetRepeatFilter
+                            mainViewModel.filterSetGroupFilter = filterSetGroupFilter
+                            navController.navigate(Routes.RepeatFilterLabel.route) {
+                                launchSingleTop = true
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -152,7 +163,16 @@ fun AddFilterSetScreen(
             }
             if (filterSetGroupFilter.isNotEmpty()) {
                 Row(
-                    modifier = Modifier.fillMaxHeight(),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .clickable {
+                            mainViewModel.filterSetName = filterSetName
+                            mainViewModel.filterSetRepeatFilter = filterSetRepeatFilter
+                            mainViewModel.filterSetGroupFilter = filterSetGroupFilter
+                            navController.navigate(Routes.GroupFilterLabel.route) {
+                                launchSingleTop = true
+                            }
+                        },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.width(20.dp))
@@ -189,7 +209,9 @@ fun AddFilterSetScreen(
             Button(
                 onClick = {
                     mainViewModel.filterSetName = filterSetName
-                    navController.navigate(Routes.RepeatFilterLabel.route)
+                    navController.navigate(Routes.RepeatFilterLabel.route) {
+                        launchSingleTop = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -200,7 +222,9 @@ fun AddFilterSetScreen(
             Button(
                 onClick = {
                     mainViewModel.filterSetName = filterSetName
-                    navController.navigate(Routes.GroupFilterLabel.route)
+                    navController.navigate(Routes.GroupFilterLabel.route) {
+                        launchSingleTop = true
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

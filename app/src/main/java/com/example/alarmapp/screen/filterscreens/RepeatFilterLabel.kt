@@ -45,7 +45,10 @@ fun RepeatFilterLabel(navController: NavController, mainViewModel: MainViewModel
                 if (it) {
                     mainViewModel.filterSetRepeatFilter = checkedStates.toMutableList()
                 }
-                navController.navigate(Routes.AddFilterSetScreen.route)
+                navController.navigate(Routes.AddFilterSetScreen.route){
+                    popUpTo("AddFilterSetScreen") {inclusive = false}
+                    launchSingleTop = true
+                }
             }
         }
     ) { paddingValues ->

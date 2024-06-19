@@ -58,7 +58,10 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate(Routes.MainScreen.route) }) {
+                    IconButton(onClick = { navController.navigate(Routes.MainScreen.route){
+                        popUpTo("MainScreen")
+                        launchSingleTop = true
+                    } }) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowLeft,
                             contentDescription = "",
@@ -83,7 +86,9 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
                             .height(66.dp)
                             .clip(shape = RoundedCornerShape(8.dp))
                             .clickable {
-                                navController.navigate("UpdateFilterSetScreen/${it.name}")
+                                navController.navigate("UpdateFilterSetScreen/${it.name}"){
+                                    launchSingleTop = true
+                                }
                             }
                     ) {
                         Row(
@@ -115,7 +120,9 @@ fun FilterSetListScreen(navController: NavController, mainViewModel: MainViewMod
             Button(
                 onClick = {
                     mainViewModel.resetFilter()
-                    navController.navigate(Routes.AddFilterSetScreen.route) },
+                    navController.navigate(Routes.AddFilterSetScreen.route){
+                        launchSingleTop = true
+                    } },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 10.dp)

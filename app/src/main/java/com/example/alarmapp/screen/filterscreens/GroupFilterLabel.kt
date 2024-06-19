@@ -20,8 +20,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,9 +42,10 @@ fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel)
     val alarmGroups = remember {
         mainViewModel.alarmGroupStateMap.values.toList()
     }
-    val checkedStates = remember {
-        mutableStateListOf<String>()
-    }
+//    val checkedStates = remember {
+//        mutableStateListOf<String>()
+//    }
+    var checkedStates by remember { mutableStateOf(mainViewModel.filterSetGroupFilter.toList()) }
 
     Scaffold(
         topBar = {
@@ -50,7 +54,10 @@ fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel)
                     mainViewModel.filterSetGroupFilter.clear()
                     mainViewModel.filterSetGroupFilter.addAll(checkedStates)
                 }
-                navController.navigate(Routes.AddFilterSetScreen.route)
+                navController.navigate(Routes.AddFilterSetScreen.route){
+                    popUpTo("AddFilterSetScreen") {inclusive = false}
+                    launchSingleTop = true
+                }
             }
         }
     ) { paddingValues ->
@@ -75,10 +82,10 @@ fun GroupFilterLabel(navController: NavController, mainViewModel: MainViewModel)
                         .padding(top = if (index == 0) 16.dp else 0.dp, bottom = if (index == alarmGroups.size - 1) 16.dp else 0.dp)
                         .clip(shape)
                         .clickable {
-                            if (checkedStates.contains(label.groupName)) {
-                                checkedStates.remove(label.groupName)
+                            checkedStates = if (checkedStates.contains(label.groupName)) {
+                                checkedStates - label.groupName
                             } else {
-                                checkedStates.add(label.groupName)
+                                checkedStates + label.groupName
                             }
                         },
                     colors = CardDefaults.cardColors(containerColor = Color.LightGray)
