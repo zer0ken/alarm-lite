@@ -132,7 +132,9 @@ fun AlarmItemView(
 
             Column(
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(end = 12.dp).widthIn(max = 120.dp)
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .widthIn(max = 150.dp)
             ) {
                 if (alarm.name != "") {
                     Text(text = alarm.name, fontSize = contentFontSize)
@@ -164,6 +166,9 @@ fun AlarmItemView(
                     Text(text = specifiedDateRange, fontSize = contentFontSize)
                 }
             }
+            
+            Spacer(modifier = Modifier.weight(1f))
+            
             Switch(
                 checked = alarm.isOn,
                 onCheckedChange = {
