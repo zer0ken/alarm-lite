@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
@@ -104,16 +106,13 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                     onDismissRequest = { isDropdownMenuExpanded = false },
                     modifier = Modifier
                         .fillMaxWidth(0.25f)
-                        .align(Alignment.TopEnd),
+                        .heightIn(max = 250.dp)
                 ) {
                     if (alarmGroups.isNotEmpty()) {
                         alarmGroups.map { it.groupName }.forEach {
                             DropdownMenuItem(
                                 text = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
+                                    Row{
                                         Text(text = it)
                                     }
                                 },
@@ -128,10 +127,7 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                     Divider()
                     DropdownMenuItem(
                         text = {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
+                            Row{
                                 Text(
                                     text = "그룹 생성",
                                     color = MaterialTheme.colorScheme.error
@@ -167,7 +163,6 @@ fun EditBottomBar(mainViewModel: MainViewModel) {
                             onClick = {
                                 showDialog = false
                                 mainViewModel.createGroupForSelectedAlarms(alarmList, setGroupName)
-//                        isDropdownMenuExpanded = false
                                 mainViewModel.isSelectMode = false
                             }
                         ) {
