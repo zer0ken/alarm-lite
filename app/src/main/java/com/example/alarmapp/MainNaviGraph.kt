@@ -1,12 +1,8 @@
 package com.example.alarmapp
 
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -19,20 +15,13 @@ import com.example.alarmapp.model.rememberAlarmState
 import com.example.alarmapp.screen.MainScreen
 import com.example.alarmapp.screen.SettingScreen
 import com.example.alarmapp.screen.UpdateAlarmScreen
-import com.example.alarmapp.screen.filterscreens.GroupFilterLabel
-import com.example.alarmapp.screen.filterscreens.RepeatFilterLabel
 import com.example.alarmapp.screen.filterscreens.AddFilterSetScreen
 import com.example.alarmapp.screen.filterscreens.FilterSetListScreen
-
-@Composable
-fun rememberViewModelStoreOwner(): ViewModelStoreOwner {
-    val context = LocalContext.current
-    return remember(context) { context as ViewModelStoreOwner }
-}
+import com.example.alarmapp.screen.filterscreens.GroupFilterLabel
+import com.example.alarmapp.screen.filterscreens.RepeatFilterLabel
 
 @Composable
 fun MainNaviGraph(navController: NavHostController) {
-    val navStoreOwner = rememberViewModelStoreOwner()
     val mainViewModel: MainViewModel =
         viewModel(factory = MainViewModel.Factory(LocalContext.current))
 

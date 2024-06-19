@@ -1,9 +1,6 @@
 package com.example.alarmapp.screen
 
-import android.Manifest
-import android.os.Build
 import androidx.activity.compose.BackHandler
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -55,30 +52,18 @@ import com.example.alarmapp.model.MainViewModel
 import com.example.alarmapp.view.alarm.AlarmListView
 import com.example.alarmapp.view.bottomBar.DefaultBottomBar
 import com.example.alarmapp.view.bottomBar.EditBottomBar
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(navController: NavController, mainViewModel: MainViewModel) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val sortList = listOf("시간순", "알림순")
     var menuExpanded by remember { mutableStateOf(false) }
-
-    val postNotificationPermission =
-        rememberPermissionState(permission = Manifest.permission.POST_NOTIFICATIONS)
-
-    LaunchedEffect(true) {
-        if (!postNotificationPermission.status.isGranted) {
-            postNotificationPermission.launchPermissionRequest()
-        }
-    }
 
     val alarms = mainViewModel.alarmStateMap.values.toList().sortedWith(AlarmComparator.ringFirst)
     LaunchedEffect(Unit) { mainViewModel.fetchAll() }
