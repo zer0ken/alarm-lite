@@ -39,6 +39,19 @@ object AlarmComparator {
             }
         }
     }
+
+    // 켜져있는 것을 우선으로 하고, 가까운 시간을 우선으로 고려하는 Comparator
+    val ringFirst: Comparator<AlarmState> = Comparator { a1, a2 ->
+        // 다음 울릴 시간 계산
+        val nextTriggerA1 = a1.getNextRingTime()
+        val nextTriggerA2 = a2.getNextRingTime()
+
+        when {
+            a1.isOn && !a2.isOn -> -1
+            !a1.isOn && a2.isOn -> 1
+            else -> nextTriggerA1.compareTo(nextTriggerA2)
+        }
+    }
 }
 
 // 사용 예시
